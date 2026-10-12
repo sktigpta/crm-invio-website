@@ -4,7 +4,7 @@ import { useCrmAuth } from '../context/CrmAuthContext';
 import { ShieldCheckIcon, RefreshCwIcon, AlertCircleIcon, PlusIcon } from '../components/CrmIcons';
 
 export function CrmStaffPage() {
-  const { staff: currentStaff, isAdmin } = useCrmAuth();
+  const { staff: currentStaff, isAdmin, isManager, isManagerOrAdmin } = useCrmAuth();
   const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -35,7 +35,11 @@ export function CrmStaffPage() {
   }, [fetchStaff]);
 
   async function handleToggleStatus(staffMember) {
-    if (!isAdmin || staffMember.id === currentStaff.id) return;
+    if (!isManagerOrAdmin || staffMember.id === currentStaff.id) return;
+    if (isManager && staffMember.role !== 'sales_executive' && staffMember.role !== 'support_executive') {
+      alert('Managers can only toggle status for Sales and Support Executives.');
+      return;
+    }
     const nextStatus = staffMember.status === 'active' ? 'suspended' : 'active';
     try {
       await crmApi.updateStaffStatus(staffMember.id, nextStatus);
@@ -59,6 +63,7 @@ export function CrmStaffPage() {
       setNewEmail('');
       setNewPassword('');
       setNewFullName('');
+      setNewRole('sales_executive');
       fetchStaff();
     } catch (err) {
       alert(err.message || 'Failed to create staff member.');
@@ -79,7 +84,7 @@ export function CrmStaffPage() {
         </div>
 
         <div className="flex items-center gap-2.5">
-          {isAdmin && (
+          {isManagerOrAdmin && (
             <button
               onClick={() => setShowCreateModal(true)}
               className="px-3.5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition flex items-center gap-1.5"
@@ -117,7 +122,7 @@ export function CrmStaffPage() {
                 <th className="py-3 px-4">Assigned Role</th>
                 <th className="py-3 px-4">Account Status</th>
                 <th className="py-3 px-4">Last Login</th>
-                {isAdmin && <th className="py-3 px-4 text-right">Action</th>}
+                {isManagerOrAdmin && <th className="py-3 px-4 text-right">Action</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -159,9 +164,9 @@ export function CrmStaffPage() {
                     <td className="py-3.5 px-4 text-slate-500">
                       {st.lastLogin ? new Date(st.lastLogin).toLocaleString() : 'Never'}
                     </td>
-                    {isAdmin && (
+                    {isManagerOrAdmin && (
                       <td className="py-3.5 px-4 text-right">
-                        {st.id !== currentStaff.id ? (
+                        {st.id !== currentStaff.id && (isAdmin || (isManager && (st.role === 'sales_executive' || st.role === 'support_executive'))) ? (
                           <button
                             onClick={() => handleToggleStatus(st)}
                             className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
@@ -245,9 +250,18 @@ export function CrmStaffPage() {
                 >
                   <option value="sales_executive">Sales Executive (Direct ≤10%, Requests ≤30%)</option>
                   <option value="support_executive">Support Executive (Tickets, Requests ≤30%)</option>
-                  <option value="manager">Operations Manager (Reviews ≤30%, Coupons)</option>
-                  <option value="admin">System Administrator (Full Authority)</option>
+                  {isAdmin && (
+                    <>
+                      <option value="manager">Operations Manager (Reviews ≤30%, Coupons)</option>
+                      <option value="admin">System Administrator (Full Authority)</option>
+                    </>
+                  )}
                 </select>
+                {isManager && (
+                  <p className="mt-1 text-[11px] text-slate-500">
+                    As an Operations Manager, you can provision Sales and Support Executives.
+                  </p>
+                )}
               </div>
 
               <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">

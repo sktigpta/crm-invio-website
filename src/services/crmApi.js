@@ -155,6 +155,19 @@ export const crmApi = {
     });
   },
 
+  async updateCustomer(customerId, payload) {
+    return request(`/customers/${encodeURIComponent(customerId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteCustomer(customerId) {
+    return request(`/customers/${encodeURIComponent(customerId)}`, {
+      method: 'DELETE',
+    });
+  },
+
   // Discounts
   async getDiscounts({ customerId = '', status = '', page = 1, limit = 20 } = {}) {
     const params = new URLSearchParams({
@@ -283,6 +296,19 @@ export const crmApi = {
     return request(`/staff/${encodeURIComponent(staffId)}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ status }),
+    });
+  },
+
+  async updateStaff(staffId, payload) {
+    return request(`/staff/${encodeURIComponent(staffId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteStaff(staffId) {
+    return request(`/staff/${encodeURIComponent(staffId)}`, {
+      method: 'DELETE',
     });
   },
 

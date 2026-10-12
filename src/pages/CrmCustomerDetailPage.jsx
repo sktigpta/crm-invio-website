@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import {
@@ -14,12 +14,28 @@ import {
 
 export function CrmCustomerDetailPage() {
   const { id } = useParams();
-  const { staff, isManagerOrAdmin, isSales, isSupport } = useCrmAuth();
+  const navigate = useNavigate();
+  const { staff, isAdmin, isManagerOrAdmin, isSales, isSupport } = useCrmAuth();
 
   const [customerData, setCustomerData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('profile');
+
+  // Edit Customer Modal State
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editFirstName, setEditFirstName] = useState('');
+  const [editLastName, setEditLastName] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editBusinessName, setEditBusinessName] = useState('');
+  const [editPlan, setEditPlan] = useState('free');
+  const [editPhone, setEditPhone] = useState('');
+  const [editCountry, setEditCountry] = useState('');
+  const [editLoading, setEditLoading] = useState(false);
+
+  // Delete Customer State
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // Staff Assignment State
   const [staffList, setStaffList] = useState([]);
@@ -53,6 +69,53 @@ export function CrmCustomerDetailPage() {
       setLoading(false);
     }
   }, [id]);
+
+  function openEditModal() {
+    if (!customerData?.profile) return;
+    const p = customerData.profile;
+    setEditFirstName(p.firstName || '');
+    setEditLastName(p.lastName || '');
+    setEditEmail(p.email || '');
+    setEditBusinessName(p.businessName || '');
+    setEditPlan(p.currentPlan || 'free');
+    setEditPhone(p.phone || '');
+    setEditCountry(p.country || '');
+    setShowEditModal(true);
+  }
+
+  async function handleUpdateCustomer(e) {
+    e.preventDefault();
+    setEditLoading(true);
+    try {
+      await crmApi.updateCustomer(id, {
+        firstName: editFirstName,
+        lastName: editLastName,
+        email: editEmail,
+        businessName: editBusinessName,
+        plan: editPlan,
+        phone: editPhone,
+        country: editCountry,
+      });
+      setShowEditModal(false);
+      fetchCustomer();
+    } catch (err) {
+      alert(err.message || 'Failed to update customer.');
+    } finally {
+      setEditLoading(false);
+    }
+  }
+
+  async function handleDeleteCustomer() {
+    setDeleteLoading(true);
+    try {
+      await crmApi.deleteCustomer(id);
+      navigate('/customers', { replace: true });
+    } catch (err) {
+      alert(err.message || 'Failed to delete customer.');
+    } finally {
+      setDeleteLoading(false);
+    }
+  }
 
   useEffect(() => {
     fetchCustomer();
@@ -186,10 +249,26 @@ export function CrmCustomerDetailPage() {
         <div className="flex items-center gap-2.5 flex-wrap">
           <button
             onClick={() => setShowDiscountModal(true)}
-            className="px-3.5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition"
+            className="px-3.5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition cursor-pointer"
           >
             + Grant Discount
           </button>
+          {isManagerOrAdmin && (
+            <button
+              onClick={openEditModal}
+              className="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition cursor-pointer"
+            >
+              Edit Details
+            </button>
+          )}
+          {isAdmin && (
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="px-3.5 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs transition cursor-pointer"
+            >
+              Delete
+            </button>
+          )}
           <Link
             to={`/tickets?search=${encodeURIComponent(profile.email)}`}
             className="px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-50 transition"
@@ -588,19 +667,177 @@ export function CrmCustomerDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowDiscountModal(false)}
-                  className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
+                  className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={discountModalLoading}
-                  className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
                 >
                   {discountModalLoading ? 'Processing...' : 'Submit Discount'}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Customer Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="font-bold text-slate-900 text-sm">Edit Customer Profile</h3>
+                <p className="text-[11px] text-slate-400 font-mono mt-0.5">{id}</p>
+              </div>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateCustomer} className="space-y-3 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">First Name</label>
+                  <input
+                    type="text"
+                    value={editFirstName}
+                    onChange={(e) => setEditFirstName(e.target.value)}
+                    className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Last Name</label>
+                  <input
+                    type="text"
+                    value={editLastName}
+                    onChange={(e) => setEditLastName(e.target.value)}
+                    className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Email Address</label>
+                <input
+                  type="email"
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  required
+                  className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Business Name</label>
+                <input
+                  type="text"
+                  value={editBusinessName}
+                  onChange={(e) => setEditBusinessName(e.target.value)}
+                  className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Phone Number</label>
+                  <input
+                    type="text"
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    placeholder="+91..."
+                    className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Country</label>
+                  <input
+                    type="text"
+                    value={editCountry}
+                    onChange={(e) => setEditCountry(e.target.value)}
+                    placeholder="India"
+                    className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Subscription Plan</label>
+                <select
+                  value={editPlan}
+                  onChange={(e) => setEditPlan(e.target.value)}
+                  className="w-full p-2.5 rounded-lg border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
+                >
+                  <option value="free">Free Tier</option>
+                  <option value="plus">Plus Plan</option>
+                  <option value="pro">Pro Plan</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={editLoading}
+                  className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
+                >
+                  {editLoading ? 'Saving...' : 'Save Profile'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Customer Confirmation Modal (Admin only) */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-red-100 space-y-4">
+            <div className="flex items-center gap-3 text-red-600">
+              <div className="size-10 rounded-full bg-red-100 flex items-center justify-center">
+                <AlertCircleIcon className="size-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 text-sm">Delete Customer Account?</h3>
+                <p className="text-[11px] text-slate-500">This action cannot be undone.</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Are you sure you want to permanently delete the customer account for{' '}
+              <strong className="text-slate-900">{profile.fullName}</strong> ({profile.email})?
+              All associated invoices, support tickets, and discount records will be permanently removed.
+            </p>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 text-xs">
+              <button
+                type="button"
+                onClick={() => setShowDeleteModal(false)}
+                className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteCustomer}
+                disabled={deleteLoading}
+                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
+              >
+                {deleteLoading ? 'Deleting...' : 'Delete Permanently'}
+              </button>
+            </div>
           </div>
         </div>
       )}

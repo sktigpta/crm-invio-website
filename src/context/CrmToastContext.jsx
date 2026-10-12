@@ -29,19 +29,24 @@ export function CrmToastProvider({ children }) {
     [dismiss]
   );
 
+  const toast = useMemo(
+    () => ({
+      success: (msg, title = 'Success') => push('success', msg, title),
+      error: (msg, title = 'Error') => push('error', msg, title),
+      warning: (msg, title = 'Warning') => push('warning', msg, title),
+      info: (msg, title = 'Info') => push('info', msg, title),
+    }),
+    [push]
+  );
+
   const value = useMemo(
     () => ({
       toasts,
       dismiss,
-      toast: {
-        success: (msg, title = 'Success') => push('success', msg, title),
-        error: (msg, title = 'Error') => push('error', msg, title),
-        warning: (msg, title = 'Warning') => push('warning', msg, title),
-        info: (msg, title = 'Info') => push('info', msg, title),
-      },
+      toast,
       notify: push,
     }),
-    [toasts, dismiss, push]
+    [toasts, dismiss, toast, push]
   );
 
   return <CrmToastContext.Provider value={value}>{children}</CrmToastContext.Provider>;

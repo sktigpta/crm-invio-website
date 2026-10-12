@@ -121,7 +121,13 @@ export function CrmLoginPage() {
         </div>
 
         <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-6 px-6 sm:px-8 border border-slate-200/90 shadow-xs">
+          <div className="bg-white py-6 px-6 sm:px-8 border border-slate-200/90 shadow-xs relative overflow-hidden">
+            {changeLoading && (
+              <div className="absolute top-0 left-0 right-0 h-1 bg-purple-100 overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-purple-500 via-indigo-600 to-purple-600 animate-pulse w-full" />
+              </div>
+            )}
+
             {changeError && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200/80 text-xs font-medium text-red-700 flex items-start gap-2.5">
                 <svg className="size-4 text-red-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -233,7 +239,13 @@ export function CrmLoginPage() {
 
       {/* Main Login Card */}
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-6 px-6 sm:px-8 border border-slate-200/90 shadow-xs">
+        <div className="bg-white py-6 px-6 sm:px-8 border border-slate-200/90 shadow-xs relative overflow-hidden">
+          {loading && (
+            <div className="absolute top-0 left-0 right-0 h-1 bg-purple-100 overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-purple-500 via-indigo-600 to-purple-600 animate-pulse w-full" />
+            </div>
+          )}
+
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200/80 text-xs font-medium text-red-700 flex items-start gap-2.5">
               <svg className="size-4 text-red-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

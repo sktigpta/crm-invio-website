@@ -3,8 +3,6 @@ import { crmApi } from '../services/crmApi';
 import { useCrmToast } from '../context/CrmToastContext';
 import { useDebouncedValue, isRateLimitError } from '../hooks/useDebouncedValue';
 import {
-  GOOGLE_SHEET_ID,
-  GOOGLE_SHEETS_TAB,
   downloadAuditLogsCsv,
   getGoogleSheetUrl,
 } from '../services/googleSheets';
@@ -100,12 +98,6 @@ export function CrmAuditLogsPage() {
             <RefreshCwIcon className={`size-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
         </div>
-      </div>
-
-      {/* Sheets store status */}
-      <div className="p-3 bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-        <span className="font-bold whitespace-nowrap">⬢ Stored in Google Sheets</span>
-        <span className="font-mono break-all">Sheet: {GOOGLE_SHEET_ID} · Tab: {GOOGLE_SHEETS_TAB}</span>
       </div>
 
       {error && (

@@ -45,9 +45,9 @@ export function CrmLayout() {
   const currentRole = roleMeta[staff?.role] || { label: staff?.role || 'Staff', bg: 'bg-slate-100 text-slate-700 border-slate-200' };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans text-slate-800">
+    <div className="h-screen w-screen overflow-hidden bg-slate-50 flex flex-col md:flex-row font-sans text-slate-800">
       {/* Mobile Top Header */}
-      <div className="md:hidden h-12 flex items-center justify-between px-3 bg-white border-b border-slate-200 sticky top-0 z-30">
+      <div className="md:hidden h-12 flex-shrink-0 flex items-center justify-between px-3 bg-white border-b border-slate-200 z-30">
         <Link to="/dashboard" className="flex items-center gap-2">
           <img src="/appLogo.png" alt="Invio" className="size-5 object-contain" />
           <span className="font-bold text-xs tracking-tight text-slate-900">Invio CRM</span>
@@ -71,11 +71,11 @@ export function CrmLayout() {
       {/* Sidebar Navigation */}
       <aside
         className={`${
-          mobileMenuOpen ? 'block' : 'hidden'
-        } md:block w-full md:w-56 bg-white border-r border-slate-200 flex-shrink-0 flex flex-col z-20`}
+          mobileMenuOpen ? 'fixed inset-0 z-40 bg-white flex flex-col' : 'hidden'
+        } md:flex md:static md:w-56 md:h-screen bg-white border-r border-slate-200 flex-shrink-0 flex-col z-20`}
       >
         {/* Left header: exact matched h-12 height */}
-        <div className="h-12 px-3 border-b border-slate-200 hidden md:flex items-center justify-between">
+        <div className="h-12 flex-shrink-0 px-3 border-b border-slate-200 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center gap-2 hover:opacity-85 transition">
             <img src="/appLogo.png" alt="Invio" className="size-5 object-contain" />
             <span className="font-bold text-xs text-slate-900 tracking-tight">Invio CRM</span>
@@ -83,6 +83,15 @@ export function CrmLayout() {
               Staff
             </span>
           </Link>
+          {mobileMenuOpen && (
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="md:hidden p-1 text-slate-500 hover:text-slate-800"
+              aria-label="Close menu"
+            >
+              ✕
+            </button>
+          )}
         </div>
 
         {/* Navigation items (tight list) */}
@@ -111,7 +120,7 @@ export function CrmLayout() {
         </nav>
 
         {/* Bottom actions */}
-        <div className="p-2 border-t border-slate-200 space-y-0.5">
+        <div className="p-2 border-t border-slate-200 space-y-0.5 flex-shrink-0">
           <a
             href="https://invio.timrio.com"
             target="_blank"
@@ -131,10 +140,10 @@ export function CrmLayout() {
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        {/* Right header: exact matched h-12 height */}
-        <header className="h-12 bg-white border-b border-slate-200 px-4 flex items-center justify-between sticky top-0 z-10">
+      {/* Main Container Area: pinned right header, scrollable content */}
+      <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
+        {/* Right header: exact matched h-12 height, sticky/pinned */}
+        <header className="h-12 flex-shrink-0 bg-white border-b border-slate-200 px-4 flex items-center justify-between z-10">
           <div className="flex items-center gap-2">
             <h1 className="text-xs font-bold text-slate-900 capitalize tracking-tight">
               {location.pathname === '/' ? 'Dashboard' : location.pathname.slice(1).replace('-', ' ')}
@@ -156,10 +165,11 @@ export function CrmLayout() {
           </div>
         </header>
 
-        <div className="p-3 md:p-3.5 flex-1">
+        {/* Scrollable content area: only this container scrolls */}
+        <main className="flex-1 overflow-y-auto p-3 md:p-3.5 min-w-0">
           <Outlet />
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

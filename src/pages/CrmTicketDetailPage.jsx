@@ -95,7 +95,7 @@ export function CrmTicketDetailPage() {
   const { ticket, comments } = ticketData;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Top back link */}
       <div className="flex items-center justify-between">
         <Link
@@ -179,12 +179,12 @@ export function CrmTicketDetailPage() {
       )}
 
       {/* Discussion Thread */}
-      <div className="bg-white  border border-slate-200 shadow-xs p-6 space-y-6">
+      <div className="bg-white  border border-slate-200 shadow-xs p-6 space-y-3">
         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 border-b border-slate-100 pb-3">
           Discussion Thread ({comments.length} message{comments.length === 1 ? '' : 's'})
         </h3>
 
-        <div className="space-y-4">
+        <div className="space-y-2.5">
           {comments.map((comment) => (
             <div
               key={comment.id}

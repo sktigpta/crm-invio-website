@@ -130,7 +130,7 @@ export function CrmStaffPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -174,12 +174,12 @@ export function CrmStaffPage() {
           <table className="w-full text-left text-xs border-collapse">
             <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-semibold text-[11px] uppercase tracking-wider">
               <tr>
-                <th className="py-3.5 px-4">Staff Member</th>
-                <th className="py-3.5 px-4">Email</th>
-                <th className="py-3.5 px-4">Assigned Role</th>
-                <th className="py-3.5 px-4">Account Status</th>
-                <th className="py-3.5 px-4">Last Login</th>
-                {isManagerOrAdmin && <th className="py-3.5 px-4 text-right">Actions</th>}
+                <th className="py-1.5 px-3">Staff Member</th>
+                <th className="py-1.5 px-3">Email</th>
+                <th className="py-1.5 px-3">Assigned Role</th>
+                <th className="py-1.5 px-3">Account Status</th>
+                <th className="py-1.5 px-3">Last Login</th>
+                {isManagerOrAdmin && <th className="py-1.5 px-3 text-right">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -204,7 +204,7 @@ export function CrmStaffPage() {
 
                   return (
                     <tr key={st.id} className="hover:bg-slate-50/70 transition">
-                      <td className="py-3.5 px-4 font-semibold text-slate-900">
+                      <td className="py-1.5 px-3 font-semibold text-slate-900">
                         <div className="flex items-center gap-2">
                           <span>{st.fullName}</span>
                           {isCurrent && (
@@ -219,13 +219,13 @@ export function CrmStaffPage() {
                           )}
                         </div>
                       </td>
-                      <td className="py-3.5 px-4 font-mono text-slate-700">{st.email}</td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-1.5 px-3 font-mono text-slate-700">{st.email}</td>
+                      <td className="py-1.5 px-3">
                         <span className="capitalize font-semibold text-[11px] px-2.5 py-0.5  bg-slate-100 text-slate-800 border border-slate-200">
                           {st.role.replace('_', ' ')}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-1.5 px-3">
                         <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5  uppercase tracking-wider ${
                           st.status === 'active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'
                         }`}>
@@ -233,11 +233,11 @@ export function CrmStaffPage() {
                           {st.status}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 text-slate-500 text-[11px]">
+                      <td className="py-1.5 px-3 text-slate-500 text-[11px]">
                         {st.lastLogin ? new Date(st.lastLogin).toLocaleString() : 'Never'}
                       </td>
                       {isManagerOrAdmin && (
-                        <td className="py-3.5 px-4 text-right">
+                        <td className="py-1.5 px-3 text-right">
                           <div className="flex items-center justify-end gap-1.5">
                             {canEdit && (
                               <button
@@ -290,7 +290,7 @@ export function CrmStaffPage() {
       {/* Add Staff Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white  max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="bg-white  max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Add New Staff Member</h3>
               <button
@@ -385,7 +385,7 @@ export function CrmStaffPage() {
       {/* Edit Staff Modal */}
       {editingStaff && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white  max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="bg-white  max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Update Staff Account</h3>
@@ -481,7 +481,7 @@ export function CrmStaffPage() {
       {/* Delete Staff Confirmation Modal (Admin only) */}
       {deletingStaff && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white  max-w-sm w-full p-6 shadow-xl border border-red-100 space-y-4">
+          <div className="bg-white  max-w-sm w-full p-4 shadow-xl border border-red-100 space-y-2.5">
             <div className="flex items-center gap-3 text-red-600">
               <div className="size-10  bg-red-100 flex items-center justify-center">
                 <AlertCircleIcon className="size-5" />

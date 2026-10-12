@@ -51,7 +51,7 @@ export function CrmApprovalsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -111,13 +111,13 @@ export function CrmApprovalsPage() {
           <table className="w-full text-left text-xs border-collapse">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
-                <th className="py-3 px-4">Customer</th>
-                <th className="py-3 px-4">Requested Discount</th>
-                <th className="py-3 px-4">Requested By</th>
-                <th className="py-3 px-4">Reason</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Review Details</th>
-                <th className="py-3 px-4 text-right">Action</th>
+                <th className="py-1.5 px-3">Customer</th>
+                <th className="py-1.5 px-3">Requested Discount</th>
+                <th className="py-1.5 px-3">Requested By</th>
+                <th className="py-1.5 px-3">Reason</th>
+                <th className="py-1.5 px-3">Status</th>
+                <th className="py-1.5 px-3">Review Details</th>
+                <th className="py-1.5 px-3 text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -139,23 +139,23 @@ export function CrmApprovalsPage() {
                   const isSelf = staff?.id === r.requestedByStaffId;
                   return (
                     <tr key={r.id} className="hover:bg-slate-50/70 transition">
-                      <td className="py-3.5 px-4 font-mono font-medium text-slate-900">
+                      <td className="py-1.5 px-3 font-mono font-medium text-slate-900">
                         {r.customerEmail}
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-1.5 px-3">
                         <span className="font-bold text-sm text-purple-700">{r.discountValue}%</span>
                         <span className="text-[10px] text-slate-500 block capitalize">{r.applicablePlan} Plan</span>
                       </td>
-                      <td className="py-3.5 px-4 text-slate-700">
+                      <td className="py-1.5 px-3 text-slate-700">
                         <div className="font-semibold text-slate-900">{r.requestedByName}</div>
                         <div className="text-[10px] text-slate-500 capitalize">
                           {r.requestedByRole.replace('_', ' ')}
                         </div>
                       </td>
-                      <td className="py-3.5 px-4 text-slate-700 max-w-xs truncate" title={r.reason}>
+                      <td className="py-1.5 px-3 text-slate-700 max-w-xs truncate" title={r.reason}>
                         {r.reason}
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-1.5 px-3">
                         <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                           r.status === 'pending'
                             ? 'bg-amber-100 text-amber-800'
@@ -166,7 +166,7 @@ export function CrmApprovalsPage() {
                           {r.status}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 text-[11px] text-slate-600">
+                      <td className="py-1.5 px-3 text-[11px] text-slate-600">
                         {r.reviewerName ? (
                           <div>
                             <span className="font-semibold">{r.reviewerName}</span>
@@ -178,7 +178,7 @@ export function CrmApprovalsPage() {
                           <span className="text-slate-400 italic">Pending review</span>
                         )}
                       </td>
-                      <td className="py-3.5 px-4 text-right">
+                      <td className="py-1.5 px-3 text-right">
                         {r.status === 'pending' && isManagerOrAdmin ? (
                           <button
                             onClick={() => {
@@ -206,7 +206,7 @@ export function CrmApprovalsPage() {
       {/* Review Modal */}
       {selectedRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="bg-white  max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="bg-white  max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Review Discount Request</h3>
               <button

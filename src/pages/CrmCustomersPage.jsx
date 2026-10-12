@@ -124,7 +124,7 @@ export function CrmCustomersPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -206,12 +206,12 @@ export function CrmCustomersPage() {
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
-                <th className="py-3.5 px-4">Customer</th>
-                <th className="py-3.5 px-4">Contact Info</th>
-                <th className="py-3.5 px-4">Current Plan</th>
-                <th className="py-3.5 px-4">Assigned Staff</th>
-                <th className="py-3.5 px-4">Status</th>
-                <th className="py-3.5 px-4 text-right">Actions</th>
+                <th className="py-1.5 px-3">Customer</th>
+                <th className="py-1.5 px-3">Contact Info</th>
+                <th className="py-1.5 px-3">Current Plan</th>
+                <th className="py-1.5 px-3">Assigned Staff</th>
+                <th className="py-1.5 px-3">Status</th>
+                <th className="py-1.5 px-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -231,27 +231,27 @@ export function CrmCustomersPage() {
               ) : (
                 customers.map((c) => (
                   <tr key={c.id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-3.5 px-4">
+                    <td className="py-1.5 px-3">
                       <div className="font-semibold text-slate-900">{c.fullName}</div>
                       <div className="text-[10px] text-slate-400 font-mono">{c.id}</div>
                     </td>
-                    <td className="py-3.5 px-4 font-mono text-[11px]">
+                    <td className="py-1.5 px-3 font-mono text-[11px]">
                       <div className="text-slate-800">{c.email}</div>
                       <div className="text-slate-400 text-[10px]">{c.phone || 'No phone'}</div>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-1.5 px-3">
                       <span className="capitalize font-semibold text-purple-700 bg-purple-50 px-2.5 py-0.5  text-[11px] border border-purple-200">
                         {c.currentPlan}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-600">
+                    <td className="py-1.5 px-3 text-slate-600">
                       {c.assignedStaffName ? (
                         <span className="font-medium text-slate-800">{c.assignedStaffName}</span>
                       ) : (
                         <span className="text-slate-400 italic">Unassigned</span>
                       )}
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-1.5 px-3">
                       <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5  ${
                         c.emailVerified ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200'
                       }`}>
@@ -259,7 +259,7 @@ export function CrmCustomersPage() {
                         {c.emailVerified ? 'Verified' : 'Unverified'}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="py-1.5 px-3 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <Link
                           to={`/customers/${encodeURIComponent(c.id)}`}
@@ -325,7 +325,7 @@ export function CrmCustomersPage() {
       {/* Edit Customer Modal */}
       {editingCustomer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white  max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="bg-white  max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Update Customer Details</h3>
@@ -433,7 +433,7 @@ export function CrmCustomersPage() {
       {/* Delete Customer Confirmation Modal (Admin only) */}
       {deletingCustomer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white  max-w-sm w-full p-6 shadow-xl border border-red-100 space-y-4">
+          <div className="bg-white  max-w-sm w-full p-4 shadow-xl border border-red-100 space-y-2.5">
             <div className="flex items-center gap-3 text-red-600">
               <div className="size-10  bg-red-100 flex items-center justify-center">
                 <AlertCircleIcon className="size-5" />

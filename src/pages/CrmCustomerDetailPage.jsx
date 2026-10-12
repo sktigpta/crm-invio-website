@@ -207,7 +207,7 @@ export function CrmCustomerDetailPage() {
   const { profile, payments, discounts, couponRedemptions, tickets, notes } = customerData;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Back button & top breadcrumb */}
       <div className="flex items-center justify-between">
         <Link
@@ -336,7 +336,7 @@ export function CrmCustomerDetailPage() {
           </div>
 
           {/* Assigned Executive Form */}
-          <div className="bg-white p-5  border border-slate-200 shadow-xs space-y-4 text-xs">
+          <div className="bg-white p-5  border border-slate-200 shadow-xs space-y-2.5 text-xs">
             <h3 className="font-bold text-slate-900 text-sm">Account Assignment</h3>
             <p className="text-slate-500">
               Assigned sales or support executive dedicated to this customer.
@@ -385,11 +385,11 @@ export function CrmCustomerDetailPage() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
-                <th className="py-3 px-4">Order ID</th>
-                <th className="py-3 px-4">Plan Purchased</th>
-                <th className="py-3 px-4">Validity</th>
-                <th className="py-3 px-4">Amount Paid</th>
-                <th className="py-3 px-4">Date</th>
+                <th className="py-1.5 px-3">Order ID</th>
+                <th className="py-1.5 px-3">Plan Purchased</th>
+                <th className="py-1.5 px-3">Validity</th>
+                <th className="py-1.5 px-3">Amount Paid</th>
+                <th className="py-1.5 px-3">Date</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -402,11 +402,11 @@ export function CrmCustomerDetailPage() {
               ) : (
                 payments.map((p) => (
                   <tr key={p.id} className="hover:bg-slate-50">
-                    <td className="py-3 px-4 font-mono font-medium">{p.order_id || p.id}</td>
-                    <td className="py-3 px-4 capitalize font-semibold text-purple-700">{p.plan}</td>
-                    <td className="py-3 px-4 capitalize text-slate-600">{p.validity}</td>
-                    <td className="py-3 px-4 font-bold text-slate-900">₹{p.amount}</td>
-                    <td className="py-3 px-4 text-slate-500">{new Date(p.created_at).toLocaleDateString()}</td>
+                    <td className="py-1.5 px-3 font-mono font-medium">{p.order_id || p.id}</td>
+                    <td className="py-1.5 px-3 capitalize font-semibold text-purple-700">{p.plan}</td>
+                    <td className="py-1.5 px-3 capitalize text-slate-600">{p.validity}</td>
+                    <td className="py-1.5 px-3 font-bold text-slate-900">₹{p.amount}</td>
+                    <td className="py-1.5 px-3 text-slate-500">{new Date(p.created_at).toLocaleDateString()}</td>
                   </tr>
                 ))
               )}
@@ -421,12 +421,12 @@ export function CrmCustomerDetailPage() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
-                <th className="py-3 px-4">Discount</th>
-                <th className="py-3 px-4">Reason</th>
-                <th className="py-3 px-4">Plan Scope</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Granted By</th>
-                <th className="py-3 px-4">Expires</th>
+                <th className="py-1.5 px-3">Discount</th>
+                <th className="py-1.5 px-3">Reason</th>
+                <th className="py-1.5 px-3">Plan Scope</th>
+                <th className="py-1.5 px-3">Status</th>
+                <th className="py-1.5 px-3">Granted By</th>
+                <th className="py-1.5 px-3">Expires</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -439,20 +439,20 @@ export function CrmCustomerDetailPage() {
               ) : (
                 discounts.map((d) => (
                   <tr key={d.id} className="hover:bg-slate-50">
-                    <td className="py-3 px-4 font-bold text-purple-700 text-sm">
+                    <td className="py-1.5 px-3 font-bold text-purple-700 text-sm">
                       {d.discount_value}% OFF
                     </td>
-                    <td className="py-3 px-4 text-slate-700 max-w-xs truncate">{d.reason}</td>
-                    <td className="py-3 px-4 capitalize text-slate-600">{d.applicable_plan}</td>
-                    <td className="py-3 px-4">
+                    <td className="py-1.5 px-3 text-slate-700 max-w-xs truncate">{d.reason}</td>
+                    <td className="py-1.5 px-3 capitalize text-slate-600">{d.applicable_plan}</td>
+                    <td className="py-1.5 px-3">
                       <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                         d.approval_status === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'
                       }`}>
                         {d.approval_status}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-slate-600">{d.createdByName || 'Staff'}</td>
-                    <td className="py-3 px-4 text-slate-500">{new Date(d.expiry_date).toLocaleDateString()}</td>
+                    <td className="py-1.5 px-3 text-slate-600">{d.createdByName || 'Staff'}</td>
+                    <td className="py-1.5 px-3 text-slate-500">{new Date(d.expiry_date).toLocaleDateString()}</td>
                   </tr>
                 ))
               )}
@@ -467,10 +467,10 @@ export function CrmCustomerDetailPage() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
-                <th className="py-3 px-4">Coupon Code</th>
-                <th className="py-3 px-4">Description</th>
-                <th className="py-3 px-4">Discount Applied</th>
-                <th className="py-3 px-4">Redemption Date</th>
+                <th className="py-1.5 px-3">Coupon Code</th>
+                <th className="py-1.5 px-3">Description</th>
+                <th className="py-1.5 px-3">Discount Applied</th>
+                <th className="py-1.5 px-3">Redemption Date</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -483,10 +483,10 @@ export function CrmCustomerDetailPage() {
               ) : (
                 couponRedemptions.map((cr) => (
                   <tr key={cr.id} className="hover:bg-slate-50">
-                    <td className="py-3 px-4 font-mono font-bold text-purple-700">{cr.code}</td>
-                    <td className="py-3 px-4 text-slate-600">{cr.description}</td>
-                    <td className="py-3 px-4 font-bold text-slate-900">₹{cr.discount_applied}</td>
-                    <td className="py-3 px-4 text-slate-500">{new Date(cr.redeemed_at).toLocaleDateString()}</td>
+                    <td className="py-1.5 px-3 font-mono font-bold text-purple-700">{cr.code}</td>
+                    <td className="py-1.5 px-3 text-slate-600">{cr.description}</td>
+                    <td className="py-1.5 px-3 font-bold text-slate-900">₹{cr.discount_applied}</td>
+                    <td className="py-1.5 px-3 text-slate-500">{new Date(cr.redeemed_at).toLocaleDateString()}</td>
                   </tr>
                 ))
               )}
@@ -501,12 +501,12 @@ export function CrmCustomerDetailPage() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
-                <th className="py-3 px-4">Ticket Number</th>
-                <th className="py-3 px-4">Subject</th>
-                <th className="py-3 px-4">Category</th>
-                <th className="py-3 px-4">Priority</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Created</th>
+                <th className="py-1.5 px-3">Ticket Number</th>
+                <th className="py-1.5 px-3">Subject</th>
+                <th className="py-1.5 px-3">Category</th>
+                <th className="py-1.5 px-3">Priority</th>
+                <th className="py-1.5 px-3">Status</th>
+                <th className="py-1.5 px-3">Created</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -519,18 +519,18 @@ export function CrmCustomerDetailPage() {
               ) : (
                 tickets.map((t) => (
                   <tr key={t.id} className="hover:bg-slate-50">
-                    <td className="py-3 px-4 font-mono font-bold text-purple-700">{t.ticket_number}</td>
-                    <td className="py-3 px-4 font-medium text-slate-900">{t.subject}</td>
-                    <td className="py-3 px-4 capitalize text-slate-600">{t.category}</td>
-                    <td className="py-3 px-4">
+                    <td className="py-1.5 px-3 font-mono font-bold text-purple-700">{t.ticket_number}</td>
+                    <td className="py-1.5 px-3 font-medium text-slate-900">{t.subject}</td>
+                    <td className="py-1.5 px-3 capitalize text-slate-600">{t.category}</td>
+                    <td className="py-1.5 px-3">
                       <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                         t.priority === 'urgent' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'
                       }`}>
                         {t.priority}
                       </span>
                     </td>
-                    <td className="py-3 px-4 capitalize font-semibold">{t.status.replace('_', ' ')}</td>
-                    <td className="py-3 px-4 text-slate-500">{new Date(t.created_at).toLocaleDateString()}</td>
+                    <td className="py-1.5 px-3 capitalize font-semibold">{t.status.replace('_', ' ')}</td>
+                    <td className="py-1.5 px-3 text-slate-500">{new Date(t.created_at).toLocaleDateString()}</td>
                   </tr>
                 ))
               )}
@@ -541,7 +541,7 @@ export function CrmCustomerDetailPage() {
 
       {/* Tab 6: Internal Notes */}
       {activeTab === 'notes' && (
-        <div className="space-y-4">
+        <div className="space-y-2.5">
           {/* Note Input Form */}
           <form onSubmit={handleAddNote} className="bg-white p-4  border border-slate-200 shadow-xs space-y-3">
             <label className="block text-xs font-bold text-slate-900">
@@ -586,7 +586,7 @@ export function CrmCustomerDetailPage() {
       {/* Grant / Request Discount Modal */}
       {showDiscountModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="bg-white  max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="bg-white  max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Assign Discount to Customer</h3>
               <button
@@ -687,7 +687,7 @@ export function CrmCustomerDetailPage() {
       {/* Edit Customer Modal */}
       {showEditModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white  max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="bg-white  max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Edit Customer Profile</h3>
@@ -804,7 +804,7 @@ export function CrmCustomerDetailPage() {
       {/* Delete Customer Confirmation Modal (Admin only) */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white  max-w-sm w-full p-6 shadow-xl border border-red-100 space-y-4">
+          <div className="bg-white  max-w-sm w-full p-4 shadow-xl border border-red-100 space-y-2.5">
             <div className="flex items-center gap-3 text-red-600">
               <div className="size-10  bg-red-100 flex items-center justify-center">
                 <AlertCircleIcon className="size-5" />

@@ -55,7 +55,7 @@ const planDefinitions = [
 
 export function CrmPlansPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Header */}
       <div>
         <h2 className="text-lg font-bold text-slate-900">Subscription Plans & Entitlements</h2>

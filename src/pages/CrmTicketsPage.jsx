@@ -64,7 +64,7 @@ export function CrmTicketsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -167,13 +167,13 @@ export function CrmTicketsPage() {
           <table className="w-full text-left text-xs border-collapse">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
-                <th className="py-3 px-4">Ticket</th>
-                <th className="py-3 px-4">Subject</th>
-                <th className="py-3 px-4">Category</th>
-                <th className="py-3 px-4">Priority</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Assigned To</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-1.5 px-3">Ticket</th>
+                <th className="py-1.5 px-3">Subject</th>
+                <th className="py-1.5 px-3">Category</th>
+                <th className="py-1.5 px-3">Priority</th>
+                <th className="py-1.5 px-3">Status</th>
+                <th className="py-1.5 px-3">Assigned To</th>
+                <th className="py-1.5 px-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -193,18 +193,18 @@ export function CrmTicketsPage() {
               ) : (
                 tickets.map((t) => (
                   <tr key={t.id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-3.5 px-4">
+                    <td className="py-1.5 px-3">
                       <div className="font-mono font-bold text-purple-700">{t.ticketNumber}</div>
                       <div className="text-[10px] text-slate-400">{new Date(t.createdAt).toLocaleDateString()}</div>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-1.5 px-3">
                       <div className="font-semibold text-slate-900 max-w-sm truncate">{t.subject}</div>
                       <div className="text-[10px] text-slate-500 font-mono">{t.customerEmail}</div>
                     </td>
-                    <td className="py-3.5 px-4 capitalize text-slate-600 font-medium">
+                    <td className="py-1.5 px-3 capitalize text-slate-600 font-medium">
                       {t.category}
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-1.5 px-3">
                       <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                         t.priority === 'urgent'
                           ? 'bg-red-100 text-red-800'
@@ -215,7 +215,7 @@ export function CrmTicketsPage() {
                         {t.priority}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-1.5 px-3">
                       <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                         t.status === 'open'
                           ? 'bg-blue-100 text-blue-800'
@@ -228,10 +228,10 @@ export function CrmTicketsPage() {
                         {t.status.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-600">
+                    <td className="py-1.5 px-3 text-slate-600">
                       {t.assignedStaffName || <span className="text-slate-400 italic">Unassigned</span>}
                     </td>
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="py-1.5 px-3 text-right">
                       <Link
                         to={`/tickets/${encodeURIComponent(t.id)}`}
                         className="inline-flex px-3 py-1  bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold transition"
@@ -250,7 +250,7 @@ export function CrmTicketsPage() {
       {/* Create Ticket Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="bg-white  max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="bg-white  max-w-lg w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Open Support Ticket</h3>
               <button

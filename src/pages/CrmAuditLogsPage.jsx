@@ -38,7 +38,7 @@ export function CrmAuditLogsPage() {
   }, [fetchLogs]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -108,11 +108,11 @@ export function CrmAuditLogsPage() {
           <table className="w-full text-left text-xs border-collapse">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
-                <th className="py-3 px-4">Timestamp</th>
-                <th className="py-3 px-4">Staff Actor</th>
-                <th className="py-3 px-4">Action</th>
-                <th className="py-3 px-4">Target</th>
-                <th className="py-3 px-4">Details</th>
+                <th className="py-1.5 px-3">Timestamp</th>
+                <th className="py-1.5 px-3">Staff Actor</th>
+                <th className="py-1.5 px-3">Action</th>
+                <th className="py-1.5 px-3">Target</th>
+                <th className="py-1.5 px-3">Details</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-mono text-[11px]">
@@ -134,20 +134,20 @@ export function CrmAuditLogsPage() {
                   const isExpanded = expandedLogId === log.id;
                   return (
                     <tr key={log.id} className="hover:bg-slate-50/70 transition">
-                      <td className="py-3.5 px-4 text-slate-500 whitespace-nowrap">
+                      <td className="py-1.5 px-3 text-slate-500 whitespace-nowrap">
                         {new Date(log.created_at).toLocaleString()}
                       </td>
-                      <td className="py-3.5 px-4 font-sans">
+                      <td className="py-1.5 px-3 font-sans">
                         <div className="font-semibold text-slate-900">{log.actor_name || 'Staff'}</div>
                         <div className="text-[10px] text-slate-500 capitalize">{log.actor_role.replace('_', ' ')}</div>
                       </td>
-                      <td className="py-3.5 px-4 font-bold text-purple-700">
+                      <td className="py-1.5 px-3 font-bold text-purple-700">
                         {log.action}
                       </td>
-                      <td className="py-3.5 px-4 text-slate-600">
+                      <td className="py-1.5 px-3 text-slate-600">
                         <span className="capitalize font-semibold text-slate-800">{log.target_type}</span>: {log.target_id}
                       </td>
-                      <td className="py-3.5 px-4 font-sans text-right">
+                      <td className="py-1.5 px-3 font-sans text-right">
                         <button
                           onClick={() => setExpandedLogId(isExpanded ? null : log.id)}
                           className="px-2.5 py-1  bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] transition"

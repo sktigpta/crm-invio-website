@@ -32,7 +32,7 @@ export function CrmDiscountsPage() {
   }, [fetchDiscounts]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -58,20 +58,6 @@ export function CrmDiscountsPage() {
             <RefreshCwIcon className={`size-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
         </div>
-      </div>
-
-      {/* Role Policy Notice Banner */}
-      <div className="p-4  bg-purple-50/70 border border-purple-200/80 text-xs text-purple-900 space-y-1">
-        <div className="font-bold flex items-center gap-2">
-          <span>🛡️ Server-Enforced Discount Policy Guardrails</span>
-        </div>
-        <p className="text-[11px] text-purple-800">
-          • <strong>Sales Executives:</strong> Can activate up to <strong>10%</strong> directly. 11% to 30% automatically triggers a Manager approval request. Over 30% is rejected.
-          <br />
-          • <strong>Support Executives:</strong> Can request discounts up to <strong>30%</strong> for customer retention (requires Manager approval).
-          <br />
-          • <strong>Managers:</strong> Can directly activate up to <strong>30%</strong>. Anti-self-approval rule strictly prohibits approving your own requests.
-        </p>
       </div>
 
       {error && (
@@ -109,13 +95,13 @@ export function CrmDiscountsPage() {
           <table className="w-full text-left text-xs border-collapse">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
-                <th className="py-3 px-4">Customer Email</th>
-                <th className="py-3 px-4">Discount</th>
-                <th className="py-3 px-4">Reason / Notes</th>
-                <th className="py-3 px-4">Plan Scope</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Staff Details</th>
-                <th className="py-3 px-4">Expires</th>
+                <th className="py-1.5 px-3">Customer Email</th>
+                <th className="py-1.5 px-3">Discount</th>
+                <th className="py-1.5 px-3">Reason / Notes</th>
+                <th className="py-1.5 px-3">Plan Scope</th>
+                <th className="py-1.5 px-3">Status</th>
+                <th className="py-1.5 px-3">Staff Details</th>
+                <th className="py-1.5 px-3">Expires</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -135,7 +121,7 @@ export function CrmDiscountsPage() {
               ) : (
                 discounts.map((d) => (
                   <tr key={d.id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-3.5 px-4 font-mono font-medium text-slate-900">
+                    <td className="py-1.5 px-3 font-mono font-medium text-slate-900">
                       <Link
                         to={`/customers/${encodeURIComponent(d.customerUserId)}`}
                         className="text-purple-700 hover:underline"
@@ -143,18 +129,18 @@ export function CrmDiscountsPage() {
                         {d.customerEmail}
                       </Link>
                     </td>
-                    <td className="py-3.5 px-4 font-bold text-slate-900">
+                    <td className="py-1.5 px-3 font-bold text-slate-900">
                       <span className="text-purple-700 font-black text-sm">
                         {d.discountValue}%
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-700 max-w-xs truncate" title={d.reason}>
+                    <td className="py-1.5 px-3 text-slate-700 max-w-xs truncate" title={d.reason}>
                       {d.reason}
                     </td>
-                    <td className="py-3.5 px-4 capitalize font-medium text-slate-600">
+                    <td className="py-1.5 px-3 capitalize font-medium text-slate-600">
                       {d.applicablePlan}
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-1.5 px-3">
                       <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                         d.approvalStatus === 'active'
                           ? 'bg-emerald-100 text-emerald-800'
@@ -165,11 +151,11 @@ export function CrmDiscountsPage() {
                         {d.approvalStatus}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-600 text-[11px]">
+                    <td className="py-1.5 px-3 text-slate-600 text-[11px]">
                       <div>By: {d.createdByName || 'Staff'}</div>
                       {d.approvedByName && <div className="text-slate-400 text-[10px]">Appr: {d.approvedByName}</div>}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500">
+                    <td className="py-1.5 px-3 text-slate-500">
                       {new Date(d.expiryDate).toLocaleDateString()}
                     </td>
                   </tr>

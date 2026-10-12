@@ -115,7 +115,7 @@ export function CrmCouponsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -229,13 +229,13 @@ export function CrmCouponsPage() {
           <table className="w-full text-left text-xs border-collapse">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
-                <th className="py-3 px-4">Coupon Code</th>
-                <th className="py-3 px-4">Discount</th>
-                <th className="py-3 px-4">Eligibility & Scope</th>
-                <th className="py-3 px-4">Redemptions</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Expires</th>
-                {isManagerOrAdmin && <th className="py-3 px-4 text-right">Action</th>}
+                <th className="py-1.5 px-3">Coupon Code</th>
+                <th className="py-1.5 px-3">Discount</th>
+                <th className="py-1.5 px-3">Eligibility & Scope</th>
+                <th className="py-1.5 px-3">Redemptions</th>
+                <th className="py-1.5 px-3">Status</th>
+                <th className="py-1.5 px-3">Expires</th>
+                {isManagerOrAdmin && <th className="py-1.5 px-3 text-right">Action</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -255,25 +255,25 @@ export function CrmCouponsPage() {
               ) : (
                 coupons.map((c) => (
                   <tr key={c.id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-3.5 px-4">
+                    <td className="py-1.5 px-3">
                       <div className="font-mono font-bold text-purple-700 text-sm">{c.code}</div>
                       <div className="text-[11px] text-slate-500 truncate max-w-xs">{c.description}</div>
                     </td>
-                    <td className="py-3.5 px-4 font-bold text-slate-900">
+                    <td className="py-1.5 px-3 font-bold text-slate-900">
                       {c.discountType === 'percentage' ? `${c.discountValue}% OFF` : `₹${c.discountValue} OFF`}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-600 text-[11px]">
+                    <td className="py-1.5 px-3 text-slate-600 text-[11px]">
                       <div>Plan: <span className="font-semibold capitalize">{c.applicablePlan}</span></div>
                       <div>Region: <span className="font-semibold uppercase">{c.applicableRegion}</span></div>
                       {c.minPurchaseAmount > 0 && <div>Min: ₹{c.minPurchaseAmount}</div>}
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-1.5 px-3">
                       <span className="font-bold text-slate-900">{c.timesRedeemed}</span>
                       <span className="text-slate-400 text-[10px]">
                         {' '}/ {c.maxTotalRedemptions ? c.maxTotalRedemptions : '∞'}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-1.5 px-3">
                       <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                         c.status === 'active'
                           ? 'bg-emerald-100 text-emerald-800'
@@ -282,11 +282,11 @@ export function CrmCouponsPage() {
                         {c.status}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500">
+                    <td className="py-1.5 px-3 text-slate-500">
                       {c.expiryDate ? new Date(c.expiryDate).toLocaleDateString() : 'Never'}
                     </td>
                     {isManagerOrAdmin && (
-                      <td className="py-3.5 px-4 text-right">
+                      <td className="py-1.5 px-3 text-right">
                         <button
                           onClick={() => handleToggleStatus(c)}
                           className={`px-3 py-1  text-xs font-semibold transition ${
@@ -310,7 +310,7 @@ export function CrmCouponsPage() {
       {/* Create Coupon Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="bg-white  max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white  max-w-lg w-full p-4 shadow-xl border border-slate-200 space-y-2.5 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Create New Coupon Code</h3>
               <button

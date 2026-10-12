@@ -339,10 +339,10 @@ export function CrmCouponsPage() {
                       </span>
                     </td>
                     <td className="py-1.5 px-3">
-                      <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase border ${
                         c.status === 'active'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-slate-100 text-slate-700'
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          : 'bg-slate-100 text-slate-700 border-slate-200'
                       }`}>
                         {c.status}
                       </span>
@@ -355,23 +355,23 @@ export function CrmCouponsPage() {
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => openEditModal(c)}
-                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition cursor-pointer"
+                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-sm transition cursor-pointer"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleToggleStatus(c)}
-                            className={`px-3 py-1 text-xs font-semibold transition cursor-pointer ${
+                            className={`px-3 py-1 text-xs font-semibold rounded-sm transition cursor-pointer ${
                               c.status === 'active'
                                 ? 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                                : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800'
+                                : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200'
                             }`}
                           >
                             {c.status === 'active' ? 'Deactivate' : 'Activate'}
                           </button>
                           <button
                             onClick={() => setDeletingCoupon(c)}
-                            className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold transition cursor-pointer"
+                            className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-sm transition cursor-pointer"
                           >
                             Delete
                           </button>

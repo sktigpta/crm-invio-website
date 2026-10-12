@@ -14,12 +14,39 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Strict sharp corners enforcement across CRM */
-*,
-*::before,
-*::after {
-  border-radius: 0 !important;
+/* Modern CRM visual balance:
+   Structural panels, tables, modals, and text inputs retain sharp edges,
+   while badges, tags, pills, avatar circles, and status indicators display rounded pill styling. */
+.crm-card,
+.crm-panel,
+.crm-modal,
+.crm-table-wrap,
+table,
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  border-radius: 0;
 }
+
+/* Preserve smooth rounded pill radius for badges and status indicators */
+.rounded-full,
+[class*="rounded-full"],
+.crm-badge,
+.crm-pill {
+  border-radius: 9999px !important;
+}
+
+.rounded-md,
+[class*="rounded-md"] {
+  border-radius: 0.375rem !important;
+}
+
+.rounded-sm,
+[class*="rounded-sm"],
+.rounded {
+  border-radius: 0.25rem !important;
+}
+
 
 /* Tight compact professional UI styling for dense data presentation */
 table {
@@ -77,8 +104,4 @@ table {
 
 .crm-toaster-scroll::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-}
-
-input, select, textarea, button {
-  border-radius: 0 !important;
 }

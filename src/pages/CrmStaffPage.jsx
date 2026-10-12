@@ -232,12 +232,12 @@ export function CrmStaffPage() {
                         <div className="flex items-center gap-2">
                           <span>{st.fullName}</span>
                           {isCurrent && (
-                            <span className="text-[10px] text-purple-700 bg-purple-50 font-bold px-1.5 py-0.5  border border-purple-200">
+                            <span className="text-[10px] text-purple-700 bg-purple-50 font-bold px-2 py-0.5 rounded-full border border-purple-200">
                               You
                             </span>
                           )}
                           {st.email.toLowerCase() === 'sktigpta@gmail.com' && (
-                            <span className="text-[10px] text-indigo-700 bg-indigo-50 font-bold px-1.5 py-0.5  border border-indigo-200">
+                            <span className="text-[10px] text-indigo-700 bg-indigo-50 font-bold px-2 py-0.5 rounded-full border border-indigo-200">
                               System Owner
                             </span>
                           )}
@@ -245,15 +245,15 @@ export function CrmStaffPage() {
                       </td>
                       <td className="py-1.5 px-3 font-mono text-slate-700">{st.email}</td>
                       <td className="py-1.5 px-3">
-                        <span className="capitalize font-semibold text-[11px] px-2.5 py-0.5  bg-slate-100 text-slate-800 border border-slate-200">
+                        <span className="capitalize font-semibold text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200">
                           {st.role.replace('_', ' ')}
                         </span>
                       </td>
                       <td className="py-1.5 px-3">
-                        <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5  uppercase tracking-wider ${
+                        <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
                           st.status === 'active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'
                         }`}>
-                          <span className={`size-1.5  ${st.status === 'active' ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                          <span className={`size-1.5 rounded-full ${st.status === 'active' ? 'bg-emerald-500' : 'bg-red-500'}`} />
                           {st.status}
                         </span>
                       </td>
@@ -266,7 +266,7 @@ export function CrmStaffPage() {
                             {canEdit && (
                               <button
                                 onClick={() => openEditModal(st)}
-                                className="px-2.5 py-1  text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
+                                className="px-2.5 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-sm transition cursor-pointer"
                                 title="Update details or reset password"
                               >
                                 Edit
@@ -276,7 +276,7 @@ export function CrmStaffPage() {
                             {!isCurrent && canToggle && (
                               <button
                                 onClick={() => handleToggleStatus(st)}
-                                className={`px-2.5 py-1  text-xs font-semibold transition cursor-pointer ${
+                                className={`px-2.5 py-1 text-xs font-semibold rounded-sm transition cursor-pointer ${
                                   st.status === 'active'
                                     ? 'bg-amber-50 hover:bg-amber-100 text-amber-700'
                                     : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700'
@@ -289,7 +289,7 @@ export function CrmStaffPage() {
                             {canDelete && (
                               <button
                                 onClick={() => setDeletingStaff(st)}
-                                className="px-2.5 py-1  text-xs font-semibold bg-red-50 hover:bg-red-100 text-red-600 transition cursor-pointer"
+                                className="px-2.5 py-1 text-xs font-semibold bg-red-50 hover:bg-red-100 text-red-600 rounded-sm transition cursor-pointer"
                                 title="Delete staff account permanently"
                               >
                                 Delete

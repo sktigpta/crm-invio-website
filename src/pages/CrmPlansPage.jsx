@@ -258,8 +258,8 @@ export function CrmPlansPage() {
               <div>
                 <div className="flex items-center justify-between mb-3 gap-2">
                   <span className="font-bold text-base text-slate-900">{plan.name}</span>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 uppercase whitespace-nowrap ${
-                    plan.popular ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-700'
+                  <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase border whitespace-nowrap ${
+                    plan.popular ? 'bg-purple-50 text-purple-700 border-purple-200' : 'bg-slate-100 text-slate-700 border-slate-200'
                   }`}>
                     {plan.badge}
                   </span>
@@ -294,7 +294,7 @@ export function CrmPlansPage() {
                 {isAdmin && (
                   <button
                     onClick={() => openEdit(plan)}
-                    className="w-full px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition cursor-pointer"
+                    className="w-full px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-sm transition cursor-pointer"
                   >
                     Edit Pricing & Features
                   </button>

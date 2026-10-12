@@ -310,7 +310,7 @@ export function CrmCustomersPage() {
                       <div className="text-slate-400 text-[10px]">{c.phone || 'No phone'}</div>
                     </td>
                     <td className="py-1.5 px-3 whitespace-nowrap">
-                      <span className="capitalize font-semibold text-purple-700 bg-purple-50 px-2.5 py-0.5 text-[11px] border border-purple-200">
+                      <span className="capitalize font-semibold text-purple-700 bg-purple-50 px-2.5 py-0.5 text-[11px] border border-purple-200 rounded-full">
                         {c.currentPlan}
                       </span>
                     </td>
@@ -322,10 +322,10 @@ export function CrmCustomersPage() {
                       )}
                     </td>
                     <td className="py-1.5 px-3 whitespace-nowrap">
-                      <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 ${
+                      <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${
                         c.emailVerified ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200'
                       }`}>
-                        <span className={`size-1.5 ${c.emailVerified ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                        <span className={`size-1.5 rounded-full ${c.emailVerified ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                         {c.emailVerified ? 'Verified' : 'Unverified'}
                       </span>
                     </td>
@@ -333,7 +333,7 @@ export function CrmCustomersPage() {
                       <div className="flex items-center justify-end gap-1.5">
                         <Link
                           to={`/customers/${encodeURIComponent(c.id)}`}
-                          className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-xs transition"
+                          className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-xs rounded-sm transition"
                         >
                           Profile →
                         </Link>
@@ -341,7 +341,7 @@ export function CrmCustomersPage() {
                         {isManagerOrAdmin && (
                           <button
                             onClick={() => openEditModal(c)}
-                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition cursor-pointer"
+                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-sm transition cursor-pointer"
                             title="Edit customer account"
                           >
                             Edit
@@ -351,7 +351,7 @@ export function CrmCustomersPage() {
                         {isAdmin && (
                           <button
                             onClick={() => setDeletingCustomer(c)}
-                            className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs transition cursor-pointer"
+                            className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs rounded-sm transition cursor-pointer"
                             title="Delete customer account"
                           >
                             Delete

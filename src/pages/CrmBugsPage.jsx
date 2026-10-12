@@ -123,10 +123,10 @@ export function CrmBugsPage() {
                     <td className="py-1.5 px-3 font-semibold text-slate-900 whitespace-nowrap" title={b.description}>{b.title}</td>
                     <td className="py-1.5 px-3 capitalize whitespace-nowrap">{b.severity}</td>
                     <td className="py-1.5 px-3 font-mono text-[11px] text-slate-600 whitespace-nowrap">{b.email || '—'}</td>
-                    <td className="py-1.5 px-3 whitespace-nowrap"><span className={`text-[10px] font-bold px-2 py-0.5 uppercase ${STATUS_STYLES[b.status] || 'bg-slate-100 text-slate-700'}`}>{b.status}</span></td>
+                    <td className="py-1.5 px-3 whitespace-nowrap"><span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase border ${STATUS_STYLES[b.status] || 'bg-slate-100 text-slate-700 border-slate-200'}`}>{b.status}</span></td>
                     <td className="py-1.5 px-3 text-slate-500 whitespace-nowrap">{b.createdAt ? new Date(b.createdAt).toLocaleDateString() : '—'}</td>
                     <td className="py-1.5 px-3 text-right whitespace-nowrap">
-                      <button onClick={() => setSelected(b)} className="px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold transition cursor-pointer">View →</button>
+                      <button onClick={() => setSelected(b)} className="px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-xs rounded-sm transition cursor-pointer">View →</button>
                     </td>
                   </tr>
                 ))

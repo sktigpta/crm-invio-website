@@ -186,12 +186,12 @@ export function CrmDiscountsPage() {
                       {d.applicablePlan}
                     </td>
                     <td className="py-1.5 px-3 whitespace-nowrap">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 uppercase ${
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase border ${
                         d.approvalStatus === 'active'
-                          ? 'bg-emerald-100 text-emerald-800'
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                           : d.approvalStatus === 'pending_approval'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-slate-100 text-slate-700'
+                          ? 'bg-amber-50 text-amber-700 border-amber-200'
+                          : 'bg-slate-100 text-slate-700 border-slate-200'
                       }`}>
                         {d.approvalStatus}
                       </span>
@@ -210,7 +210,7 @@ export function CrmDiscountsPage() {
                             <button
                               onClick={() => handleRevoke(d)}
                               disabled={actionId === d.id}
-                              className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 font-semibold text-xs transition disabled:opacity-50 cursor-pointer"
+                              className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 font-semibold text-xs rounded-sm transition disabled:opacity-50 cursor-pointer"
                             >
                               {actionId === d.id ? '...' : 'Revoke'}
                             </button>
@@ -218,9 +218,9 @@ export function CrmDiscountsPage() {
                           <button
                             onClick={() => handleDelete(d)}
                             disabled={actionId === d.id}
-                            className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs transition disabled:opacity-50 cursor-pointer"
+                            className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs rounded-sm transition disabled:opacity-50 cursor-pointer"
                           >
-                            Delete
+                            {actionId === d.id ? '...' : 'Delete'}
                           </button>
                         </div>
                       </td>

@@ -129,15 +129,15 @@ export function CrmContactsPage() {
                     <td className="py-1.5 px-3 font-mono text-[11px] text-slate-600 whitespace-nowrap">{c.email}</td>
                     <td className="py-1.5 px-3 text-slate-700 whitespace-nowrap" title={c.message}>{c.subject}</td>
                     <td className="py-1.5 px-3 whitespace-nowrap">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 uppercase ${STATUS_STYLES[c.status] || 'bg-slate-100 text-slate-700'}`}>{c.status}</span>
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase border ${STATUS_STYLES[c.status] || 'bg-slate-100 text-slate-700 border-slate-200'}`}>{c.status}</span>
                       {c.actionRequired && (
-                        <span className="ml-1.5 text-[10px] font-bold px-2 py-0.5 uppercase bg-red-600 text-white" title={`Waiting ${c.hoursOpen}h — SLA is 20h`}>
+                        <span className="ml-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase bg-red-600 text-white" title={`Waiting ${c.hoursOpen}h — SLA is 20h`}>
                           ⚠ Action required · {c.hoursOpen}h
                         </span>
                       )}
                     </td>
                     <td className="py-1.5 px-3 text-right whitespace-nowrap">
-                      <button onClick={() => setSelected(c)} className="px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold transition cursor-pointer">Read →</button>
+                      <button onClick={() => setSelected(c)} className="px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-xs rounded-sm transition cursor-pointer">Read →</button>
                     </td>
                   </tr>
                 ))

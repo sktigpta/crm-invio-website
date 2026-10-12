@@ -79,7 +79,7 @@ export function CrmLayout() {
           <Link to="/dashboard" className="flex items-center gap-2 hover:opacity-85 transition">
             <img src="/appLogo.png" alt="Invio" className="size-5 object-contain" />
             <span className="font-bold text-xs text-slate-900 tracking-tight">Invio CRM</span>
-            <span className="text-[9px] uppercase font-bold tracking-wider px-1 py-0.2 bg-purple-50 text-purple-700 border border-purple-200">
+            <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 bg-purple-50 text-purple-700 border border-purple-200 rounded-full">
               Staff
             </span>
           </Link>
@@ -146,13 +146,13 @@ export function CrmLayout() {
             <span className="text-[11px] text-slate-500 font-medium hidden sm:inline">
               Signed in:
             </span>
-            <span className={`text-[10px] font-bold px-1.5 py-0.5 border ${currentRole.bg}`}>
-              ({currentRole.label})
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${currentRole.bg}`}>
+              {currentRole.label}
             </span>
             <span className="font-semibold text-xs text-slate-900 truncate max-w-[140px] sm:max-w-[200px]">
               {staff?.fullName || 'Staff'}
             </span>
-            <div className="size-1.5 bg-emerald-500 ml-1" title="Connected & Active" />
+            <div className="size-2 bg-emerald-500 rounded-full ml-1 ring-2 ring-emerald-100" title="Connected & Active" />
           </div>
         </header>
 

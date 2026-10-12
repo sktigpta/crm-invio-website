@@ -369,12 +369,12 @@ export function CrmStaffPage() {
                   onChange={(e) => setNewRole(e.target.value)}
                   className="w-full p-2.5  border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
                 >
-                  <option value="sales_executive">Sales Executive (Direct ≤10%, Requests ≤30%)</option>
-                  <option value="support_executive">Support Executive (Tickets, Requests ≤30%)</option>
+                  <option value="sales_executive">Sales Executive</option>
+                  <option value="support_executive">Support Executive</option>
                   {isAdmin && (
                     <>
-                      <option value="manager">Operations Manager (Reviews ≤30%, Coupons)</option>
-                      <option value="admin">System Administrator (Full Authority)</option>
+                      <option value="manager">Operations Manager</option>
+                      <option value="admin">System Administrator</option>
                     </>
                   )}
                 </select>

@@ -7,10 +7,9 @@ import {
   FiRadio,
   FiBell,
   FiSend,
-  FiCheck,
-  FiAlertTriangle,
   FiInfo,
   FiCheckCircle,
+  FiAlertTriangle,
   FiAlertCircle,
   FiExternalLink,
   FiX,
@@ -21,171 +20,11 @@ import {
   FiUnderline,
   FiList,
   FiLink,
-  FiImage,
-  FiType,
-  FiFileText,
   FiRefreshCw,
   FiSave,
+  FiCode,
+  FiEye,
 } from 'react-icons/fi';
-
-const MIDDLE_CARD_TEMPLATES = [
-  {
-    name: '🪔 Diwali Festival Wish',
-    badge: 'Festive Greeting',
-    title: 'Happy Diwali from Invio & Timrio!',
-    subtitle: 'Wishing your business brilliant prosperity, boundless growth, and joyful success this festive season.',
-    ctaLabel: 'Visit Website',
-    actionUrl: 'https://invio.timrio.com',
-    plan: 'all',
-    htmlContent: `<h2>✨ Wishing You a Joyous & Prosperous Diwali!</h2>
-<p>As festival lights illuminate homes and shops across the country, the entire team at Invio extends our warmest blessings to you and your family.</p>
-<blockquote>May this auspicious season bring boundless growth, smooth operations, and higher profits to your business!</blockquote>
-<p><strong>Special Festive Notice:</strong></p>
-<ul>
-  <li>Our servers and automatic backups operate 24/7 uninterrupted.</li>
-  <li>Priority support desk remains open throughout the holidays.</li>
-  <li>Share invoices with festive greetings via WhatsApp in 1-tap.</li>
-</ul>
-<p>Thank you for letting Invio be a part of your daily billing journey. Have a sparkling celebration!</p>`,
-  },
-  {
-    name: '🎉 New Year 2026 Celebration',
-    badge: 'New Year Special',
-    title: 'Happy New Year 2026!',
-    subtitle: 'Ready to make 2026 your most profitable business year yet? Here is what is coming to Invio.',
-    ctaLabel: 'See 2026 Roadmap',
-    actionUrl: 'https://invio.timrio.com',
-    plan: 'all',
-    htmlContent: `<h2>🚀 Welcome to 2026 with Invio!</h2>
-<p>Cheers to new milestones and fresh opportunities. Thank you for powering your billing and inventory with us throughout the past year.</p>
-<p><strong>Coming in Early 2026:</strong></p>
-<ul>
-  <li>Enhanced multi-branch stock synchronization across stores.</li>
-  <li>AI-assisted invoice categorization and expenditure insights.</li>
-  <li>Faster Bluetooth thermal printing & barcode scanner latency.</li>
-</ul>
-<p>Wishing you, your staff, and your families health, peace, and immense business growth!</p>`,
-  },
-  {
-    name: '🌙 Eid Mubarak Greeting',
-    badge: 'Festive Blessing',
-    title: 'Eid Mubarak to You & Your Family!',
-    subtitle: 'May this blessed occasion shower your home and enterprise with happiness, health, and harmony.',
-    ctaLabel: 'Visit Invio',
-    actionUrl: 'https://invio.timrio.com',
-    plan: 'all',
-    htmlContent: `<h2>🌙 Warmest Eid Greetings!</h2>
-<p>Sending heartfelt greetings and peace to all our valued merchants and their families celebrating around the world.</p>
-<blockquote>May your efforts be blessed with continuous abundance, harmony, and prosperity.</blockquote>
-<p>Our cloud services and offline POS billing are running smoothly to ensure your festive sales rush is effortless.</p>`,
-  },
-  {
-    name: '🎄 Christmas & Holiday Season',
-    badge: "Season's Greetings",
-    title: 'Merry Christmas & Happy Holidays!',
-    subtitle: 'Sending cheer, peace, and heartfelt gratitude to all our wonderful merchants and partners.',
-    ctaLabel: 'Holiday Notes',
-    actionUrl: 'https://invio.timrio.com',
-    plan: 'all',
-    htmlContent: `<h2>🎄 Season's Greetings from Team Invio!</h2>
-<p>During this joyful holiday season, we want to express our deepest gratitude for your continued trust and partnership.</p>
-<ul>
-  <li>Ensure your year-end tax ledgers and reports are exported under <strong>Reports → Tax Summary</strong>.</li>
-  <li>Holiday customer support remains active via ticket and email.</li>
-</ul>
-<p>Wishing you cozy holidays and a wonderful start to the coming year!</p>`,
-  },
-  {
-    name: '🚀 Product Release v1.0.2',
-    badge: 'Release v1.0.2',
-    title: 'Invio v1.0.2 is Here!',
-    subtitle: 'Supercharged with POS customer displays, instant thermal receipt auto-cut, and lightning sync.',
-    ctaLabel: 'Check on Website',
-    actionUrl: 'https://invio.timrio.com',
-    plan: 'all',
-    htmlContent: `<h2>✨ What's New in v1.0.2</h2>
-<p>We've polished Invio from the ground up to give you the fastest, most reliable local-first POS billing experience:</p>
-<ul>
-  <li><strong>Dual-Screen POS Display:</strong> Real-time customer-facing display with dynamic UPI QR payment.</li>
-  <li><strong>Thermal Printing:</strong> Seamless 58mm and 80mm roll formatting with auto-paper cut.</li>
-  <li><strong>Instant WhatsApp Billing:</strong> Pre-filled paid invoices delivered to clients in seconds.</li>
-  <li><strong>Local Resilience:</strong> 100% offline billing that safeguards your records during internet drops.</li>
-</ul>
-<p>Update is automatically available for your platform today.</p>`,
-  },
-  {
-    name: '⚠️ Scheduled Maintenance Advisory',
-    badge: 'System Advisory',
-    title: 'Scheduled Cloud Maintenance',
-    subtitle: 'Upgrading cloud sync infrastructure on Sunday night. Local offline billing is 100% unaffected.',
-    ctaLabel: 'System Status',
-    actionUrl: 'https://invio.timrio.com',
-    plan: 'all',
-    htmlContent: `<h2>🛠️ Cloud Sync Infrastructure Upgrade</h2>
-<p>We are performing scheduled maintenance on our PostgreSQL synchronization cluster to improve connection latency and database backup speeds.</p>
-<blockquote><strong>Maintenance Window:</strong> Sunday, 2:00 AM – 3:30 AM IST</blockquote>
-<p><strong>Good News:</strong></p>
-<p>Invio operates <em>Local-First</em>. You can continue creating bills, printing receipts, and managing inventory offline as normal. Once maintenance concludes, cloud sync will resume automatically.</p>`,
-  },
-  {
-    name: '⭐ Try Invio Plus Offer',
-    badge: 'Power Features',
-    title: 'Try Invio Plus',
-    subtitle: 'Unlock thermal printing, POS billing, WhatsApp sharing, automated GST, and unlimited invoicing.',
-    ctaLabel: 'Check on Website',
-    actionUrl: 'https://invio.timrio.com/pricing',
-    plan: 'free',
-    htmlContent: `<h2>Upgrade Your Business with Plus</h2>
-<p>Take your billing and inventory management to the professional level with Invio Plus:</p>
-<ul>
-  <li>Unlimited products, customers, and invoice generations.</li>
-  <li>Thermal receipt printing (58mm and 80mm rolls) with auto-cut.</li>
-  <li>Automated 1-click WhatsApp and Gmail delivery.</li>
-  <li>Customer-facing POS screen with dynamic UPI payment QR.</li>
-  <li>PostgreSQL multi-store cloud database synchronization.</li>
-</ul>
-<p>Annual plans start at an unbeatable price with full priority support.</p>`,
-  },
-];
-
-const NOTIFICATION_CARD_TEMPLATES = [
-  {
-    name: '🪔 Festive Season Greeting',
-    title: 'Happy Festive Season!',
-    message: 'Wishing you and your business immense joy, growth, and prosperity from the Invio team! ✨',
-    badge: 'Festive Wishes',
-    actionType: 'success',
-    actionLabel: 'Learn more',
-    actionUrl: 'https://invio.timrio.com',
-  },
-  {
-    name: '🚀 New Update v1.0.2 Ready',
-    title: 'Invio v1.0.2 Available',
-    message: 'Enjoy second-screen customer POS displays, 58mm/80mm thermal rolls, and ultra-fast offline billing.',
-    badge: 'Update',
-    actionType: 'info',
-    actionLabel: 'Release Notes',
-    actionUrl: 'https://invio.timrio.com',
-  },
-  {
-    name: '⚠️ Cloud Maintenance Notice',
-    title: 'Cloud Maintenance Advisory',
-    message: 'Scheduled cloud database upgrade tonight 2:00 AM IST. Local offline billing continues without interruption.',
-    badge: 'Advisory',
-    actionType: 'warning',
-    actionLabel: 'Check Status',
-    actionUrl: 'https://invio.timrio.com',
-  },
-  {
-    name: '🚨 Payment Gateway Alert',
-    title: 'Banking Gateway Latency',
-    message: 'Upstream banking delays observed on UPI networks. Kindly verify customer receipts on transaction screen.',
-    badge: 'Alert',
-    actionType: 'danger',
-    actionLabel: 'Details',
-    actionUrl: 'https://invio.timrio.com',
-  },
-];
 
 export function CrmBroadcastsPage() {
   const { addToast } = useCrmToast();
@@ -193,6 +32,7 @@ export function CrmBroadcastsPage() {
 
   const [activeTab, setActiveTab] = useState('middle'); // 'middle' | 'notification'
   const [previewTheme, setPreviewTheme] = useState('light'); // 'light' | 'dark'
+  const [editorView, setEditorView] = useState('html'); // 'html' | 'body'
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -205,7 +45,16 @@ export function CrmBroadcastsPage() {
     plan: 'all',
     ctaLabel: 'Visit Website',
     actionUrl: 'https://invio.timrio.com',
-    htmlContent: `<h2>✨ Wishing You a Joyous & Prosperous Diwali!</h2>\n<p>May this festive season illuminate your business with immense growth, joy, and prosperity.</p>`,
+    htmlContent: `<h2>✨ Wishing You a Joyous & Prosperous Diwali!</h2>
+<p>As festival lights illuminate homes and shops across the country, the entire team at Invio extends our warmest blessings to you and your family.</p>
+<blockquote>May this auspicious season bring boundless growth, smooth operations, and higher profits to your business!</blockquote>
+<p><strong>Special Festive Notice:</strong></p>
+<ul>
+  <li>Our servers and automatic backups operate 24/7 uninterrupted.</li>
+  <li>Priority support desk remains open throughout the holidays.</li>
+  <li>Share invoices with festive greetings via WhatsApp in 1-tap.</li>
+</ul>
+<p>Thank you for letting Invio be a part of your daily billing journey. Have a sparkling celebration!</p>`,
     active: true,
   });
 
@@ -345,38 +194,384 @@ export function CrmBroadcastsPage() {
     }
   };
 
-  // Preset Template Selectors
-  const applyMiddleTemplate = (tmpl) => {
-    setMiddleCard((prev) => ({
-      ...prev,
-      title: tmpl.title,
-      subtitle: tmpl.subtitle,
-      badge: tmpl.badge,
-      ctaLabel: tmpl.ctaLabel,
-      actionUrl: tmpl.actionUrl,
-      plan: tmpl.plan || 'all',
-      htmlContent: tmpl.htmlContent,
-      active: true,
-    }));
-    addToast(`Loaded preset template: "${tmpl.name}"`, 'info');
-  };
-
-  const applyNoticeTemplate = (tmpl) => {
-    setNoticeCard((prev) => ({
-      ...prev,
-      title: tmpl.title,
-      message: tmpl.message,
-      badge: tmpl.badge,
-      actionType: tmpl.actionType,
-      actionLabel: tmpl.actionLabel,
-      actionUrl: tmpl.actionUrl,
-      active: true,
-    }));
-    addToast(`Loaded preset notice: "${tmpl.name}"`, 'info');
-  };
-
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 font-sans">
+      {/* Scoped Desktop App Styling & Animations */}
+      <style>{`
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(18px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fluidArtShift {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+
+        @keyframes glowPulse {
+          0%, 100% { opacity: 0.5; transform: scale(1); }
+          50% { opacity: 0.85; transform: scale(1.08); }
+        }
+
+        /* Scoped Desktop Inner Sheet */
+        .desktop-card-inner {
+          position: relative;
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
+          width: min(520px, 100%);
+          min-width: 0;
+          border-radius: 20px !important;
+          overflow: hidden;
+          box-shadow: 0 24px 64px rgba(15, 23, 42, 0.28) !important;
+          isolation: isolate;
+          animation: slideInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .desktop-theme-light .desktop-card-inner {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          color: #0f172a;
+        }
+
+        .desktop-theme-dark .desktop-card-inner {
+          background: #0b0f19;
+          border: 1px solid #2a3352;
+          color: #f1f5f9;
+        }
+
+        /* Header Fluid Art */
+        .desktop-art-header {
+          position: relative;
+          z-index: 1;
+          flex: none;
+          height: 140px;
+          overflow: hidden;
+          background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 45%, #4f46e5 100%);
+          background-size: 200% 200%;
+          animation: fluidArtShift 10s ease infinite;
+        }
+
+        .desktop-theme-dark .desktop-art-header {
+          background: linear-gradient(135deg, #4338ca 0%, #312e81 45%, #1e1b4b 100%);
+          background-size: 200% 200%;
+          animation: fluidArtShift 10s ease infinite;
+        }
+
+        .desktop-head-block {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          padding: 24px 32px 10px;
+        }
+
+        .desktop-pill-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          color: #ea580c;
+          background: rgba(234, 88, 12, 0.12);
+          border: 1px solid rgba(234, 88, 12, 0.25);
+          padding: 3px 10px;
+          border-radius: 9999px !important;
+          margin-bottom: 6px;
+        }
+
+        .desktop-card-title {
+          margin: 0 0 6px;
+          font-size: 21px;
+          font-weight: 600;
+          line-height: 1.25;
+          color: #ffffff;
+          text-shadow: 0 1px 14px rgba(76, 60, 180, 0.5);
+          text-wrap: balance;
+        }
+
+        .desktop-card-subtitle {
+          margin: 0;
+          font-size: 12.5px;
+          line-height: 1.45;
+          color: rgba(255, 255, 255, 0.94);
+          text-shadow: 0 1px 10px rgba(76, 60, 180, 0.45);
+          max-width: 52ch;
+          text-wrap: balance;
+        }
+
+        .desktop-close-btn {
+          position: absolute;
+          top: 14px;
+          right: 14px;
+          z-index: 10;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          border-radius: 9999px !important;
+          border: 1px solid rgba(255, 255, 255, 0.25);
+          background: rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(14px) saturate(140%);
+          color: #ffffff;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .desktop-close-btn:hover {
+          background: rgba(255, 255, 255, 0.35);
+          transform: scale(1.05);
+        }
+
+        .desktop-body-wrap {
+          position: relative;
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          background: transparent;
+          padding: 14px 24px 20px;
+          gap: 16px;
+          overflow-y: auto;
+        }
+
+        /* Formatted HTML Container */
+        .desktop-html-container {
+          margin: 0 0 16px;
+          padding: 16px 20px;
+          border-radius: 14px !important;
+          max-height: 250px;
+          overflow-y: auto;
+          font-size: 13px;
+          line-height: 1.55;
+          text-align: left;
+        }
+
+        .desktop-theme-light .desktop-html-container {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+          color: #475569;
+        }
+
+        .desktop-theme-dark .desktop-html-container {
+          background: #151928;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+          color: #cbd5e1;
+        }
+
+        .desktop-html-container h1,
+        .desktop-html-container h2,
+        .desktop-html-container h3,
+        .desktop-html-container h4 {
+          margin: 0 0 8px;
+          font-weight: 700;
+          line-height: 1.3;
+        }
+
+        .desktop-theme-light .desktop-html-container h1,
+        .desktop-theme-light .desktop-html-container h2,
+        .desktop-theme-light .desktop-html-container h3,
+        .desktop-theme-light .desktop-html-container h4 {
+          color: #0f172a;
+        }
+
+        .desktop-theme-dark .desktop-html-container h1,
+        .desktop-theme-dark .desktop-html-container h2,
+        .desktop-theme-dark .desktop-html-container h3,
+        .desktop-theme-dark .desktop-html-container h4 {
+          color: #f8fafc;
+        }
+
+        .desktop-html-container h2 { font-size: 16px; }
+        .desktop-html-container h3 { font-size: 14px; }
+
+        .desktop-html-container p { margin: 0 0 10px; }
+        .desktop-html-container p:last-child { margin-bottom: 0; }
+
+        .desktop-html-container ul,
+        .desktop-html-container ol {
+          margin: 0 0 10px;
+          padding-left: 20px;
+        }
+
+        .desktop-html-container li { margin-bottom: 4px; }
+
+        .desktop-html-container a {
+          color: #8646f4;
+          text-decoration: underline;
+          font-weight: 600;
+        }
+
+        .desktop-html-container blockquote {
+          margin: 10px 0;
+          padding: 8px 14px;
+          border-left: 3px solid #8646f4;
+          background: rgba(134, 70, 244, 0.05);
+          border-radius: 0 8px 8px 0;
+          font-style: italic;
+        }
+
+        .desktop-html-container .badge {
+          display: inline-block;
+          padding: 2px 8px;
+          border-radius: 9999px !important;
+          font-size: 11px;
+          font-weight: 700;
+          background: #ede9fe;
+          color: #8646f4;
+        }
+
+        /* Action Buttons */
+        .desktop-claim-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #8646f4;
+          color: #ffffff;
+          border: none;
+          border-radius: 8px !important;
+          padding: 11px 20px;
+          font-size: 13.5px;
+          font-weight: 600;
+          letter-spacing: 0.01em;
+          cursor: pointer;
+          transition: filter 0.15s ease, transform 0.1s ease;
+          box-shadow: 0 4px 12px rgba(134, 70, 244, 0.35);
+        }
+
+        .desktop-claim-btn:hover {
+          filter: brightness(1.08);
+          transform: translateY(-1px);
+        }
+
+        .desktop-maybe-later-btn {
+          background: none;
+          border: none;
+          color: #94a3b8;
+          font-size: 11.5px;
+          cursor: pointer;
+          padding: 4px;
+          text-align: center;
+          transition: color 0.15s ease;
+        }
+
+        .desktop-theme-light .desktop-maybe-later-btn:hover { color: #0f172a; }
+        .desktop-theme-dark .desktop-maybe-later-btn:hover { color: #f1f5f9; }
+
+        /* Notification Card */
+        .desktop-notice-card {
+          width: 320px;
+          max-width: 100%;
+          border-radius: 14px !important;
+          padding: 13px 15px;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          position: relative;
+          overflow: hidden;
+          text-align: left;
+          animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .desktop-theme-light .desktop-notice-card {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+
+        .desktop-theme-dark .desktop-notice-card {
+          background: #181920;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .desktop-notice-glow {
+          position: absolute;
+          top: -20px;
+          right: -20px;
+          width: 90px;
+          height: 90px;
+          background: radial-gradient(circle, rgba(134, 70, 244, 0.22) 0%, transparent 70%);
+          pointer-events: none;
+          animation: glowPulse 4s ease-in-out infinite;
+        }
+
+        .desktop-notice-title {
+          margin: 0;
+          font-size: 13px;
+          font-weight: 700;
+          line-height: 1.25;
+          display: flex;
+          align-items: center;
+        }
+
+        .desktop-theme-light .desktop-notice-title { color: #0f172a; }
+        .desktop-theme-dark .desktop-notice-title { color: #f8fafc; }
+
+        .desktop-notice-badge {
+          display: inline-flex;
+          align-items: center;
+          padding: 1px 7px;
+          font-size: 9.5px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          border-radius: 9999px !important;
+          background: #ede9fe;
+          color: #8646f4;
+          border: 1px solid rgba(134, 70, 244, 0.25);
+          margin-left: 6px;
+          flex-shrink: 0;
+        }
+
+        .desktop-theme-dark .desktop-notice-badge {
+          background: rgba(134, 70, 244, 0.2);
+          color: #c4b5fd;
+          border-color: rgba(134, 70, 244, 0.4);
+        }
+
+        .desktop-notice-action-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 11.5px;
+          font-weight: 600;
+          color: #8646f4;
+          background: transparent;
+          border: none;
+          padding: 4px 0;
+          cursor: pointer;
+          transition: opacity 0.15s ease;
+        }
+
+        .desktop-notice-action-btn:hover {
+          opacity: 0.8;
+          text-decoration: underline;
+        }
+      `}</style>
+
       {/* Header Bar */}
       <div className="h-14 flex-shrink-0 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-10">
         <div className="flex items-center gap-3">
@@ -480,49 +675,16 @@ export function CrmBroadcastsPage() {
         </div>
       </div>
 
-      {/* Main Body: Two Columns (Left Editor, Right Live Preview) */}
+      {/* Main Body: Two Columns (Left Editor, Right Live Desktop Preview) */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {/* Left Column: Form & HTML Editor */}
         <div className="w-full lg:w-1/2 h-full overflow-y-auto p-5 border-r border-slate-200 space-y-4">
-          {/* Preset Templates Quick Selector */}
-          <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs">
-            <div className="flex items-center justify-between mb-2.5">
-              <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                <FiFileText className="size-3.5 text-indigo-500" />
-                <span>Load Preset Template</span>
-              </span>
-              <span className="text-[11px] text-slate-400">Instantly populate pre-formatted festive & advisory cards</span>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {activeTab === 'middle'
-                ? MIDDLE_CARD_TEMPLATES.map((tmpl) => (
-                    <button
-                      key={tmpl.name}
-                      onClick={() => applyMiddleTemplate(tmpl)}
-                      className="text-left text-xs p-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 transition cursor-pointer font-medium leading-tight"
-                    >
-                      {tmpl.name}
-                    </button>
-                  ))
-                : NOTIFICATION_CARD_TEMPLATES.map((tmpl) => (
-                    <button
-                      key={tmpl.name}
-                      onClick={() => applyNoticeTemplate(tmpl)}
-                      className="text-left text-xs p-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 transition cursor-pointer font-medium leading-tight"
-                    >
-                      {tmpl.name}
-                    </button>
-                  ))}
-            </div>
-          </div>
-
           {/* Form Fields for Middle Card */}
           {activeTab === 'middle' ? (
-            <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs space-y-3.5">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                  Card Metadata & Audience
+                  CARD METADATA & AUDIENCE
                 </span>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <span className="text-xs font-semibold text-slate-600">Active Broadcast:</span>
@@ -535,14 +697,14 @@ export function CrmBroadcastsPage() {
                 </label>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Title Header</label>
                   <input
                     type="text"
                     value={middleCard.title}
                     onChange={(e) => setMiddleCard({ ...middleCard, title: e.target.value })}
-                    placeholder="e.g. Happy Diwali from Invio!"
+                    placeholder="e.g. Happy Diwali from Invio & Timrio!"
                     className="w-full text-xs px-3 py-1.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white"
                   />
                 </div>
@@ -570,7 +732,7 @@ export function CrmBroadcastsPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Target Audience</label>
                   <select
@@ -608,129 +770,164 @@ export function CrmBroadcastsPage() {
                 </div>
               </div>
 
-              {/* Rich HTML Editor & Toolbar */}
+              {/* Rich HTML Content Section with Code vs Body Toggle */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-semibold text-slate-700">
-                    Card HTML Content (Formatted Body)
-                  </label>
-                  <span className="text-[11px] text-slate-400">Click toolbar items to insert tags</span>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700">
+                      Card HTML Content (Formatted Body)
+                    </label>
+                    <div className="text-[11px] text-slate-400">
+                      Click toolbar items to insert tags
+                    </div>
+                  </div>
+
+                  {/* Toggle between HTML code and Formatted Body */}
+                  <div className="flex items-center bg-slate-200/80 p-0.5 rounded-lg border border-slate-300">
+                    <button
+                      type="button"
+                      onClick={() => setEditorView('html')}
+                      className={`px-2.5 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
+                        editorView === 'html'
+                          ? 'bg-white text-indigo-700 shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      <FiCode className="size-3" />
+                      <span>HTML Code</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditorView('body')}
+                      className={`px-2.5 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
+                        editorView === 'body'
+                          ? 'bg-white text-indigo-700 shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      <FiEye className="size-3" />
+                      <span>Formatted Body</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Toolbar */}
-                <div className="flex flex-wrap items-center gap-1 bg-slate-100 p-1.5 rounded-t-lg border border-slate-300 border-b-0">
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<strong>', '</strong>')}
-                    className="p-1 rounded hover:bg-slate-200 text-slate-700 text-xs font-bold transition"
-                    title="Bold"
-                  >
-                    <FiBold className="size-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<em>', '</em>')}
-                    className="p-1 rounded hover:bg-slate-200 text-slate-700 text-xs italic transition"
-                    title="Italic"
-                  >
-                    <FiItalic className="size-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<u>', '</u>')}
-                    className="p-1 rounded hover:bg-slate-200 text-slate-700 text-xs underline transition"
-                    title="Underline"
-                  >
-                    <FiUnderline className="size-3.5" />
-                  </button>
+                {editorView === 'html' ? (
+                  <>
+                    <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-2 rounded-t-lg border border-slate-300 border-b-0">
+                      <button
+                        type="button"
+                        onClick={() => insertHtmlTag('<h2>', '</h2>')}
+                        className="px-2 py-0.5 rounded hover:bg-slate-200 text-slate-700 text-xs font-bold transition border border-slate-200 bg-white"
+                        title="Heading 2"
+                      >
+                        H2
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => insertHtmlTag('<h3>', '</h3>')}
+                        className="px-2 py-0.5 rounded hover:bg-slate-200 text-slate-700 text-xs font-bold transition border border-slate-200 bg-white"
+                        title="Heading 3"
+                      >
+                        H3
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => insertHtmlTag('<p>', '</p>')}
+                        className="px-2 py-0.5 rounded hover:bg-slate-200 text-slate-700 text-xs font-medium transition border border-slate-200 bg-white"
+                        title="Paragraph"
+                      >
+                        P
+                      </button>
 
-                  <div className="h-4 w-px bg-slate-300 mx-1" />
+                      <div className="h-4 w-px bg-slate-300 mx-1" />
 
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<h2>', '</h2>')}
-                    className="px-1.5 py-0.5 rounded hover:bg-slate-200 text-slate-700 text-[11px] font-bold transition"
-                    title="Heading 2"
-                  >
-                    H2
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<h3>', '</h3>')}
-                    className="px-1.5 py-0.5 rounded hover:bg-slate-200 text-slate-700 text-[11px] font-bold transition"
-                    title="Heading 3"
-                  >
-                    H3
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<p>', '</p>')}
-                    className="px-1.5 py-0.5 rounded hover:bg-slate-200 text-slate-700 text-[11px] font-medium transition"
-                    title="Paragraph"
-                  >
-                    P
-                  </button>
+                      <button
+                        type="button"
+                        onClick={() => insertHtmlTag('<blockquote>', '</blockquote>')}
+                        className="px-2 py-0.5 rounded hover:bg-slate-200 text-slate-700 text-xs italic transition border border-slate-200 bg-white"
+                        title="Quote Callout"
+                      >
+                        Quote
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => insertHtmlTag('<span class="badge">', '</span>')}
+                        className="px-2 py-0.5 rounded hover:bg-slate-200 text-indigo-700 bg-indigo-50 text-xs font-semibold transition border border-indigo-200"
+                        title="Badge Tag"
+                      >
+                        Badge
+                      </button>
 
-                  <div className="h-4 w-px bg-slate-300 mx-1" />
+                      <div className="h-4 w-px bg-slate-300 mx-1" />
 
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<ul>\n  <li>', '</li>\n  <li>Second item</li>\n</ul>')}
-                    className="p-1 rounded hover:bg-slate-200 text-slate-700 text-xs transition"
-                    title="Bullet List"
-                  >
-                    <FiList className="size-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<blockquote>', '</blockquote>')}
-                    className="px-1.5 py-0.5 rounded hover:bg-slate-200 text-slate-700 text-[11px] italic transition"
-                    title="Quote Callout"
-                  >
-                    Quote
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<span class="badge">', '</span>')}
-                    className="px-1.5 py-0.5 rounded hover:bg-slate-200 text-indigo-700 bg-indigo-50 text-[11px] font-semibold transition"
-                    title="Badge Tag"
-                  >
-                    Badge
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<a href="https://invio.timrio.com" target="_blank">', '</a>')}
-                    className="p-1 rounded hover:bg-slate-200 text-slate-700 text-xs transition"
-                    title="Link"
-                  >
-                    <FiLink className="size-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600" alt="Festive banner" />')}
-                    className="p-1 rounded hover:bg-slate-200 text-slate-700 text-xs transition"
-                    title="Image"
-                  >
-                    <FiImage className="size-3.5" />
-                  </button>
-                </div>
+                      <button
+                        type="button"
+                        onClick={() => insertHtmlTag('<strong>', '</strong>')}
+                        className="p-1.5 rounded hover:bg-slate-200 text-slate-700 text-xs font-bold transition border border-slate-200 bg-white"
+                        title="Bold"
+                      >
+                        <FiBold className="size-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => insertHtmlTag('<em>', '</em>')}
+                        className="p-1.5 rounded hover:bg-slate-200 text-slate-700 text-xs italic transition border border-slate-200 bg-white"
+                        title="Italic"
+                      >
+                        <FiItalic className="size-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => insertHtmlTag('<u>', '</u>')}
+                        className="p-1.5 rounded hover:bg-slate-200 text-slate-700 text-xs underline transition border border-slate-200 bg-white"
+                        title="Underline"
+                      >
+                        <FiUnderline className="size-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => insertHtmlTag('<ul>\n  <li>', '</li>\n  <li>Second item</li>\n</ul>')}
+                        className="p-1.5 rounded hover:bg-slate-200 text-slate-700 text-xs transition border border-slate-200 bg-white"
+                        title="Bullet List"
+                      >
+                        <FiList className="size-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => insertHtmlTag('<a href="https://invio.timrio.com">', '</a>')}
+                        className="p-1.5 rounded hover:bg-slate-200 text-slate-700 text-xs transition border border-slate-200 bg-white"
+                        title="Link"
+                      >
+                        <FiLink className="size-3.5" />
+                      </button>
+                    </div>
 
-                <textarea
-                  ref={textareaRef}
-                  rows={8}
-                  value={middleCard.htmlContent}
-                  onChange={(e) => setMiddleCard({ ...middleCard, htmlContent: e.target.value })}
-                  placeholder="Write HTML content here..."
-                  className="w-full text-xs font-mono px-3 py-2 rounded-b-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-900 text-emerald-400 selection:bg-indigo-700 leading-relaxed"
-                />
+                    <textarea
+                      ref={textareaRef}
+                      rows={9}
+                      value={middleCard.htmlContent}
+                      onChange={(e) => setMiddleCard({ ...middleCard, htmlContent: e.target.value })}
+                      placeholder="Write HTML content here..."
+                      className="w-full text-xs font-mono px-3 py-2.5 rounded-b-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-900 text-emerald-400 selection:bg-indigo-700 leading-relaxed"
+                    />
+                  </>
+                ) : (
+                  <div
+                    className="w-full min-h-[220px] max-h-[280px] overflow-y-auto p-4 rounded-lg border border-slate-300 bg-white text-slate-700 desktop-html-container shadow-inner"
+                    dangerouslySetInnerHTML={{
+                      __html: sanitizeHtml(middleCard.htmlContent || '<p>No content entered yet.</p>'),
+                    }}
+                  />
+                )}
               </div>
             </div>
           ) : (
             /* Form Fields for Notification Card */
-            <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs space-y-3.5">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                  Notification Properties
+                  NOTIFICATION PROPERTIES
                 </span>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <span className="text-xs font-semibold text-slate-600">Active Notice:</span>
@@ -743,7 +940,7 @@ export function CrmBroadcastsPage() {
                 </label>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Title Header</label>
                   <input
@@ -770,7 +967,7 @@ export function CrmBroadcastsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Badge Tag</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Badge Pill Text</label>
                   <input
                     type="text"
                     value={noticeCard.badge}
@@ -781,7 +978,7 @@ export function CrmBroadcastsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Action Button Text</label>
                   <input
@@ -805,60 +1002,107 @@ export function CrmBroadcastsPage() {
                 </div>
               </div>
 
-              {/* Message Editor */}
+              {/* Message Content Section with Code vs Body Toggle */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-semibold text-slate-700">Message Content (HTML Allowed)</label>
-                  <span className="text-[11px] text-slate-400">Renders in 320px floating card</span>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700">
+                      Message Content (Formatted Body)
+                    </label>
+                    <div className="text-[11px] text-slate-400">
+                      Renders in 320px floating card
+                    </div>
+                  </div>
+
+                  {/* Toggle between HTML code and Formatted Body */}
+                  <div className="flex items-center bg-slate-200/80 p-0.5 rounded-lg border border-slate-300">
+                    <button
+                      type="button"
+                      onClick={() => setEditorView('html')}
+                      className={`px-2.5 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
+                        editorView === 'html'
+                          ? 'bg-white text-indigo-700 shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      <FiCode className="size-3" />
+                      <span>HTML Code</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditorView('body')}
+                      className={`px-2.5 py-1 rounded text-[11px] font-semibold flex items-center gap-1 transition ${
+                        editorView === 'body'
+                          ? 'bg-white text-indigo-700 shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      <FiEye className="size-3" />
+                      <span>Formatted Body</span>
+                    </button>
+                  </div>
                 </div>
 
-                {/* Toolbar */}
-                <div className="flex flex-wrap items-center gap-1 bg-slate-100 p-1.5 rounded-t-lg border border-slate-300 border-b-0">
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<strong>', '</strong>')}
-                    className="p-1 rounded hover:bg-slate-200 text-slate-700 text-xs font-bold transition"
-                    title="Bold"
-                  >
-                    <FiBold className="size-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<em>', '</em>')}
-                    className="p-1 rounded hover:bg-slate-200 text-slate-700 text-xs italic transition"
-                    title="Italic"
-                  >
-                    <FiItalic className="size-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertHtmlTag('<a href="https://invio.timrio.com">', '</a>')}
-                    className="p-1 rounded hover:bg-slate-200 text-slate-700 text-xs transition"
-                    title="Link"
-                  >
-                    <FiLink className="size-3.5" />
-                  </button>
-                </div>
+                {editorView === 'html' ? (
+                  <>
+                    <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-2 rounded-t-lg border border-slate-300 border-b-0">
+                      <button
+                        type="button"
+                        onClick={() => insertHtmlTag('<strong>', '</strong>')}
+                        className="p-1.5 rounded hover:bg-slate-200 text-slate-700 text-xs font-bold transition border border-slate-200 bg-white"
+                        title="Bold"
+                      >
+                        <FiBold className="size-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => insertHtmlTag('<em>', '</em>')}
+                        className="p-1.5 rounded hover:bg-slate-200 text-slate-700 text-xs italic transition border border-slate-200 bg-white"
+                        title="Italic"
+                      >
+                        <FiItalic className="size-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => insertHtmlTag('<a href="https://invio.timrio.com">', '</a>')}
+                        className="p-1.5 rounded hover:bg-slate-200 text-slate-700 text-xs transition border border-slate-200 bg-white"
+                        title="Link"
+                      >
+                        <FiLink className="size-3.5" />
+                      </button>
+                    </div>
 
-                <textarea
-                  ref={textareaRef}
-                  rows={4}
-                  value={noticeCard.message}
-                  onChange={(e) => setNoticeCard({ ...noticeCard, message: e.target.value })}
-                  placeholder="Enter notification message here..."
-                  className="w-full text-xs font-mono px-3 py-2 rounded-b-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-900 text-emerald-400 selection:bg-indigo-700 leading-relaxed"
-                />
+                    <textarea
+                      ref={textareaRef}
+                      rows={5}
+                      value={noticeCard.message}
+                      onChange={(e) => setNoticeCard({ ...noticeCard, message: e.target.value })}
+                      placeholder="Enter notification message here..."
+                      className="w-full text-xs font-mono px-3 py-2.5 rounded-b-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-900 text-emerald-400 selection:bg-indigo-700 leading-relaxed"
+                    />
+                  </>
+                ) : (
+                  <div
+                    className="w-full min-h-[140px] p-3 rounded-lg border border-slate-300 bg-white text-slate-700 text-xs leading-relaxed shadow-inner"
+                    dangerouslySetInnerHTML={{
+                      __html: sanitizeHtml(noticeCard.message || 'No notification message entered.'),
+                    }}
+                  />
+                )}
               </div>
             </div>
           )}
         </div>
 
-        {/* Right Column: Live Interactive Desktop App Preview */}
-        <div className="w-full lg:w-1/2 h-full overflow-y-auto bg-slate-200/70 p-6 flex flex-col items-center justify-center relative">
-          <div className="w-full max-w-xl flex items-center justify-between mb-3 text-xs font-semibold text-slate-500">
+        {/* Right Column: Live Desktop App Preview */}
+        <div className={`w-full lg:w-1/2 h-full overflow-y-auto p-6 flex flex-col items-center justify-center relative ${
+          previewTheme === 'dark' ? 'desktop-theme-dark bg-[#0f172a]' : 'desktop-theme-light bg-slate-200/80'
+        }`}>
+          {/* Preview Dimensions Badge */}
+          <div className="w-full max-w-[520px] flex items-center justify-between mb-3 text-xs font-semibold text-slate-500">
             <span className="flex items-center gap-2">
               <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Real-Time Desktop UI Preview ({previewTheme === 'dark' ? 'Dark Mode' : 'Light Mode'})</span>
+              <span>Real-Time Desktop UI Preview ({previewTheme === 'dark' ? 'Dark Theme' : 'Light Theme'})</span>
             </span>
             <span className="font-mono text-[11px] bg-slate-300/80 px-2 py-0.5 rounded text-slate-700">
               {activeTab === 'middle' ? 'Width: 520px · Radius: 20px' : 'Width: 320px · Radius: 14px'}
@@ -868,94 +1112,62 @@ export function CrmBroadcastsPage() {
           {/* PREVIEW CONTAINER */}
           {activeTab === 'middle' ? (
             /* Center Modal Card Live Preview */
-            <div
-              className={`w-full max-w-[520px] rounded-[20px] shadow-2xl overflow-hidden transition-all duration-300 relative border ${
-                previewTheme === 'dark'
-                  ? 'bg-[#0b0f19] text-white border-slate-700/60 shadow-[0_24px_64px_rgba(0,0,0,0.6)]'
-                  : 'bg-white text-slate-900 border-slate-200 shadow-[0_24px_64px_rgba(15,23,42,0.22)]'
-              }`}
-            >
-              {/* Fluid Radial Header (140px) */}
-              <div
-                className="relative h-[140px] px-8 flex flex-col items-center justify-center text-center overflow-hidden"
-                style={{
-                  background:
-                    previewTheme === 'dark'
-                      ? 'linear-gradient(135deg, #4338ca 0%, #312e81 60%, #1e1b4b 100%)'
-                      : 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 60%, #5b21b6 100%)',
-                }}
-              >
-                {/* Glow sphere effect */}
-                <div
-                  className="absolute inset-0 pointer-events-none opacity-40"
-                  style={{
-                    background:
-                      'radial-gradient(circle at 50% 30%, rgba(255,255,255,0.35) 0%, transparent 60%)',
-                  }}
-                />
+            <div className="desktop-card-inner">
+              {/* Header Fluid Wave Art (140px) */}
+              <div className="desktop-art-header">
+                <div className="desktop-head-block">
+                  {/* Badge Pill */}
+                  {middleCard.badge ? (
+                    <span className="desktop-pill-badge">
+                      {middleCard.badge}
+                    </span>
+                  ) : null}
 
-                {/* Badge Pill */}
-                {middleCard.badge && (
-                  <span className="relative z-10 mb-1.5 px-3 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase bg-white/20 text-white backdrop-blur-md border border-white/30 shadow-xs">
-                    {middleCard.badge}
-                  </span>
-                )}
+                  {/* Title */}
+                  <h2 className="desktop-card-title">
+                    {middleCard.title || 'Try Invio Plus'}
+                  </h2>
 
-                {/* Title */}
-                <h2 className="relative z-10 text-[20px] font-bold text-white leading-tight drop-shadow-sm">
-                  {middleCard.title || 'Broadcast Title'}
-                </h2>
+                  {/* Subtitle */}
+                  {middleCard.subtitle ? (
+                    <p className="desktop-card-subtitle">
+                      {middleCard.subtitle}
+                    </p>
+                  ) : null}
+                </div>
 
-                {/* Subtitle */}
-                {middleCard.subtitle && (
-                  <p className="relative z-10 text-[12px] text-white/90 leading-snug mt-1.5 max-w-md line-clamp-2 drop-shadow-2xs">
-                    {middleCard.subtitle}
-                  </p>
-                )}
-
-                {/* Close X Icon top right */}
+                {/* Close Button X */}
                 <button
                   type="button"
-                  className="absolute top-3.5 right-3.5 size-7 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition"
-                  title="Simulate Close"
+                  className="desktop-close-btn"
+                  title="Close"
+                  aria-label="Close"
                 >
-                  <FiX className="size-4" />
+                  <FiX size={18} />
                 </button>
               </div>
 
               {/* Modal Body & HTML Container */}
-              <div className="p-6 flex flex-col gap-4">
-                {/* Sanitized HTML Content Body */}
+              <div className="desktop-body-wrap">
                 <div
-                  className={`rounded-[14px] p-4 text-[13px] leading-relaxed max-h-[220px] overflow-y-auto border ${
-                    previewTheme === 'dark'
-                      ? 'bg-[#151928] text-slate-300 border-slate-700/50'
-                      : 'bg-slate-50 text-slate-700 border-slate-200'
-                  }`}
-                  style={{ wordBreak: 'break-word' }}
+                  className="desktop-html-container"
                   dangerouslySetInnerHTML={{
                     __html: sanitizeHtml(middleCard.htmlContent || '<p>No content provided</p>'),
                   }}
                 />
 
                 {/* Action Buttons */}
-                <div className="flex flex-col gap-2 pt-1">
+                <div className="offerUpsellCard__actions">
                   <button
                     type="button"
-                    className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold text-white shadow-md transition transform active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
-                    style={{
-                      background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-                    }}
+                    className="desktop-claim-btn"
                   >
                     <span>{middleCard.ctaLabel || 'Check on Website'}</span>
-                    <FiExternalLink className="size-3" />
                   </button>
 
                   <button
                     type="button"
-                    className={`text-xs py-1 transition cursor-pointer text-center font-medium ${
-                      previewTheme === 'dark' ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-700'
-                    }`}
+                    className="desktop-maybe-later-btn"
                   >
                     Maybe later
                   </button>
@@ -963,20 +1175,14 @@ export function CrmBroadcastsPage() {
               </div>
             </div>
           ) : (
-            /* Bottom-Right Notification Card Live Preview */
-            <div
-              className={`w-[320px] rounded-[14px] p-3.5 shadow-xl transition-all duration-300 relative border flex flex-col gap-2 ${
-                previewTheme === 'dark'
-                  ? 'bg-[#181920] text-white border-slate-700/60 shadow-[0_14px_30px_rgba(0,0,0,0.5)]'
-                  : 'bg-white text-slate-900 border-slate-200/90 shadow-[0_12px_28px_rgba(15,23,42,0.14)]'
-              }`}
-            >
-              {/* Header */}
-              <div className="flex items-center justify-between gap-2">
+            /* Notification Card Live Preview (Exact 320px width) */
+            <aside className="desktop-notice-card">
+              <div className="desktop-notice-glow" />
+
+              <div className="flex items-center justify-between gap-2 min-h-[20px]">
                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                  {/* Icon according to type */}
                   <span
-                    className={`size-4 flex items-center justify-center flex-shrink-0 ${
+                    className={`size-4 inline-flex items-center justify-center flex-shrink-0 ${
                       noticeCard.actionType === 'danger'
                         ? 'text-red-500'
                         : noticeCard.actionType === 'warning'
@@ -987,60 +1193,57 @@ export function CrmBroadcastsPage() {
                     }`}
                   >
                     {noticeCard.actionType === 'danger' ? (
-                      <FiAlertCircle className="size-4" />
+                      <FiAlertCircle size={16} />
                     ) : noticeCard.actionType === 'warning' ? (
-                      <FiAlertTriangle className="size-4" />
+                      <FiAlertTriangle size={16} />
                     ) : noticeCard.actionType === 'success' ? (
-                      <FiCheckCircle className="size-4" />
+                      <FiCheckCircle size={16} />
                     ) : (
-                      <FiInfo className="size-4" />
+                      <FiInfo size={16} />
                     )}
                   </span>
 
-                  <h4 className="text-[13px] font-bold truncate leading-tight">
-                    {noticeCard.title || 'System Notification'}
+                  <h4 className="desktop-notice-title truncate">
+                    {noticeCard.title || 'System notification'}
                   </h4>
 
-                  {noticeCard.badge && (
-                    <span className="px-1.5 py-0.5 rounded-full text-[9.5px] font-bold uppercase tracking-wider bg-indigo-100 text-indigo-700 border border-indigo-200 flex-shrink-0">
+                  {noticeCard.badge ? (
+                    <span className="desktop-notice-badge">
                       {noticeCard.badge}
                     </span>
-                  )}
+                  ) : null}
                 </div>
 
                 <button
                   type="button"
-                  className="text-slate-400 hover:text-slate-600 p-0.5"
-                  title="Dismiss"
+                  className="desktop-close-btn !relative !top-auto !right-auto !size-5 !bg-transparent !border-none !text-slate-400 hover:!text-slate-600"
+                  title="Dismiss notification"
                 >
-                  <FiX className="size-3.5" />
+                  <FiX size={14} />
                 </button>
               </div>
 
-              {/* Body */}
+              {/* Message Content */}
               <div
-                className={`text-[12px] leading-relaxed ${
-                  previewTheme === 'dark' ? 'text-slate-300' : 'text-slate-600'
-                }`}
+                className="text-[12px] leading-[1.45] text-slate-600 desktop-theme-dark:text-slate-300"
                 dangerouslySetInnerHTML={{
-                  __html: sanitizeHtml(noticeCard.message || 'Notification message...'),
+                  __html: sanitizeHtml(noticeCard.message || 'Notification content...'),
                 }}
               />
 
-              {/* Footer CTA */}
-              {noticeCard.actionLabel && (
-                <div className="pt-1 flex items-center">
-                  <a
-                    href={noticeCard.actionUrl || '#'}
-                    onClick={(e) => e.preventDefault()}
-                    className="text-[11.5px] font-semibold text-indigo-600 hover:underline inline-flex items-center gap-1"
+              {/* Action Button */}
+              {noticeCard.actionLabel ? (
+                <div className="pt-0.5 flex items-center">
+                  <button
+                    type="button"
+                    className="desktop-notice-action-btn"
                   >
                     <span>{noticeCard.actionLabel}</span>
-                    <FiExternalLink className="size-3" />
-                  </a>
+                    <FiExternalLink size={12} />
+                  </button>
                 </div>
-              )}
-            </div>
+              ) : null}
+            </aside>
           )}
         </div>
       </div>

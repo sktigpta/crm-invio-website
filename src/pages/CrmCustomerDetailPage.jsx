@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
+import { useCrmToast } from '../context/CrmToastContext';
 import {
   UsersIcon,
   PercentIcon,
@@ -15,7 +16,8 @@ import {
 export function CrmCustomerDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { staff, isAdmin, isManagerOrAdmin, isSales, isSupport } = useCrmAuth();
+  const { isAdmin, isManagerOrAdmin, isSales, isSupport } = useCrmAuth();
+  const { toast } = useCrmToast();
 
   const [customerData, setCustomerData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -97,9 +99,10 @@ export function CrmCustomerDetailPage() {
         country: editCountry,
       });
       setShowEditModal(false);
+      toast.success('Customer profile updated.');
       fetchCustomer();
     } catch (err) {
-      alert(err.message || 'Failed to update customer.');
+      toast.error(err.message || 'Failed to update customer.');
     } finally {
       setEditLoading(false);
     }
@@ -109,9 +112,10 @@ export function CrmCustomerDetailPage() {
     setDeleteLoading(true);
     try {
       await crmApi.deleteCustomer(id);
+      toast.success('Customer deleted.');
       navigate('/customers', { replace: true });
     } catch (err) {
-      alert(err.message || 'Failed to delete customer.');
+      toast.error(err.message || 'Failed to delete customer.');
     } finally {
       setDeleteLoading(false);
     }
@@ -133,10 +137,11 @@ export function CrmCustomerDetailPage() {
     try {
       await crmApi.assignCustomerStaff(id, selectedStaffId || null);
       setAssignSuccess(true);
+      toast.success('Staff assignment saved.');
       fetchCustomer();
       setTimeout(() => setAssignSuccess(false), 3000);
     } catch (err) {
-      alert(err.message || 'Failed to assign staff.');
+      toast.error(err.message || 'Failed to assign staff.');
     } finally {
       setAssignLoading(false);
     }
@@ -149,9 +154,10 @@ export function CrmCustomerDetailPage() {
     try {
       await crmApi.addCustomerNote(id, noteText);
       setNoteText('');
+      toast.success('Internal note added.');
       fetchCustomer();
     } catch (err) {
-      alert(err.message || 'Failed to save internal note.');
+      toast.error(err.message || 'Failed to save internal note.');
     } finally {
       setNoteLoading(false);
     }
@@ -170,6 +176,7 @@ export function CrmCustomerDetailPage() {
         applicablePlan: discountPlan,
       });
       setDiscountMessage(res.message || 'Discount processed successfully!');
+      toast.success(res.message || 'Discount processed successfully!');
       fetchCustomer();
       setTimeout(() => {
         setShowDiscountModal(false);
@@ -177,7 +184,7 @@ export function CrmCustomerDetailPage() {
         setDiscountReason('');
       }, 2000);
     } catch (err) {
-      alert(err.message || 'Failed to create discount.');
+      toast.error(err.message || 'Failed to create discount.');
     } finally {
       setDiscountModalLoading(false);
     }
@@ -381,8 +388,8 @@ export function CrmCustomerDetailPage() {
 
       {/* Tab 2: Billing & Subscriptions History */}
       {activeTab === 'subscriptions' && (
-        <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
-          <table className="w-full text-left text-xs">
+        <div className="bg-white  border border-slate-200 shadow-xs crm-table-wrap overflow-x-auto">
+          <table className="crm-table text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
                 <th className="py-1.5 px-3">Order ID</th>
@@ -417,8 +424,8 @@ export function CrmCustomerDetailPage() {
 
       {/* Tab 3: Discounts */}
       {activeTab === 'discounts' && (
-        <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
-          <table className="w-full text-left text-xs">
+        <div className="bg-white  border border-slate-200 shadow-xs crm-table-wrap overflow-x-auto">
+          <table className="crm-table text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
                 <th className="py-1.5 px-3">Discount</th>
@@ -442,7 +449,7 @@ export function CrmCustomerDetailPage() {
                     <td className="py-1.5 px-3 font-bold text-purple-700 text-sm">
                       {d.discount_value}% OFF
                     </td>
-                    <td className="py-1.5 px-3 text-slate-700 max-w-xs truncate">{d.reason}</td>
+                    <td className="py-1.5 px-3 text-slate-700 whitespace-nowrap">{d.reason}</td>
                     <td className="py-1.5 px-3 capitalize text-slate-600">{d.applicable_plan}</td>
                     <td className="py-1.5 px-3">
                       <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
@@ -463,8 +470,8 @@ export function CrmCustomerDetailPage() {
 
       {/* Tab 4: Coupons Redeemed */}
       {activeTab === 'coupons' && (
-        <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
-          <table className="w-full text-left text-xs">
+        <div className="bg-white  border border-slate-200 shadow-xs crm-table-wrap overflow-x-auto">
+          <table className="crm-table text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
                 <th className="py-1.5 px-3">Coupon Code</th>
@@ -497,8 +504,8 @@ export function CrmCustomerDetailPage() {
 
       {/* Tab 5: Support Tickets */}
       {activeTab === 'tickets' && (
-        <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
-          <table className="w-full text-left text-xs">
+        <div className="bg-white  border border-slate-200 shadow-xs crm-table-wrap overflow-x-auto">
+          <table className="crm-table text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
                 <th className="py-1.5 px-3">Ticket Number</th>

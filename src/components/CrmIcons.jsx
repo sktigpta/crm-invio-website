@@ -16,6 +16,8 @@ import {
   FiFilter,
   FiRefreshCw,
   FiAlertCircle,
+  FiTool,
+  FiMail,
 } from 'react-icons/fi';
 
 export function DashboardIcon({ className = 'size-4' }) {
@@ -80,4 +82,12 @@ export function AlertCircleIcon({ className = 'size-4' }) {
 
 export function LayersIcon({ className = 'size-4' }) {
   return <FiLayers className={className} />;
+}
+
+export function BugIcon({ className = 'size-4' }) {
+  return <FiTool className={className} />;
+}
+
+export function MailIcon({ className = 'size-4' }) {
+  return <FiMail className={className} />;
 }

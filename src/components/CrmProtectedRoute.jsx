@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { useCrmAuth } from '../context/CrmAuthContext';
 
 export function CrmProtectedRoute({ children, requiredRoles }) {
-  const { staff, loading, isAuthenticated } = useCrmAuth();
+  const { staff, loading, isAuthenticated, mustChangePassword } = useCrmAuth();
 
   if (loading) {
     return (
@@ -17,6 +17,11 @@ export function CrmProtectedRoute({ children, requiredRoles }) {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Temporary-password holders must set a new password before using the portal.
+  if (mustChangePassword) {
+    return <Navigate to="/login?change=1" replace />;
   }
 
   if (requiredRoles && !requiredRoles.includes(staff?.role)) {

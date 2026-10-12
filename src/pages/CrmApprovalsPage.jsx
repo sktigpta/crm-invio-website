@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
-import { CheckCircleIcon, RefreshCwIcon, AlertCircleIcon } from '../components/CrmIcons';
+import { useCrmToast } from '../context/CrmToastContext';
+import { RefreshCwIcon, AlertCircleIcon } from '../components/CrmIcons';
 
 export function CrmApprovalsPage() {
   const { staff, isManagerOrAdmin } = useCrmAuth();
+  const { toast } = useCrmToast();
   const [requests, setRequests] = useState([]);
   const [status, setStatus] = useState('pending');
   const [loading, setLoading] = useState(true);
@@ -23,11 +25,13 @@ export function CrmApprovalsPage() {
       const res = await crmApi.getApprovalRequests({ status });
       setRequests(res.requests || []);
     } catch (err) {
-      setError(err.message || 'Failed to fetch approval requests.');
+      const msg = err.message || 'Failed to fetch approval requests.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
-  }, [status]);
+  }, [status, toast]);
 
   useEffect(() => {
     fetchRequests();
@@ -42,9 +46,10 @@ export function CrmApprovalsPage() {
       await crmApi.reviewApproval(selectedRequest.id, decision, comment);
       setSelectedRequest(null);
       setComment('');
+      toast.success(`Discount request ${decision} successfully.`);
       fetchRequests();
     } catch (err) {
-      alert(err.message || 'Failed to review request.');
+      toast.error(err.message || 'Failed to review request.');
     } finally {
       setReviewLoading(false);
     }
@@ -69,16 +74,6 @@ export function CrmApprovalsPage() {
         >
           <RefreshCwIcon className={`size-4 ${loading ? 'animate-spin' : ''}`} />
         </button>
-      </div>
-
-      {/* Anti-self-approval rule notice */}
-      <div className="p-4  bg-amber-50 border border-amber-200 text-xs text-amber-900">
-        <h4 className="font-bold flex items-center gap-1.5 mb-1">
-          <span>⚠️ Anti-Self-Approval Enforcement</span>
-        </h4>
-        <p className="text-[11px] text-amber-800">
-          To maintain fiscal compliance and internal controls, managers and executives are strictly prevented from approving their own discount requests. All reviews are permanently signed with reviewer credentials.
-        </p>
       </div>
 
       {error && (
@@ -107,8 +102,8 @@ export function CrmApprovalsPage() {
 
       {/* Approvals Table */}
       <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+        <div className="crm-table-wrap overflow-x-auto">
+          <table className="crm-table text-left text-xs border-collapse">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
                 <th className="py-1.5 px-3">Customer</th>
@@ -152,7 +147,7 @@ export function CrmApprovalsPage() {
                           {r.requestedByRole.replace('_', ' ')}
                         </div>
                       </td>
-                      <td className="py-1.5 px-3 text-slate-700 max-w-xs truncate" title={r.reason}>
+                      <td className="py-1.5 px-3 text-slate-700 whitespace-nowrap" title={r.reason}>
                         {r.reason}
                       </td>
                       <td className="py-1.5 px-3">
@@ -171,7 +166,7 @@ export function CrmApprovalsPage() {
                           <div>
                             <span className="font-semibold">{r.reviewerName}</span>
                             {r.reviewComment && (
-                              <p className="text-[10px] text-slate-500 truncate max-w-xs">"{r.reviewComment}"</p>
+                              <p className="text-[10px] text-slate-500 whitespace-nowrap">"{r.reviewComment}"</p>
                             )}
                           </div>
                         ) : (

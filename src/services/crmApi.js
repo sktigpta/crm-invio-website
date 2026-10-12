@@ -55,13 +55,27 @@ export function setStoredStaff(staff, remember = true) {
 }
 
 const ENV_API_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL
-  ? import.meta.env.VITE_API_URL
+  ? import.meta.env.VITE_API_URL.trim()
   : '';
 
-export const API_BASE_URL = ENV_API_URL
-  || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? ''
-    : 'https://api.invio.timrio.com');
+const APP_ENV = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_APP_ENV
+  ? String(import.meta.env.VITE_APP_ENV).toLowerCase()
+  : '';
+
+const IS_DEV_BUILD = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.DEV === true;
+
+// dev environment => LOCAL API ONLY (same-origin /api proxy, never production)
+const IS_LOCAL_ENV = IS_DEV_BUILD
+  || APP_ENV === 'development'
+  || APP_ENV === 'dev'
+  || APP_ENV === 'local'
+  || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'));
+
+export const API_BASE_URL = IS_LOCAL_ENV
+  ? ''
+  : (ENV_API_URL || 'https://api.invio.timrio.com');
+
+export const APP_RUNTIME_ENV = IS_LOCAL_ENV ? 'development' : 'production';
 
 function resolveApiUrl(path) {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
@@ -120,6 +134,13 @@ export const crmApi = {
     return request('/auth/me');
   },
 
+  async changePassword(currentPassword, newPassword) {
+    return request('/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+  },
+
   // Dashboard
   async getDashboardMetrics() {
     return request('/dashboard');
@@ -139,6 +160,20 @@ export const crmApi = {
 
   async getCustomerDetail(customerId) {
     return request(`/customers/${encodeURIComponent(customerId)}`);
+  },
+
+  async createCustomer(payload) {
+    return request('/customers', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async registerCustomer(payload) {
+    return request('/customers/register', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
   },
 
   async assignCustomerStaff(customerId, staffId) {
@@ -186,6 +221,25 @@ export const crmApi = {
     });
   },
 
+  async updateDiscount(discountId, payload) {
+    return request(`/discounts/${encodeURIComponent(discountId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async revokeDiscount(discountId) {
+    return request(`/discounts/${encodeURIComponent(discountId)}/revoke`, {
+      method: 'PATCH',
+    });
+  },
+
+  async deleteDiscount(discountId) {
+    return request(`/discounts/${encodeURIComponent(discountId)}`, {
+      method: 'DELETE',
+    });
+  },
+
   async getApprovalRequests({ status = 'pending', page = 1, limit = 20 } = {}) {
     const params = new URLSearchParams({
       page: String(page),
@@ -220,6 +274,19 @@ export const crmApi = {
     });
   },
 
+  async updateCoupon(couponId, payload) {
+    return request(`/coupons/${encodeURIComponent(couponId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteCoupon(couponId) {
+    return request(`/coupons/${encodeURIComponent(couponId)}`, {
+      method: 'DELETE',
+    });
+  },
+
   async updateCouponStatus(couponId, status) {
     return request(`/coupons/${encodeURIComponent(couponId)}/status`, {
       method: 'PATCH',
@@ -234,6 +301,43 @@ export const crmApi = {
     });
   },
 
+  // Bug Reports (STORE: Google Sheet)
+  async getBugs({ status = '', severity = '', search = '', page = 1, limit = 20 } = {}) {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+      ...(status ? { status } : {}),
+      ...(severity ? { severity } : {}),
+      ...(search ? { search } : {}),
+    });
+    return request(`/bugs?${params.toString()}`);
+  },
+
+  async updateBugStatus(ticketId, status) {
+    return request(`/bugs/${encodeURIComponent(ticketId)}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    });
+  },
+
+  // Contact Submissions (STORE: Google Sheet)
+  async getContacts({ status = '', search = '', breached = false, page = 1, limit = 20 } = {}) {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+      ...(status ? { status } : {}),
+      ...(search ? { search } : {}),
+      ...(breached ? { breached: '1' } : {}),
+    });
+    return request(`/contacts?${params.toString()}`);
+  },
+
+  async updateContactStatus(id, status) {
+    return request(`/contacts/${encodeURIComponent(id)}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    });
+  },
   // Support Tickets
   async getTickets({ status = '', category = '', priority = '', assignedStaffId = '', search = '', page = 1, limit = 20 } = {}) {
     const params = new URLSearchParams({
@@ -280,6 +384,12 @@ export const crmApi = {
     });
   },
 
+  async deleteTicket(ticketId) {
+    return request(`/tickets/${encodeURIComponent(ticketId)}`, {
+      method: 'DELETE',
+    });
+  },
+
   // Staff Management
   async getStaffList() {
     return request('/staff');
@@ -312,7 +422,26 @@ export const crmApi = {
     });
   },
 
-  // Audit Logs
+  // Subscription Plans (real catalog data, admin-managed pricing)
+  async getPlans() {
+    return request('/plans');
+  },
+
+  async updatePlan(planId, payload) {
+    return request(`/plans/${encodeURIComponent(planId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async createPlan(payload) {
+    return request('/plans', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  // Audit Logs (STORE: Google Sheet — backend reads/writes the Sheet directly)
   async getAuditLogs({ page = 1, limit = 25, targetType = '', action = '' } = {}) {
     const params = new URLSearchParams({
       page: String(page),

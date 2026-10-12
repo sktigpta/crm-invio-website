@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
-import { ShieldCheckIcon, RefreshCwIcon, AlertCircleIcon, PlusIcon } from '../components/CrmIcons';
+import { useCrmToast } from '../context/CrmToastContext';
+import { RefreshCwIcon, AlertCircleIcon, PlusIcon } from '../components/CrmIcons';
 
 export function CrmStaffPage() {
   const { staff: currentStaff, isAdmin, isManager, isManagerOrAdmin } = useCrmAuth();
+  const { toast } = useCrmToast();
   const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -36,28 +38,39 @@ export function CrmStaffPage() {
       const res = await crmApi.getStaffList();
       setStaffList(res.staff || []);
     } catch (err) {
-      setError(err.message || 'Failed to load staff list.');
+      const msg = err.message || 'Failed to load staff list.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     fetchStaff();
   }, [fetchStaff]);
 
+  const OWNER_EMAIL = 'sktigpta@gmail.com';
+  const isOwner = (email) => (email || '').toLowerCase() === OWNER_EMAIL;
+  const amOwner = isOwner(currentStaff?.email);
+
   async function handleToggleStatus(staffMember) {
     if (!isManagerOrAdmin || staffMember.id === currentStaff.id) return;
+    if (isOwner(staffMember.email) && !amOwner) {
+      toast.warning('Only the System Owner account can change its own status.');
+      return;
+    }
     if (isManager && staffMember.role !== 'sales_executive' && staffMember.role !== 'support_executive') {
-      alert('Managers can only toggle status for Sales and Support Executives.');
+      toast.warning('Managers can only toggle status for Sales and Support Executives.');
       return;
     }
     const nextStatus = staffMember.status === 'active' ? 'suspended' : 'active';
     try {
       await crmApi.updateStaffStatus(staffMember.id, nextStatus);
+      toast.success(`${staffMember.fullName} ${nextStatus === 'active' ? 'activated' : 'suspended'}.`);
       fetchStaff();
     } catch (err) {
-      alert(err.message || 'Failed to update staff status.');
+      toast.error(err.message || 'Failed to update staff status.');
     }
   }
 
@@ -72,6 +85,10 @@ export function CrmStaffPage() {
   async function handleUpdateStaff(e) {
     e.preventDefault();
     if (!editingStaff) return;
+    if (isOwner(editingStaff.email) && !amOwner) {
+      toast.warning('Only the System Owner account can edit its own record.');
+      return;
+    }
     setEditLoading(true);
     try {
       const payload = {
@@ -84,9 +101,10 @@ export function CrmStaffPage() {
       }
       await crmApi.updateStaff(editingStaff.id, payload);
       setEditingStaff(null);
+      toast.success('Staff account updated.');
       fetchStaff();
     } catch (err) {
-      alert(err.message || 'Failed to update staff account.');
+      toast.error(err.message || 'Failed to update staff account.');
     } finally {
       setEditLoading(false);
     }
@@ -98,9 +116,10 @@ export function CrmStaffPage() {
     try {
       await crmApi.deleteStaff(deletingStaff.id);
       setDeletingStaff(null);
+      toast.success('Staff account deleted permanently.');
       fetchStaff();
     } catch (err) {
-      alert(err.message || 'Failed to delete staff account.');
+      toast.error(err.message || 'Failed to delete staff account.');
     } finally {
       setDeleteLoading(false);
     }
@@ -121,9 +140,10 @@ export function CrmStaffPage() {
       setNewPassword('');
       setNewFullName('');
       setNewRole('sales_executive');
+      toast.success('Staff account created. Temporary credentials emailed with CRM login link.');
       fetchStaff();
     } catch (err) {
-      alert(err.message || 'Failed to create staff member.');
+      toast.error(err.message || 'Failed to create staff member.');
     } finally {
       setCreateLoading(false);
     }
@@ -170,8 +190,8 @@ export function CrmStaffPage() {
 
       {/* Staff Table */}
       <div className="bg-white  border border-slate-200/90 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+        <div className="crm-table-wrap overflow-x-auto">
+          <table className="crm-table text-left text-xs border-collapse">
             <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-semibold text-[11px] uppercase tracking-wider">
               <tr>
                 <th className="py-1.5 px-3">Staff Member</th>
@@ -199,8 +219,12 @@ export function CrmStaffPage() {
               ) : (
                 staffList.map((st) => {
                   const isCurrent = st.id === currentStaff?.id;
-                  const canEdit = isAdmin || (isManager && (st.role === 'sales_executive' || st.role === 'support_executive'));
-                  const canDelete = isAdmin && !isCurrent && st.email.toLowerCase() !== 'sktigpta@gmail.com';
+                  const isOwnerRow = isOwner(st.email);
+                  const canEdit = isOwnerRow
+                    ? amOwner || isCurrent
+                    : isAdmin || (isManager && (st.role === 'sales_executive' || st.role === 'support_executive'));
+                  const canToggle = !isCurrent && canEdit && (!isOwnerRow || amOwner);
+                  const canDelete = isAdmin && !isCurrent && !isOwnerRow;
 
                   return (
                     <tr key={st.id} className="hover:bg-slate-50/70 transition">
@@ -249,7 +273,7 @@ export function CrmStaffPage() {
                               </button>
                             )}
 
-                            {!isCurrent && canEdit && (
+                            {!isCurrent && canToggle && (
                               <button
                                 onClick={() => handleToggleStatus(st)}
                                 className={`px-2.5 py-1  text-xs font-semibold transition cursor-pointer ${

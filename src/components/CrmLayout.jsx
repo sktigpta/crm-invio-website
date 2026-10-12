@@ -12,6 +12,8 @@ import {
   ShieldCheckIcon,
   FileTextIcon,
   LogOutIcon,
+  BugIcon,
+  MailIcon,
 } from './CrmIcons';
 
 const roleMeta = {
@@ -33,6 +35,8 @@ export function CrmLayout() {
     { to: '/approvals', label: 'Discount Approvals', icon: CheckCircleIcon },
     { to: '/coupons', label: 'Coupons', icon: TagIcon },
     { to: '/tickets', label: 'Support Tickets', icon: TicketIcon },
+    { to: '/bugs', label: 'Bug Reports', icon: BugIcon },
+    ...(isManagerOrAdmin ? [{ to: '/contacts', label: 'Contact Messages', icon: MailIcon }] : []),
     { to: '/plans', label: 'Subscription Plans', icon: LayersIcon },
     ...(isManagerOrAdmin ? [{ to: '/staff', label: 'Staff Management', icon: ShieldCheckIcon }] : []),
     ...(isAdmin ? [{ to: '/audit-logs', label: 'Audit Logs', icon: FileTextIcon }] : []),
@@ -135,9 +139,6 @@ export function CrmLayout() {
             <h1 className="text-xs font-bold text-slate-900 capitalize tracking-tight">
               {location.pathname === '/' ? 'Dashboard' : location.pathname.slice(1).replace('-', ' ')}
             </h1>
-            <span className="text-[10px] text-slate-400 font-mono hidden sm:inline">
-              / crm.invio.timrio.com
-            </span>
           </div>
 
           {/* Right navbar: (admin/role) name */}

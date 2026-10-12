@@ -1,8 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { crmApi } from '../services/crmApi';
-import { FileTextIcon, RefreshCwIcon, AlertCircleIcon, SearchIcon } from '../components/CrmIcons';
+import { useCrmToast } from '../context/CrmToastContext';
+import { useDebouncedValue, isRateLimitError } from '../hooks/useDebouncedValue';
+import {
+  GOOGLE_SHEET_ID,
+  GOOGLE_SHEETS_TAB,
+  downloadAuditLogsCsv,
+  getGoogleSheetUrl,
+} from '../services/googleSheets';
+import { RefreshCwIcon, AlertCircleIcon, SearchIcon } from '../components/CrmIcons';
 
 export function CrmAuditLogsPage() {
+  const { toast } = useCrmToast();
   const [logs, setLogs] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -11,7 +20,8 @@ export function CrmAuditLogsPage() {
   const [actionSearch, setActionSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [expandedLogId, setExpandedLogId] = useState(null);
+  const [selectedLog, setSelectedLog] = useState(null);
+  const debouncedAction = useDebouncedValue(actionSearch, 600);
 
   const fetchLogs = useCallback(async () => {
     setLoading(true);
@@ -21,21 +31,38 @@ export function CrmAuditLogsPage() {
         page,
         limit: 20,
         targetType,
-        action: actionSearch,
+        action: debouncedAction,
       });
       setLogs(res.logs || []);
       setTotal(res.total || 0);
       setTotalPages(res.totalPages || 1);
     } catch (err) {
-      setError(err.message || 'Failed to fetch audit logs.');
+      if (isRateLimitError(err)) {
+        toast.warning('Too many requests — pausing briefly, then try again.');
+        return;
+      }
+      const msg = err.message || 'Failed to fetch audit logs.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
-  }, [page, targetType, actionSearch]);
+  }, [page, targetType, debouncedAction, toast]);
 
   useEffect(() => {
     fetchLogs();
   }, [fetchLogs]);
+
+  // Audits live in the Google Sheet — this page reads them via GET /audit-logs.
+  function handleExportCsv() {
+    if (!logs.length) {
+      toast.warning('Nothing to export — no audit rows on this page.');
+      return;
+    }
+    const ok = downloadAuditLogsCsv(logs);
+    if (ok) toast.success('Audit logs exported as Sheets-ready CSV.');
+    else toast.error('CSV export failed.');
+  }
 
   return (
     <div className="space-y-3">
@@ -44,29 +71,52 @@ export function CrmAuditLogsPage() {
         <div>
           <h2 className="text-lg font-bold text-slate-900">Immutable Audit Logs</h2>
           <p className="text-xs text-slate-500">
-            Cryptographically timestamped audit records of all staff actions, discount approvals, and data access.
+            Every staff action is stored as a row in Google Sheets — no local database.
           </p>
         </div>
 
-        <button
-          onClick={fetchLogs}
-          disabled={loading}
-          className="p-2  bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50"
-          title="Refresh"
-        >
-          <RefreshCwIcon className={`size-4 ${loading ? 'animate-spin' : ''}`} />
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <a
+            href={getGoogleSheetUrl()}
+            target="_blank"
+            rel="noreferrer"
+            className="px-3.5 py-2 bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+            title="Open the Google Sheet"
+          >
+            Open Sheet ↗
+          </a>
+          <button
+            onClick={handleExportCsv}
+            className="px-3.5 py-2 bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+          >
+            Export CSV ↓
+          </button>
+          <button
+            onClick={fetchLogs}
+            disabled={loading}
+            className="p-2 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50 cursor-pointer"
+            title="Refresh"
+          >
+            <RefreshCwIcon className={`size-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+      </div>
+
+      {/* Sheets store status */}
+      <div className="p-3 bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+        <span className="font-bold whitespace-nowrap">⬢ Stored in Google Sheets</span>
+        <span className="font-mono break-all">Sheet: {GOOGLE_SHEET_ID} · Tab: {GOOGLE_SHEETS_TAB}</span>
       </div>
 
       {error && (
-        <div className="p-4  bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
+        <div className="p-4 bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
           <AlertCircleIcon className="size-4 text-red-500 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Filter Bar */}
-      <div className="bg-white p-3.5  border border-slate-200 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between text-xs">
+      <div className="bg-white p-3.5 border border-slate-200 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between text-xs">
         <div className="relative w-full md:w-80">
           <input
             type="text"
@@ -76,7 +126,7 @@ export function CrmAuditLogsPage() {
               setActionSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full pl-9 pr-3.5 py-2  border border-slate-200 focus:outline-none focus:border-purple-600"
+            className="w-full pl-9 pr-3.5 py-2 border border-slate-200 focus:outline-none focus:border-purple-600"
           />
           <SearchIcon className="size-4 text-slate-400 absolute left-3 top-2.5" />
         </div>
@@ -89,7 +139,7 @@ export function CrmAuditLogsPage() {
               setTargetType(e.target.value);
               setPage(1);
             }}
-            className="px-3 py-1.5  border border-slate-200 bg-white text-slate-700"
+            className="px-3 py-1.5 border border-slate-200 bg-white text-slate-700"
           >
             <option value="">All Targets</option>
             <option value="customer">Customer</option>
@@ -102,24 +152,24 @@ export function CrmAuditLogsPage() {
         </div>
       </div>
 
-      {/* Audit Table */}
-      <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+      {/* Audit Table — one line per row, auto width = longest row */}
+      <div className="bg-white border border-slate-200 shadow-xs overflow-hidden">
+        <div className="crm-table-wrap overflow-x-auto">
+          <table className="crm-table text-left text-xs border-collapse">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
-                <th className="py-1.5 px-3">Timestamp</th>
-                <th className="py-1.5 px-3">Staff Actor</th>
-                <th className="py-1.5 px-3">Action</th>
-                <th className="py-1.5 px-3">Target</th>
-                <th className="py-1.5 px-3">Details</th>
+                <th className="py-1.5 px-3 whitespace-nowrap">Timestamp</th>
+                <th className="py-1.5 px-3 whitespace-nowrap">Staff Actor</th>
+                <th className="py-1.5 px-3 whitespace-nowrap">Action</th>
+                <th className="py-1.5 px-3 whitespace-nowrap">Target</th>
+                <th className="py-1.5 px-3 whitespace-nowrap">Details</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-mono text-[11px]">
               {loading ? (
                 <tr>
                   <td colSpan="5" className="py-12 text-center text-slate-400 font-sans">
-                    <div className="size-6 border-2 border-slate-200 border-t-purple-600  animate-spin mx-auto mb-2" />
+                    <div className="size-6 border-2 border-slate-200 border-t-purple-600 animate-spin mx-auto mb-2" />
                     Querying audit store...
                   </td>
                 </tr>
@@ -130,42 +180,31 @@ export function CrmAuditLogsPage() {
                   </td>
                 </tr>
               ) : (
-                logs.map((log) => {
-                  const isExpanded = expandedLogId === log.id;
-                  return (
+                logs.map((log) => (
                     <tr key={log.id} className="hover:bg-slate-50/70 transition">
                       <td className="py-1.5 px-3 text-slate-500 whitespace-nowrap">
                         {new Date(log.created_at).toLocaleString()}
                       </td>
-                      <td className="py-1.5 px-3 font-sans">
+                      <td className="py-1.5 px-3 font-sans whitespace-nowrap">
                         <div className="font-semibold text-slate-900">{log.actor_name || 'Staff'}</div>
-                        <div className="text-[10px] text-slate-500 capitalize">{log.actor_role.replace('_', ' ')}</div>
+                        <div className="text-[10px] text-slate-500 capitalize">{(log.actor_role || '').replace('_', ' ')}</div>
                       </td>
-                      <td className="py-1.5 px-3 font-bold text-purple-700">
+                      <td className="py-1.5 px-3 font-bold text-purple-700 whitespace-nowrap">
                         {log.action}
                       </td>
-                      <td className="py-1.5 px-3 text-slate-600">
+                      <td className="py-1.5 px-3 text-slate-600 whitespace-nowrap">
                         <span className="capitalize font-semibold text-slate-800">{log.target_type}</span>: {log.target_id}
                       </td>
-                      <td className="py-1.5 px-3 font-sans text-right">
+                      <td className="py-1.5 px-3 font-sans text-right whitespace-nowrap">
                         <button
-                          onClick={() => setExpandedLogId(isExpanded ? null : log.id)}
-                          className="px-2.5 py-1  bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] transition"
+                          onClick={() => setSelectedLog(log)}
+                          className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] transition cursor-pointer"
                         >
-                          {isExpanded ? 'Hide Details' : 'View Payload'}
+                          View Payload
                         </button>
-                        {isExpanded && (
-                          <div className="mt-2 p-3  bg-slate-900 text-slate-200 font-mono text-[10px] text-left overflow-x-auto max-w-sm">
-                            <pre>{JSON.stringify(log.details, null, 2)}</pre>
-                            {log.ip_address && (
-                              <div className="mt-1 text-slate-400">IP: {log.ip_address}</div>
-                            )}
-                          </div>
-                        )}
                       </td>
                     </tr>
-                  );
-                })
+                ))
               )}
             </tbody>
           </table>
@@ -181,14 +220,14 @@ export function CrmAuditLogsPage() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1  border border-slate-200 disabled:opacity-40 hover:bg-slate-50 transition"
+                className="px-3 py-1 border border-slate-200 disabled:opacity-40 hover:bg-slate-50 transition cursor-pointer"
               >
                 Previous
               </button>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1  border border-slate-200 disabled:opacity-40 hover:bg-slate-50 transition"
+                className="px-3 py-1 border border-slate-200 disabled:opacity-40 hover:bg-slate-50 transition cursor-pointer"
               >
                 Next
               </button>
@@ -196,6 +235,80 @@ export function CrmAuditLogsPage() {
           </div>
         )}
       </div>
+
+      {/* Payload dialog — shows everything for the selected log */}
+      {selectedLog && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4"
+          onClick={() => setSelectedLog(null)}
+        >
+          <div
+            className="bg-white max-w-lg w-full shadow-xl border border-slate-200 max-h-[85vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-100 p-4">
+              <div>
+                <h3 className="font-bold text-slate-900 text-sm">Audit Event Payload</h3>
+                <p className="text-[11px] text-slate-400 font-mono mt-0.5">ID: {selectedLog.id}</p>
+              </div>
+              <button
+                onClick={() => setSelectedLog(null)}
+                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+                aria-label="Close dialog"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-4 overflow-y-auto space-y-3 text-xs">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2 bg-slate-50 border border-slate-100 p-3">
+                <div><span className="text-slate-500">Timestamp:</span><div className="font-mono font-semibold text-slate-900">{selectedLog.created_at ? new Date(selectedLog.created_at).toLocaleString() : '—'}</div></div>
+                <div><span className="text-slate-500">Action:</span><div className="font-bold text-purple-700">{selectedLog.action || '—'}</div></div>
+                <div><span className="text-slate-500">Actor:</span><div className="font-semibold text-slate-900">{selectedLog.actor_name || 'Staff'}</div><div className="text-[10px] text-slate-500 capitalize">{(selectedLog.actor_role || '').replace('_', ' ')}</div></div>
+                <div><span className="text-slate-500">Actor ID:</span><div className="font-mono text-slate-800 break-all">{selectedLog.actor_id || selectedLog.actorId || '—'}</div></div>
+                <div><span className="text-slate-500">Target:</span><div className="font-semibold text-slate-900 capitalize">{selectedLog.target_type || '—'}: <span className="font-mono">{selectedLog.target_id || '—'}</span></div></div>
+                <div><span className="text-slate-500">IP Address:</span><div className="font-mono text-slate-800">{selectedLog.ip_address || '—'}</div></div>
+              </div>
+
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Details JSON</p>
+                <div className="p-3 bg-slate-900 text-slate-200 font-mono text-[11px] overflow-x-auto">
+                  <pre className="whitespace-pre-wrap break-words">{JSON.stringify(selectedLog.details ?? {}, null, 2)}</pre>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Full Raw Record</p>
+                <div className="p-3 bg-slate-50 border border-slate-200 font-mono text-[10px] text-slate-700 overflow-x-auto">
+                  <pre className="whitespace-pre-wrap break-words">{JSON.stringify(selectedLog, null, 2)}</pre>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 p-4 border-t border-slate-100 text-xs">
+              <button
+                onClick={() => {
+                  try {
+                    navigator.clipboard.writeText(JSON.stringify(selectedLog, null, 2));
+                    toast.success('Payload copied to clipboard.');
+                  } catch {
+                    toast.error('Copy failed.');
+                  }
+                }}
+                className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+              >
+                Copy JSON
+              </button>
+              <button
+                onClick={() => setSelectedLog(null)}
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold transition cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2,10 +2,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
-import { SearchIcon, FilterIcon, RefreshCwIcon, AlertCircleIcon } from '../components/CrmIcons';
+import { useCrmToast } from '../context/CrmToastContext';
+import { SearchIcon, FilterIcon, RefreshCwIcon, AlertCircleIcon, PlusIcon } from '../components/CrmIcons';
 
 export function CrmCustomersPage() {
-  const { staff, isAdmin, isManagerOrAdmin } = useCrmAuth();
+  const { isAdmin, isManagerOrAdmin } = useCrmAuth();
+  const { toast } = useCrmToast();
   const [customers, setCustomers] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -29,6 +31,17 @@ export function CrmCustomersPage() {
   const [deletingCustomer, setDeletingCustomer] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
+  // Register Customer Modal
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [regFirstName, setRegFirstName] = useState('');
+  const [regLastName, setRegLastName] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPhone, setRegPhone] = useState('');
+  const [regBusinessName, setRegBusinessName] = useState('');
+  const [regPlan, setRegPlan] = useState('free');
+  const [regCountry, setRegCountry] = useState('India');
+  const [regLoading, setRegLoading] = useState(false);
+
   const fetchCustomers = useCallback(async () => {
     setLoading(true);
     setError('');
@@ -38,11 +51,13 @@ export function CrmCustomersPage() {
       setTotal(res.total || 0);
       setTotalPages(res.totalPages || 1);
     } catch (err) {
-      setError(err.message || 'Failed to fetch customer directory.');
+      const msg = err.message || 'Failed to fetch customer directory.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
-  }, [page, search, plan]);
+  }, [page, search, plan, toast]);
 
   useEffect(() => {
     fetchCustomers();
@@ -79,9 +94,10 @@ export function CrmCustomersPage() {
         emailVerified: editEmailVerified,
       });
       setEditingCustomer(null);
+      toast.success('Customer details updated successfully.');
       fetchCustomers();
     } catch (err) {
-      alert(err.message || 'Failed to update customer.');
+      toast.error(err.message || 'Failed to update customer.');
     } finally {
       setEditLoading(false);
     }
@@ -93,16 +109,60 @@ export function CrmCustomersPage() {
     try {
       await crmApi.deleteCustomer(deletingCustomer.id);
       setDeletingCustomer(null);
+      toast.success('Customer account deleted permanently.');
       fetchCustomers();
     } catch (err) {
-      alert(err.message || 'Failed to delete customer.');
+      toast.error(err.message || 'Failed to delete customer.');
     } finally {
       setDeleteLoading(false);
     }
   }
 
+  async function handleRegisterCustomer(e) {
+    e.preventDefault();
+    setRegLoading(true);
+    try {
+      const payload = {
+        firstName: regFirstName,
+        lastName: regLastName,
+        email: regEmail,
+        phone: regPhone,
+        businessName: regBusinessName,
+        plan: regPlan,
+        country: regCountry,
+      };
+      try {
+        await crmApi.createCustomer(payload);
+      } catch (firstErr) {
+        // Fallback to /register route if plain POST is not supported
+        if (String(firstErr.message || '').toLowerCase().includes('not found')) {
+          await crmApi.registerCustomer(payload);
+        } else {
+          throw firstErr;
+        }
+      }
+      setShowRegisterModal(false);
+      setRegFirstName('');
+      setRegLastName('');
+      setRegEmail('');
+      setRegPhone('');
+      setRegBusinessName('');
+      setRegPlan('free');
+      setRegCountry('India');
+      toast.success('Customer registered successfully.');
+      fetchCustomers();
+    } catch (err) {
+      toast.error(err.message || 'Failed to register customer.');
+    } finally {
+      setRegLoading(false);
+    }
+  }
+
   function exportCsv() {
-    if (!customers.length) return;
+    if (!customers.length) {
+      toast.warning('Nothing to export — customer list is empty.');
+      return;
+    }
     const headers = ['ID', 'Name', 'Email', 'Phone', 'Plan', 'Country', 'RegistrationDate'];
     const rows = customers.map((c) => [
       c.id,
@@ -121,6 +181,7 @@ export function CrmCustomersPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    toast.success('Customer CSV exported.');
   }
 
   return (
@@ -142,8 +203,17 @@ export function CrmCustomersPage() {
         <div className="flex items-center gap-2">
           {isManagerOrAdmin && (
             <button
+              onClick={() => setShowRegisterModal(true)}
+              className="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+            >
+              <PlusIcon className="size-4" />
+              <span>Register Customer</span>
+            </button>
+          )}
+          {isManagerOrAdmin && (
+            <button
               onClick={exportCsv}
-              className="px-3.5 py-2  bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-xs transition cursor-pointer"
+              className="px-3.5 py-2 bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-xs transition cursor-pointer"
             >
               Export CSV ↓
             </button>
@@ -151,7 +221,7 @@ export function CrmCustomersPage() {
           <button
             onClick={fetchCustomers}
             disabled={loading}
-            className="p-2  bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50 cursor-pointer"
+            className="p-2 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50 cursor-pointer"
             title="Refresh"
           >
             <RefreshCwIcon className={`size-4 ${loading ? 'animate-spin' : ''}`} />
@@ -160,21 +230,21 @@ export function CrmCustomersPage() {
       </div>
 
       {error && (
-        <div className="p-4  bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
+        <div className="p-4 bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
           <AlertCircleIcon className="size-4 text-red-500 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Filter and Search Bar */}
-      <div className="bg-white p-4  border border-slate-200/90 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
+      <div className="bg-white p-4 border border-slate-200/90 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
         <form onSubmit={handleSearch} className="relative w-full md:w-80">
           <input
             type="text"
             placeholder="Search name, email, ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3.5 py-2  border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+            className="w-full pl-9 pr-3.5 py-2 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
           />
           <SearchIcon className="size-4 text-slate-400 absolute left-3 top-2.5" />
         </form>
@@ -190,7 +260,7 @@ export function CrmCustomersPage() {
               setPlan(e.target.value);
               setPage(1);
             }}
-            className="px-3 py-1.5  border border-slate-200 text-xs bg-white text-slate-700 focus:outline-none focus:border-purple-600"
+            className="px-3 py-1.5 border border-slate-200 text-xs bg-white text-slate-700 focus:outline-none focus:border-purple-600"
           >
             <option value="all">All Plans</option>
             <option value="free">Free Tier</option>
@@ -200,25 +270,25 @@ export function CrmCustomersPage() {
         </div>
       </div>
 
-      {/* Customers Table */}
-      <div className="bg-white  border border-slate-200/90 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
+      {/* Customers Table — one line per row, auto width = longest row */}
+      <div className="bg-white border border-slate-200/90 shadow-xs overflow-hidden">
+        <div className="crm-table-wrap overflow-x-auto">
+          <table className="crm-table text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
-                <th className="py-1.5 px-3">Customer</th>
-                <th className="py-1.5 px-3">Contact Info</th>
-                <th className="py-1.5 px-3">Current Plan</th>
-                <th className="py-1.5 px-3">Assigned Staff</th>
-                <th className="py-1.5 px-3">Status</th>
-                <th className="py-1.5 px-3 text-right">Actions</th>
+                <th className="py-1.5 px-3 whitespace-nowrap">Customer</th>
+                <th className="py-1.5 px-3 whitespace-nowrap">Contact Info</th>
+                <th className="py-1.5 px-3 whitespace-nowrap">Current Plan</th>
+                <th className="py-1.5 px-3 whitespace-nowrap">Assigned Staff</th>
+                <th className="py-1.5 px-3 whitespace-nowrap">Status</th>
+                <th className="py-1.5 px-3 text-right whitespace-nowrap">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
                   <td colSpan="6" className="py-12 text-center text-slate-400">
-                    <div className="size-6 border-2 border-slate-200 border-t-purple-600  animate-spin mx-auto mb-2" />
+                    <div className="size-6 border-2 border-slate-200 border-t-purple-600 animate-spin mx-auto mb-2" />
                     Loading customer directory...
                   </td>
                 </tr>
@@ -231,39 +301,39 @@ export function CrmCustomersPage() {
               ) : (
                 customers.map((c) => (
                   <tr key={c.id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-1.5 px-3">
+                    <td className="py-1.5 px-3 whitespace-nowrap">
                       <div className="font-semibold text-slate-900">{c.fullName}</div>
                       <div className="text-[10px] text-slate-400 font-mono">{c.id}</div>
                     </td>
-                    <td className="py-1.5 px-3 font-mono text-[11px]">
+                    <td className="py-1.5 px-3 font-mono text-[11px] whitespace-nowrap">
                       <div className="text-slate-800">{c.email}</div>
                       <div className="text-slate-400 text-[10px]">{c.phone || 'No phone'}</div>
                     </td>
-                    <td className="py-1.5 px-3">
-                      <span className="capitalize font-semibold text-purple-700 bg-purple-50 px-2.5 py-0.5  text-[11px] border border-purple-200">
+                    <td className="py-1.5 px-3 whitespace-nowrap">
+                      <span className="capitalize font-semibold text-purple-700 bg-purple-50 px-2.5 py-0.5 text-[11px] border border-purple-200">
                         {c.currentPlan}
                       </span>
                     </td>
-                    <td className="py-1.5 px-3 text-slate-600">
+                    <td className="py-1.5 px-3 text-slate-600 whitespace-nowrap">
                       {c.assignedStaffName ? (
                         <span className="font-medium text-slate-800">{c.assignedStaffName}</span>
                       ) : (
                         <span className="text-slate-400 italic">Unassigned</span>
                       )}
                     </td>
-                    <td className="py-1.5 px-3">
-                      <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5  ${
+                    <td className="py-1.5 px-3 whitespace-nowrap">
+                      <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 ${
                         c.emailVerified ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200'
                       }`}>
-                        <span className={`size-1.5  ${c.emailVerified ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                        <span className={`size-1.5 ${c.emailVerified ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                         {c.emailVerified ? 'Verified' : 'Unverified'}
                       </span>
                     </td>
-                    <td className="py-1.5 px-3 text-right">
+                    <td className="py-1.5 px-3 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-1.5">
                         <Link
                           to={`/customers/${encodeURIComponent(c.id)}`}
-                          className="px-2.5 py-1  bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-xs transition"
+                          className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-xs transition"
                         >
                           Profile →
                         </Link>
@@ -271,7 +341,7 @@ export function CrmCustomersPage() {
                         {isManagerOrAdmin && (
                           <button
                             onClick={() => openEditModal(c)}
-                            className="px-2.5 py-1  bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition cursor-pointer"
+                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition cursor-pointer"
                             title="Edit customer account"
                           >
                             Edit
@@ -281,7 +351,7 @@ export function CrmCustomersPage() {
                         {isAdmin && (
                           <button
                             onClick={() => setDeletingCustomer(c)}
-                            className="px-2.5 py-1  bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs transition cursor-pointer"
+                            className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs transition cursor-pointer"
                             title="Delete customer account"
                           >
                             Delete
@@ -306,14 +376,14 @@ export function CrmCustomersPage() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1  border border-slate-200 disabled:opacity-40 hover:bg-slate-50 transition cursor-pointer"
+                className="px-3 py-1 border border-slate-200 disabled:opacity-40 hover:bg-slate-50 transition cursor-pointer"
               >
                 Previous
               </button>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1  border border-slate-200 disabled:opacity-40 hover:bg-slate-50 transition cursor-pointer"
+                className="px-3 py-1 border border-slate-200 disabled:opacity-40 hover:bg-slate-50 transition cursor-pointer"
               >
                 Next
               </button>
@@ -322,10 +392,73 @@ export function CrmCustomersPage() {
         )}
       </div>
 
+      {/* Register Customer Modal */}
+      {showRegisterModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
+          <div className="bg-white max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-900 text-sm">Register New Customer</h3>
+              <button
+                onClick={() => setShowRegisterModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+            <form onSubmit={handleRegisterCustomer} className="space-y-3 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">First Name *</label>
+                  <input type="text" value={regFirstName} onChange={(e) => setRegFirstName(e.target.value)} required className="w-full p-2.5 border border-slate-200 focus:outline-none focus:border-purple-600" />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Last Name</label>
+                  <input type="text" value={regLastName} onChange={(e) => setRegLastName(e.target.value)} className="w-full p-2.5 border border-slate-200 focus:outline-none focus:border-purple-600" />
+                </div>
+              </div>
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Email *</label>
+                <input type="email" value={regEmail} onChange={(e) => setRegEmail(e.target.value)} required className="w-full p-2.5 border border-slate-200 focus:outline-none focus:border-purple-600" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Phone</label>
+                  <input type="text" value={regPhone} onChange={(e) => setRegPhone(e.target.value)} placeholder="+91..." className="w-full p-2.5 border border-slate-200 focus:outline-none focus:border-purple-600" />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Country</label>
+                  <input type="text" value={regCountry} onChange={(e) => setRegCountry(e.target.value)} className="w-full p-2.5 border border-slate-200 focus:outline-none focus:border-purple-600" />
+                </div>
+              </div>
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Business Name</label>
+                <input type="text" value={regBusinessName} onChange={(e) => setRegBusinessName(e.target.value)} placeholder="e.g. Acme Studio" className="w-full p-2.5 border border-slate-200 focus:outline-none focus:border-purple-600" />
+              </div>
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Plan</label>
+                <select value={regPlan} onChange={(e) => setRegPlan(e.target.value)} className="w-full p-2.5 border border-slate-200 bg-white focus:outline-none focus:border-purple-600">
+                  <option value="free">Free Tier</option>
+                  <option value="plus">Plus Plan</option>
+                  <option value="pro">Pro Plan</option>
+                </select>
+              </div>
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <button type="button" onClick={() => setShowRegisterModal(false)} className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer">
+                  Cancel
+                </button>
+                <button type="submit" disabled={regLoading} className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer">
+                  {regLoading ? 'Registering...' : 'Register Customer'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Edit Customer Modal */}
       {editingCustomer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white  max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
+          <div className="bg-white max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Update Customer Details</h3>
@@ -347,7 +480,7 @@ export function CrmCustomersPage() {
                     type="text"
                     value={editFirstName}
                     onChange={(e) => setEditFirstName(e.target.value)}
-                    className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                    className="w-full p-2.5 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                   />
                 </div>
                 <div>
@@ -356,7 +489,7 @@ export function CrmCustomersPage() {
                     type="text"
                     value={editLastName}
                     onChange={(e) => setEditLastName(e.target.value)}
-                    className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                    className="w-full p-2.5 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                   />
                 </div>
               </div>
@@ -368,7 +501,7 @@ export function CrmCustomersPage() {
                   value={editEmail}
                   onChange={(e) => setEditEmail(e.target.value)}
                   required
-                  className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                  className="w-full p-2.5 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                 />
               </div>
 
@@ -379,7 +512,7 @@ export function CrmCustomersPage() {
                   value={editBusinessName}
                   onChange={(e) => setEditBusinessName(e.target.value)}
                   placeholder="e.g. Acme Studio"
-                  className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                  className="w-full p-2.5 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                 />
               </div>
 
@@ -389,7 +522,7 @@ export function CrmCustomersPage() {
                   <select
                     value={editPlan}
                     onChange={(e) => setEditPlan(e.target.value)}
-                    className="w-full p-2.5  border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
+                    className="w-full p-2.5 border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
                   >
                     <option value="free">Free Tier</option>
                     <option value="plus">Plus Plan</option>
@@ -401,7 +534,7 @@ export function CrmCustomersPage() {
                   <select
                     value={editEmailVerified ? 'verified' : 'unverified'}
                     onChange={(e) => setEditEmailVerified(e.target.value === 'verified')}
-                    className="w-full p-2.5  border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
+                    className="w-full p-2.5 border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
                   >
                     <option value="verified">Verified</option>
                     <option value="unverified">Unverified</option>
@@ -413,14 +546,14 @@ export function CrmCustomersPage() {
                 <button
                   type="button"
                   onClick={() => setEditingCustomer(null)}
-                  className="px-3.5 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                  className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={editLoading}
-                  className="px-4 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
                 >
                   {editLoading ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -433,9 +566,9 @@ export function CrmCustomersPage() {
       {/* Delete Customer Confirmation Modal (Admin only) */}
       {deletingCustomer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white  max-w-sm w-full p-4 shadow-xl border border-red-100 space-y-2.5">
+          <div className="bg-white max-w-sm w-full p-4 shadow-xl border border-red-100 space-y-2.5">
             <div className="flex items-center gap-3 text-red-600">
-              <div className="size-10  bg-red-100 flex items-center justify-center">
+              <div className="size-10 bg-red-100 flex items-center justify-center">
                 <AlertCircleIcon className="size-5" />
               </div>
               <div>
@@ -454,7 +587,7 @@ export function CrmCustomersPage() {
               <button
                 type="button"
                 onClick={() => setDeletingCustomer(null)}
-                className="px-3.5 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -462,7 +595,7 @@ export function CrmCustomersPage() {
                 type="button"
                 onClick={handleDeleteCustomer}
                 disabled={deleteLoading}
-                className="px-4 py-2  bg-red-600 hover:bg-red-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
               >
                 {deleteLoading ? 'Deleting...' : 'Delete Permanently'}
               </button>

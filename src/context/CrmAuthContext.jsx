@@ -46,6 +46,19 @@ export function CrmAuthProvider({ children }) {
     return res;
   }, []);
 
+  const refreshStaff = useCallback(async () => {
+    const res = await crmApi.me();
+    if (res.staff) {
+      setStaff(res.staff);
+      try {
+        const remember = Boolean(localStorage.getItem('invio_crm_staff_token'));
+        if (remember) localStorage.setItem('invio_crm_staff_user', JSON.stringify(res.staff));
+        else sessionStorage.setItem('invio_crm_staff_user', JSON.stringify(res.staff));
+      } catch { /* storage best-effort */ }
+    }
+    return res.staff;
+  }, []);
+
   const logout = useCallback(() => {
     clearCrmAuth();
     setToken(null);
@@ -67,6 +80,7 @@ export function CrmAuthProvider({ children }) {
       staff,
       loading,
       isAuthenticated: Boolean(token && staff),
+      mustChangePassword: Boolean(staff?.mustChangePassword),
       isAdmin: staff?.role === 'admin',
       isManager: staff?.role === 'manager',
       isSales: staff?.role === 'sales_executive',
@@ -75,9 +89,10 @@ export function CrmAuthProvider({ children }) {
       canViewUnmaskedPii: staff?.role === 'admin' || staff?.role === 'manager',
       login,
       logout,
+      refreshStaff,
       hasRole,
     }),
-    [token, staff, loading, login, logout, hasRole]
+    [token, staff, loading, login, logout, refreshStaff, hasRole]
   );
 
   return <CrmAuthContext.Provider value={value}>{children}</CrmAuthContext.Provider>;

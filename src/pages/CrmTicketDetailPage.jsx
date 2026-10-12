@@ -1,12 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
-import { RefreshCwIcon, AlertCircleIcon } from '../components/CrmIcons';
+import { useCrmToast } from '../context/CrmToastContext';
+import { AlertCircleIcon } from '../components/CrmIcons';
 
 export function CrmTicketDetailPage() {
   const { id } = useParams();
-  const { staff } = useCrmAuth();
+  const navigate = useNavigate();
+  const { isManagerOrAdmin } = useCrmAuth();
+  const { toast } = useCrmToast();
 
   const [ticketData, setTicketData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,6 +24,13 @@ export function CrmTicketDetailPage() {
   const [newStatus, setNewStatus] = useState('');
   const [resolution, setResolution] = useState('');
   const [statusLoading, setStatusLoading] = useState(false);
+
+  // Assign + delete state
+  const [staffList, setStaffList] = useState([]);
+  const [assignId, setAssignId] = useState('');
+  const [assignLoading, setAssignLoading] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const fetchTicket = useCallback(async () => {
     setLoading(true);
@@ -39,7 +49,12 @@ export function CrmTicketDetailPage() {
 
   useEffect(() => {
     fetchTicket();
-  }, [fetchTicket]);
+    if (isManagerOrAdmin) {
+      crmApi.getStaffList().then((res) => {
+        if (res.staff) setStaffList(res.staff);
+      }).catch(() => {});
+    }
+  }, [fetchTicket, isManagerOrAdmin]);
 
   async function handleAddComment(e) {
     e.preventDefault();
@@ -49,9 +64,10 @@ export function CrmTicketDetailPage() {
     try {
       await crmApi.addTicketComment(id, replyMessage, isInternal);
       setReplyMessage('');
+      toast.success(isInternal ? 'Internal note saved.' : 'Reply sent to customer.');
       fetchTicket();
     } catch (err) {
-      alert(err.message || 'Failed to add comment.');
+      toast.error(err.message || 'Failed to add comment.');
     } finally {
       setCommentLoading(false);
     }
@@ -63,11 +79,38 @@ export function CrmTicketDetailPage() {
     try {
       await crmApi.updateTicketStatus(id, newStatus, resolution);
       fetchTicket();
-      alert('Ticket status updated successfully.');
+      toast.success('Ticket status updated successfully.');
     } catch (err) {
-      alert(err.message || 'Failed to update status.');
+      toast.error(err.message || 'Failed to update status.');
     } finally {
       setStatusLoading(false);
+    }
+  }
+
+  async function handleAssign(e) {
+    e.preventDefault();
+    setAssignLoading(true);
+    try {
+      await crmApi.assignTicket(id, assignId || null);
+      toast.success('Ticket assignment updated.');
+      fetchTicket();
+    } catch (err) {
+      toast.error(err.message || 'Failed to assign ticket.');
+    } finally {
+      setAssignLoading(false);
+    }
+  }
+
+  async function handleDeleteTicket() {
+    setDeleteLoading(true);
+    try {
+      await crmApi.deleteTicket(id);
+      toast.success('Ticket deleted permanently.');
+      navigate('/tickets', { replace: true });
+    } catch (err) {
+      toast.error(err.message || 'Failed to delete ticket.');
+    } finally {
+      setDeleteLoading(false);
     }
   }
 
@@ -148,27 +191,47 @@ export function CrmTicketDetailPage() {
         </div>
 
         {/* Status update widget */}
-        <form onSubmit={handleUpdateStatus} className="flex items-center gap-2 text-xs">
-          <select
-            value={newStatus}
-            onChange={(e) => setNewStatus(e.target.value)}
-            className="p-2  border border-slate-200 bg-white font-medium text-slate-800"
-          >
-            <option value="open">Open</option>
-            <option value="in_progress">In Progress</option>
-            <option value="waiting_customer">Waiting on Customer</option>
-            <option value="escalated">Escalated</option>
-            <option value="resolved">Resolved</option>
-            <option value="closed">Closed</option>
-          </select>
-          <button
-            type="submit"
-            disabled={statusLoading}
-            className="px-3.5 py-2  bg-slate-900 hover:bg-slate-800 text-white font-semibold transition"
-          >
-            {statusLoading ? '...' : 'Update'}
-          </button>
-        </form>
+        <div className="flex flex-col gap-2">
+          <form onSubmit={handleUpdateStatus} className="flex items-center gap-2 text-xs">
+            <select
+              value={newStatus}
+              onChange={(e) => setNewStatus(e.target.value)}
+              className="p-2 border border-slate-200 bg-white font-medium text-slate-800"
+            >
+              <option value="open">Open</option>
+              <option value="in_progress">In Progress</option>
+              <option value="waiting_customer">Waiting on Customer</option>
+              <option value="escalated">Escalated</option>
+              <option value="resolved">Resolved</option>
+              <option value="closed">Closed</option>
+            </select>
+            <button
+              type="submit"
+              disabled={statusLoading}
+              className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
+            >
+              {statusLoading ? '...' : 'Update'}
+            </button>
+          </form>
+          {isManagerOrAdmin && (
+            <div className="flex items-center gap-2 text-xs">
+              <form onSubmit={handleAssign} className="flex items-center gap-2">
+                <select value={assignId} onChange={(e) => setAssignId(e.target.value)} className="p-2 border border-slate-200 bg-white text-slate-800 max-w-[180px]">
+                  <option value="">Unassigned</option>
+                  {staffList.map((st) => (
+                    <option key={st.id} value={st.id}>{st.fullName}</option>
+                  ))}
+                </select>
+                <button type="submit" disabled={assignLoading} className="px-3 py-2 bg-white border border-slate-200 hover:bg-slate-50 font-semibold transition disabled:opacity-50 cursor-pointer">
+                  {assignLoading ? '...' : 'Assign'}
+                </button>
+              </form>
+              <button onClick={() => setShowDeleteConfirm(true)} className="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 font-semibold transition cursor-pointer">
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {ticket.resolution && (
@@ -253,7 +316,7 @@ export function CrmTicketDetailPage() {
             <button
               type="submit"
               disabled={commentLoading}
-              className={`px-4 py-2  font-semibold text-white shadow-xs transition disabled:opacity-50 ${
+              className={`px-4 py-2 font-semibold text-white shadow-xs transition disabled:opacity-50 cursor-pointer ${
                 isInternal
                   ? 'bg-amber-600 hover:bg-amber-700'
                   : 'bg-purple-600 hover:bg-purple-700'
@@ -264,6 +327,19 @@ export function CrmTicketDetailPage() {
           </div>
         </form>
       </div>
+
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
+          <div className="bg-white max-w-sm w-full p-4 shadow-xl border border-red-100 space-y-2.5">
+            <h3 className="font-bold text-slate-900 text-sm">Delete this ticket?</h3>
+            <p className="text-xs text-slate-600">Ticket {ticket.ticketNumber} and its thread will be permanently removed.</p>
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 text-xs">
+              <button type="button" onClick={() => setShowDeleteConfirm(false)} className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer">Cancel</button>
+              <button type="button" onClick={handleDeleteTicket} disabled={deleteLoading} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer">{deleteLoading ? 'Deleting...' : 'Delete Permanently'}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

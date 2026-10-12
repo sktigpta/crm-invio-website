@@ -1,5 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { CrmAuthProvider } from './context/CrmAuthContext';
+import { CrmToastProvider } from './context/CrmToastContext';
+import { CrmToaster } from './components/CrmToaster';
 import { CrmLayout } from './components/CrmLayout';
 import { CrmProtectedRoute } from './components/CrmProtectedRoute';
 import { CrmHomePage } from './pages/CrmHomePage';
@@ -15,11 +17,15 @@ import { CrmTicketDetailPage } from './pages/CrmTicketDetailPage';
 import { CrmPlansPage } from './pages/CrmPlansPage';
 import { CrmStaffPage } from './pages/CrmStaffPage';
 import { CrmAuditLogsPage } from './pages/CrmAuditLogsPage';
+import { CrmBugsPage } from './pages/CrmBugsPage';
+import { CrmContactsPage } from './pages/CrmContactsPage';
 
 export function App() {
   return (
     <CrmAuthProvider>
-      <Routes>
+      <CrmToastProvider>
+        <CrmToaster />
+        <Routes>
         {/* Public 100% W x H Home Landing Page */}
         <Route path="/" element={<CrmHomePage />} />
 
@@ -42,6 +48,8 @@ export function App() {
           <Route path="/coupons" element={<CrmCouponsPage />} />
           <Route path="/tickets" element={<CrmTicketsPage />} />
           <Route path="/tickets/:id" element={<CrmTicketDetailPage />} />
+          <Route path="/bugs" element={<CrmBugsPage />} />
+          <Route path="/contacts" element={<CrmContactsPage />} />
           <Route path="/plans" element={<CrmPlansPage />} />
           <Route
             path="/staff"
@@ -68,6 +76,7 @@ export function App() {
         {/* Catch-all redirect */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </CrmToastProvider>
     </CrmAuthProvider>
   );
 }

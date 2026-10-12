@@ -26,6 +26,59 @@ table {
   border-spacing: 0;
 }
 
+/* ── CRM one-line auto-width tables ─────────────────────────────
+   Table grows to fit the longest row (width:max-content) while
+   never shrinking below container (min-width:100%).
+   Every cell stays on a single line (white-space:nowrap).
+   The .crm-table-wrap provides the horizontal scroll. */
+.crm-table-wrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+}
+
+.crm-table {
+  width: max-content;
+  min-width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+}
+
+.crm-table thead th,
+.crm-table tbody td {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* ── Toaster ──────────────────────────────────────────────────── */
+@keyframes crm-toast-slide-in {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.crm-toast-in {
+  animation: crm-toast-slide-in 0.22s ease-out;
+}
+
+.crm-toaster-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.crm-toaster-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.crm-toaster-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
 input, select, textarea, button {
   border-radius: 0 !important;
 }

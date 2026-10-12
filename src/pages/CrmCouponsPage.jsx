@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
-import { TagIcon, RefreshCwIcon, AlertCircleIcon, PlusIcon, SearchIcon } from '../components/CrmIcons';
+import { useCrmToast } from '../context/CrmToastContext';
+import { RefreshCwIcon, AlertCircleIcon, PlusIcon } from '../components/CrmIcons';
 
 export function CrmCouponsPage() {
   const { isManagerOrAdmin } = useCrmAuth();
+  const { toast } = useCrmToast();
   const [coupons, setCoupons] = useState([]);
   const [status, setStatus] = useState('all');
   const [search, setSearch] = useState('');
@@ -34,6 +36,16 @@ export function CrmCouponsPage() {
   const [validationResult, setValidationResult] = useState(null);
   const [validationLoading, setValidationLoading] = useState(false);
 
+  // Edit + Delete state
+  const [editingCoupon, setEditingCoupon] = useState(null);
+  const [editDesc, setEditDesc] = useState('');
+  const [editValue, setEditValue] = useState(10);
+  const [editMinPurchase, setEditMinPurchase] = useState(0);
+  const [editExpiryDays, setEditExpiryDays] = useState(30);
+  const [editLoading, setEditLoading] = useState(false);
+  const [deletingCoupon, setDeletingCoupon] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
   const fetchCoupons = useCallback(async () => {
     setLoading(true);
     setError('');
@@ -41,24 +53,76 @@ export function CrmCouponsPage() {
       const res = await crmApi.getCoupons({ status, search });
       setCoupons(res.coupons || []);
     } catch (err) {
-      setError(err.message || 'Failed to fetch coupons.');
+      const msg = err.message || 'Failed to fetch coupons.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
-  }, [status, search]);
+  }, [status, search, toast]);
 
   useEffect(() => {
     fetchCoupons();
   }, [fetchCoupons]);
 
   async function handleToggleStatus(coupon) {
-    if (!isManagerOrAdmin) return;
+    if (!isManagerOrAdmin) {
+      toast.warning('Only managers or admins can change coupon status.');
+      return;
+    }
     const nextStatus = coupon.status === 'active' ? 'revoked' : 'active';
     try {
       await crmApi.updateCouponStatus(coupon.id, nextStatus);
+      toast.success(`Coupon ${coupon.code} ${nextStatus === 'active' ? 'activated' : 'deactivated'}.`);
       fetchCoupons();
     } catch (err) {
-      alert(err.message || 'Failed to update coupon status.');
+      toast.error(err.message || 'Failed to update coupon status.');
+    }
+  }
+
+  function openEditModal(c) {
+    setEditingCoupon(c);
+    setEditDesc(c.description || '');
+    setEditValue(c.discountValue || 10);
+    setEditMinPurchase(c.minPurchaseAmount || 0);
+    setEditExpiryDays(30);
+  }
+
+  async function handleUpdateCoupon(e) {
+    e.preventDefault();
+    if (!editingCoupon) return;
+    setEditLoading(true);
+    try {
+      const expiry = new Date();
+      expiry.setDate(expiry.getDate() + Number(editExpiryDays));
+      await crmApi.updateCoupon(editingCoupon.id, {
+        description: editDesc,
+        discountValue: Number(editValue),
+        minPurchaseAmount: Number(editMinPurchase) || 0,
+        expiryDate: expiry.toISOString(),
+      });
+      setEditingCoupon(null);
+      toast.success(`Coupon ${editingCoupon.code} updated.`);
+      fetchCoupons();
+    } catch (err) {
+      toast.error(err.message || 'Failed to update coupon.');
+    } finally {
+      setEditLoading(false);
+    }
+  }
+
+  async function handleDeleteCoupon() {
+    if (!deletingCoupon) return;
+    setDeleteLoading(true);
+    try {
+      await crmApi.deleteCoupon(deletingCoupon.id);
+      setDeletingCoupon(null);
+      toast.success(`Coupon ${deletingCoupon.code} deleted permanently.`);
+      fetchCoupons();
+    } catch (err) {
+      toast.error(err.message || 'Failed to delete coupon.');
+    } finally {
+      setDeleteLoading(false);
     }
   }
 
@@ -86,9 +150,10 @@ export function CrmCouponsPage() {
       setShowCreateModal(false);
       setCreateCode('');
       setCreateDesc('');
+      toast.success(`Coupon ${createCode.toUpperCase()} created & published.`);
       fetchCoupons();
     } catch (err) {
-      alert(err.message || 'Failed to create coupon.');
+      toast.error(err.message || 'Failed to create coupon.');
     } finally {
       setCreateLoading(false);
     }
@@ -225,8 +290,8 @@ export function CrmCouponsPage() {
 
       {/* Coupons Table */}
       <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+        <div className="crm-table-wrap overflow-x-auto">
+          <table className="crm-table text-left text-xs border-collapse">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
                 <th className="py-1.5 px-3">Coupon Code</th>
@@ -257,7 +322,7 @@ export function CrmCouponsPage() {
                   <tr key={c.id} className="hover:bg-slate-50/70 transition">
                     <td className="py-1.5 px-3">
                       <div className="font-mono font-bold text-purple-700 text-sm">{c.code}</div>
-                      <div className="text-[11px] text-slate-500 truncate max-w-xs">{c.description}</div>
+                      <div className="text-[11px] text-slate-500 whitespace-nowrap">{c.description}</div>
                     </td>
                     <td className="py-1.5 px-3 font-bold text-slate-900">
                       {c.discountType === 'percentage' ? `${c.discountValue}% OFF` : `₹${c.discountValue} OFF`}
@@ -286,17 +351,31 @@ export function CrmCouponsPage() {
                       {c.expiryDate ? new Date(c.expiryDate).toLocaleDateString() : 'Never'}
                     </td>
                     {isManagerOrAdmin && (
-                      <td className="py-1.5 px-3 text-right">
-                        <button
-                          onClick={() => handleToggleStatus(c)}
-                          className={`px-3 py-1  text-xs font-semibold transition ${
-                            c.status === 'active'
-                              ? 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                              : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800'
-                          }`}
-                        >
-                          {c.status === 'active' ? 'Deactivate' : 'Activate'}
-                        </button>
+                      <td className="py-1.5 px-3 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => openEditModal(c)}
+                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition cursor-pointer"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleToggleStatus(c)}
+                            className={`px-3 py-1 text-xs font-semibold transition cursor-pointer ${
+                              c.status === 'active'
+                                ? 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                                : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800'
+                            }`}
+                          >
+                            {c.status === 'active' ? 'Deactivate' : 'Activate'}
+                          </button>
+                          <button
+                            onClick={() => setDeletingCoupon(c)}
+                            className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold transition cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     )}
                   </tr>
@@ -438,19 +517,72 @@ export function CrmCouponsPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-3.5 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
+                  className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createLoading}
-                  className="px-4 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50"
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
                 >
                   {createLoading ? 'Creating...' : 'Create & Publish Coupon'}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Coupon Modal */}
+      {editingCoupon && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
+          <div className="bg-white max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="font-bold text-slate-900 text-sm">Update Coupon</h3>
+                <p className="text-[11px] font-mono text-slate-400 mt-0.5">{editingCoupon.code}</p>
+              </div>
+              <button onClick={() => setEditingCoupon(null)} className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer">✕</button>
+            </div>
+            <form onSubmit={handleUpdateCoupon} className="space-y-3 text-xs">
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Description</label>
+                <input type="text" value={editDesc} onChange={(e) => setEditDesc(e.target.value)} className="w-full p-2.5 border border-slate-200" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Discount Value</label>
+                  <input type="number" min="1" value={editValue} onChange={(e) => setEditValue(e.target.value)} required className="w-full p-2.5 border border-slate-200 font-bold" />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Min Order (₹)</label>
+                  <input type="number" min="0" value={editMinPurchase} onChange={(e) => setEditMinPurchase(e.target.value)} className="w-full p-2.5 border border-slate-200" />
+                </div>
+              </div>
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Extend Validity (days from now)</label>
+                <input type="number" min="1" value={editExpiryDays} onChange={(e) => setEditExpiryDays(e.target.value)} className="w-full p-2.5 border border-slate-200" />
+              </div>
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <button type="button" onClick={() => setEditingCoupon(null)} className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer">Cancel</button>
+                <button type="submit" disabled={editLoading} className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer">{editLoading ? 'Saving...' : 'Save Changes'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Coupon Confirm */}
+      {deletingCoupon && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
+          <div className="bg-white max-w-sm w-full p-4 shadow-xl border border-red-100 space-y-2.5">
+            <h3 className="font-bold text-slate-900 text-sm">Delete Coupon {deletingCoupon.code}?</h3>
+            <p className="text-xs text-slate-600">This permanently removes the voucher. Redemptions history is preserved in audit logs.</p>
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 text-xs">
+              <button type="button" onClick={() => setDeletingCoupon(null)} className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer">Cancel</button>
+              <button type="button" onClick={handleDeleteCoupon} disabled={deleteLoading} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer">{deleteLoading ? 'Deleting...' : 'Delete Permanently'}</button>
+            </div>
           </div>
         </div>
       )}

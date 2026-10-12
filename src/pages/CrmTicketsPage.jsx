@@ -2,10 +2,13 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
-import { TicketIcon, RefreshCwIcon, AlertCircleIcon, PlusIcon, SearchIcon } from '../components/CrmIcons';
+import { useCrmToast } from '../context/CrmToastContext';
+import { useDebouncedValue, isRateLimitError } from '../hooks/useDebouncedValue';
+import { RefreshCwIcon, AlertCircleIcon, PlusIcon, SearchIcon } from '../components/CrmIcons';
 
 export function CrmTicketsPage() {
   const { isManagerOrAdmin } = useCrmAuth();
+  const { toast } = useCrmToast();
   const [tickets, setTickets] = useState([]);
   const [status, setStatus] = useState('all');
   const [category, setCategory] = useState('all');
@@ -23,18 +26,29 @@ export function CrmTicketsPage() {
   const [ticketMessage, setTicketMessage] = useState('');
   const [createLoading, setCreateLoading] = useState(false);
 
+  // Delete state
+  const [deletingTicket, setDeletingTicket] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const debouncedSearch = useDebouncedValue(search, 600);
+
   const fetchTickets = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
-      const res = await crmApi.getTickets({ status, category, priority, search });
+      const res = await crmApi.getTickets({ status, category, priority, search: debouncedSearch });
       setTickets(res.tickets || []);
     } catch (err) {
-      setError(err.message || 'Failed to fetch tickets.');
+      if (isRateLimitError(err)) {
+        toast.warning('Too many requests — pausing briefly, then try again.');
+        return;
+      }
+      const msg = err.message || 'Failed to fetch tickets.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
-  }, [status, category, priority, search]);
+  }, [status, category, priority, debouncedSearch, toast]);
 
   useEffect(() => {
     fetchTickets();
@@ -55,11 +69,27 @@ export function CrmTicketsPage() {
       setTicketEmail('');
       setTicketSubject('');
       setTicketMessage('');
+      toast.success('Support ticket opened successfully.');
       fetchTickets();
     } catch (err) {
-      alert(err.message || 'Failed to create support ticket.');
+      toast.error(err.message || 'Failed to create support ticket.');
     } finally {
       setCreateLoading(false);
+    }
+  }
+
+  async function handleDeleteTicket() {
+    if (!deletingTicket) return;
+    setDeleteLoading(true);
+    try {
+      await crmApi.deleteTicket(deletingTicket.id);
+      setDeletingTicket(null);
+      toast.success(`Ticket ${deletingTicket.ticketNumber || ''} deleted.`);
+      fetchTickets();
+    } catch (err) {
+      toast.error(err.message || 'Failed to delete ticket.');
+    } finally {
+      setDeleteLoading(false);
     }
   }
 
@@ -163,8 +193,8 @@ export function CrmTicketsPage() {
 
       {/* Tickets Table */}
       <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+        <div className="crm-table-wrap overflow-x-auto">
+          <table className="crm-table text-left text-xs border-collapse">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
                 <th className="py-1.5 px-3">Ticket</th>
@@ -198,7 +228,7 @@ export function CrmTicketsPage() {
                       <div className="text-[10px] text-slate-400">{new Date(t.createdAt).toLocaleDateString()}</div>
                     </td>
                     <td className="py-1.5 px-3">
-                      <div className="font-semibold text-slate-900 max-w-sm truncate">{t.subject}</div>
+                      <div className="font-semibold text-slate-900 whitespace-nowrap">{t.subject}</div>
                       <div className="text-[10px] text-slate-500 font-mono">{t.customerEmail}</div>
                     </td>
                     <td className="py-1.5 px-3 capitalize text-slate-600 font-medium">
@@ -228,16 +258,26 @@ export function CrmTicketsPage() {
                         {t.status.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="py-1.5 px-3 text-slate-600">
+                    <td className="py-1.5 px-3 text-slate-600 whitespace-nowrap">
                       {t.assignedStaffName || <span className="text-slate-400 italic">Unassigned</span>}
                     </td>
-                    <td className="py-1.5 px-3 text-right">
-                      <Link
-                        to={`/tickets/${encodeURIComponent(t.id)}`}
-                        className="inline-flex px-3 py-1  bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold transition"
-                      >
-                        Discussion →
-                      </Link>
+                    <td className="py-1.5 px-3 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Link
+                          to={`/tickets/${encodeURIComponent(t.id)}`}
+                          className="inline-flex px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold transition"
+                        >
+                          Discussion →
+                        </Link>
+                        {isManagerOrAdmin && (
+                          <button
+                            onClick={() => setDeletingTicket(t)}
+                            className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs transition cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -332,19 +372,33 @@ export function CrmTicketsPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-3.5 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
+                  className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createLoading}
-                  className="px-4 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50"
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
                 >
                   {createLoading ? 'Submitting...' : 'Open Ticket'}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Ticket Confirm */}
+      {deletingTicket && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
+          <div className="bg-white max-w-sm w-full p-4 shadow-xl border border-red-100 space-y-2.5">
+            <h3 className="font-bold text-slate-900 text-sm">Delete Ticket {deletingTicket.ticketNumber}?</h3>
+            <p className="text-xs text-slate-600">This permanently removes the ticket thread. This cannot be undone.</p>
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 text-xs">
+              <button type="button" onClick={() => setDeletingTicket(null)} className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer">Cancel</button>
+              <button type="button" onClick={handleDeleteTicket} disabled={deleteLoading} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer">{deleteLoading ? 'Deleting...' : 'Delete Permanently'}</button>
+            </div>
           </div>
         </div>
       )}

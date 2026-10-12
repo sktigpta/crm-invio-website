@@ -186,7 +186,7 @@ export function CrmCustomerDetailPage() {
   if (loading) {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-slate-400">
-        <div className="size-8 border-2 border-slate-200 border-t-purple-600 rounded-full animate-spin mb-3" />
+        <div className="size-8 border-2 border-slate-200 border-t-purple-600  animate-spin mb-3" />
         <p className="text-xs">Loading customer profile...</p>
       </div>
     );
@@ -194,7 +194,7 @@ export function CrmCustomerDetailPage() {
 
   if (error || !customerData) {
     return (
-      <div className="p-6 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700">
+      <div className="p-6  bg-red-50 border border-red-200 text-xs text-red-700">
         <h3 className="font-bold mb-1">Error Loading Customer</h3>
         <p>{error || 'Customer not found.'}</p>
         <Link to="/customers" className="mt-3 inline-block font-semibold text-purple-700">
@@ -220,18 +220,18 @@ export function CrmCustomerDetailPage() {
       </div>
 
       {/* Customer Header Card */}
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+      <div className="bg-white p-6  border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-5">
         <div className="flex items-center gap-4">
-          <div className="size-14 rounded-2xl bg-purple-100 text-purple-700 font-bold text-xl flex items-center justify-center flex-shrink-0">
+          <div className="size-14  bg-purple-100 text-purple-700 font-bold text-xl flex items-center justify-center flex-shrink-0">
             {profile.fullName.charAt(0) || 'C'}
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-lg font-bold text-slate-900">{profile.fullName}</h2>
-              <span className="capitalize text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+              <span className="capitalize text-xs font-semibold px-2 py-0.5  bg-purple-50 text-purple-700 border border-purple-200">
                 {profile.currentPlan} Plan
               </span>
-              <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${
+              <span className={`text-[11px] font-medium px-2 py-0.5  ${
                 profile.emailVerified ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'
               }`}>
                 {profile.emailVerified ? '✓ Verified' : 'Unverified'}
@@ -249,14 +249,14 @@ export function CrmCustomerDetailPage() {
         <div className="flex items-center gap-2.5 flex-wrap">
           <button
             onClick={() => setShowDiscountModal(true)}
-            className="px-3.5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition cursor-pointer"
+            className="px-3.5 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition cursor-pointer"
           >
             + Grant Discount
           </button>
           {isManagerOrAdmin && (
             <button
               onClick={openEditModal}
-              className="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition cursor-pointer"
+              className="px-3.5 py-2  bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition cursor-pointer"
             >
               Edit Details
             </button>
@@ -264,14 +264,14 @@ export function CrmCustomerDetailPage() {
           {isAdmin && (
             <button
               onClick={() => setShowDeleteModal(true)}
-              className="px-3.5 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs transition cursor-pointer"
+              className="px-3.5 py-2  bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs transition cursor-pointer"
             >
               Delete
             </button>
           )}
           <Link
             to={`/tickets?search=${encodeURIComponent(profile.email)}`}
-            className="px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-50 transition"
+            className="px-3.5 py-2  bg-white border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-50 transition"
           >
             View Tickets ({tickets.length})
           </Link>
@@ -305,7 +305,7 @@ export function CrmCustomerDetailPage() {
       {/* Tab 1: Profile & Contact */}
       {activeTab === 'profile' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3 text-xs">
+          <div className="bg-white p-5  border border-slate-200 shadow-xs space-y-3 text-xs">
             <h3 className="font-bold text-slate-900 text-sm mb-2">Account Details</h3>
             <div className="flex justify-between py-1.5 border-b border-slate-100">
               <span className="text-slate-500">Business / Entity Name:</span>
@@ -336,7 +336,7 @@ export function CrmCustomerDetailPage() {
           </div>
 
           {/* Assigned Executive Form */}
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4 text-xs">
+          <div className="bg-white p-5  border border-slate-200 shadow-xs space-y-4 text-xs">
             <h3 className="font-bold text-slate-900 text-sm">Account Assignment</h3>
             <p className="text-slate-500">
               Assigned sales or support executive dedicated to this customer.
@@ -347,7 +347,7 @@ export function CrmCustomerDetailPage() {
                 <select
                   value={selectedStaffId}
                   onChange={(e) => setSelectedStaffId(e.target.value)}
-                  className="w-full p-2 rounded-lg border border-slate-200 text-xs bg-white text-slate-800"
+                  className="w-full p-2  border border-slate-200 text-xs bg-white text-slate-800"
                 >
                   <option value="">Unassigned</option>
                   {staffList.map((st) => (
@@ -361,7 +361,7 @@ export function CrmCustomerDetailPage() {
                   <button
                     type="submit"
                     disabled={assignLoading}
-                    className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition disabled:opacity-50"
+                    className="px-4 py-2  bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition disabled:opacity-50"
                   >
                     {assignLoading ? 'Saving...' : 'Update Assignment'}
                   </button>
@@ -371,7 +371,7 @@ export function CrmCustomerDetailPage() {
                 </div>
               </form>
             ) : (
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 text-slate-700">
+              <div className="p-3 bg-slate-50  border border-slate-100 text-slate-700">
                 Assigned Executive: <strong className="ml-1">{profile.assignedStaffName || 'Unassigned'}</strong>
               </div>
             )}
@@ -381,7 +381,7 @@ export function CrmCustomerDetailPage() {
 
       {/* Tab 2: Billing & Subscriptions History */}
       {activeTab === 'subscriptions' && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
@@ -417,7 +417,7 @@ export function CrmCustomerDetailPage() {
 
       {/* Tab 3: Discounts */}
       {activeTab === 'discounts' && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
@@ -445,7 +445,7 @@ export function CrmCustomerDetailPage() {
                     <td className="py-3 px-4 text-slate-700 max-w-xs truncate">{d.reason}</td>
                     <td className="py-3 px-4 capitalize text-slate-600">{d.applicable_plan}</td>
                     <td className="py-3 px-4">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                      <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                         d.approval_status === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'
                       }`}>
                         {d.approval_status}
@@ -463,7 +463,7 @@ export function CrmCustomerDetailPage() {
 
       {/* Tab 4: Coupons Redeemed */}
       {activeTab === 'coupons' && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
@@ -497,7 +497,7 @@ export function CrmCustomerDetailPage() {
 
       {/* Tab 5: Support Tickets */}
       {activeTab === 'tickets' && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
               <tr>
@@ -523,7 +523,7 @@ export function CrmCustomerDetailPage() {
                     <td className="py-3 px-4 font-medium text-slate-900">{t.subject}</td>
                     <td className="py-3 px-4 capitalize text-slate-600">{t.category}</td>
                     <td className="py-3 px-4">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                      <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                         t.priority === 'urgent' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'
                       }`}>
                         {t.priority}
@@ -543,7 +543,7 @@ export function CrmCustomerDetailPage() {
       {activeTab === 'notes' && (
         <div className="space-y-4">
           {/* Note Input Form */}
-          <form onSubmit={handleAddNote} className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-3">
+          <form onSubmit={handleAddNote} className="bg-white p-4  border border-slate-200 shadow-xs space-y-3">
             <label className="block text-xs font-bold text-slate-900">
               Add Staff Note (Internal Only)
             </label>
@@ -553,12 +553,12 @@ export function CrmCustomerDetailPage() {
               onChange={(e) => setNoteText(e.target.value)}
               placeholder="Record call logs, customer preferences, retention context..."
               required
-              className="w-full p-3 rounded-lg border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+              className="w-full p-3  border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
             />
             <button
               type="submit"
               disabled={noteLoading}
-              className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs transition disabled:opacity-50"
+              className="px-4 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs transition disabled:opacity-50"
             >
               {noteLoading ? 'Saving...' : 'Add Note'}
             </button>
@@ -570,7 +570,7 @@ export function CrmCustomerDetailPage() {
               <p className="text-xs text-slate-400 py-6 text-center">No internal notes yet.</p>
             ) : (
               notes.map((n) => (
-                <div key={n.id} className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-1.5 text-xs">
+                <div key={n.id} className="p-4  bg-white border border-slate-200 shadow-xs space-y-1.5 text-xs">
                   <div className="flex items-center justify-between text-slate-500 text-[11px]">
                     <span className="font-semibold text-slate-800">{n.author_name}</span>
                     <span>{new Date(n.created_at).toLocaleString()}</span>
@@ -586,7 +586,7 @@ export function CrmCustomerDetailPage() {
       {/* Grant / Request Discount Modal */}
       {showDiscountModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="bg-white  max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Assign Discount to Customer</h3>
               <button
@@ -598,7 +598,7 @@ export function CrmCustomerDetailPage() {
             </div>
 
             {discountMessage && (
-              <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800">
+              <div className="p-3  bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800">
                 {discountMessage}
               </div>
             )}
@@ -615,7 +615,7 @@ export function CrmCustomerDetailPage() {
                   value={discountValue}
                   onChange={(e) => setDiscountValue(e.target.value)}
                   required
-                  className="w-full p-2.5 rounded-lg border border-slate-200 text-sm font-semibold"
+                  className="w-full p-2.5  border border-slate-200 text-sm font-semibold"
                 />
                 {isSales && Number(discountValue) <= 10 && (
                   <p className="text-[11px] text-emerald-600 mt-1 font-medium">
@@ -641,7 +641,7 @@ export function CrmCustomerDetailPage() {
                 <select
                   value={discountPlan}
                   onChange={(e) => setDiscountPlan(e.target.value)}
-                  className="w-full p-2.5 rounded-lg border border-slate-200 bg-white"
+                  className="w-full p-2.5  border border-slate-200 bg-white"
                 >
                   <option value="all">All Plans</option>
                   <option value="plus">Plus Plan Only</option>
@@ -659,7 +659,7 @@ export function CrmCustomerDetailPage() {
                   onChange={(e) => setDiscountReason(e.target.value)}
                   placeholder="e.g. Enterprise volume deal, renewal retention..."
                   required
-                  className="w-full p-2.5 rounded-lg border border-slate-200"
+                  className="w-full p-2.5  border border-slate-200"
                 />
               </div>
 
@@ -667,14 +667,14 @@ export function CrmCustomerDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowDiscountModal(false)}
-                  className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                  className="px-3.5 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={discountModalLoading}
-                  className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
+                  className="px-4 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
                 >
                   {discountModalLoading ? 'Processing...' : 'Submit Discount'}
                 </button>
@@ -687,7 +687,7 @@ export function CrmCustomerDetailPage() {
       {/* Edit Customer Modal */}
       {showEditModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="bg-white  max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Edit Customer Profile</h3>
@@ -709,7 +709,7 @@ export function CrmCustomerDetailPage() {
                     type="text"
                     value={editFirstName}
                     onChange={(e) => setEditFirstName(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                    className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                   />
                 </div>
                 <div>
@@ -718,7 +718,7 @@ export function CrmCustomerDetailPage() {
                     type="text"
                     value={editLastName}
                     onChange={(e) => setEditLastName(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                    className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                   />
                 </div>
               </div>
@@ -730,7 +730,7 @@ export function CrmCustomerDetailPage() {
                   value={editEmail}
                   onChange={(e) => setEditEmail(e.target.value)}
                   required
-                  className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                  className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                 />
               </div>
 
@@ -740,7 +740,7 @@ export function CrmCustomerDetailPage() {
                   type="text"
                   value={editBusinessName}
                   onChange={(e) => setEditBusinessName(e.target.value)}
-                  className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                  className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                 />
               </div>
 
@@ -752,7 +752,7 @@ export function CrmCustomerDetailPage() {
                     value={editPhone}
                     onChange={(e) => setEditPhone(e.target.value)}
                     placeholder="+91..."
-                    className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                    className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                   />
                 </div>
                 <div>
@@ -762,7 +762,7 @@ export function CrmCustomerDetailPage() {
                     value={editCountry}
                     onChange={(e) => setEditCountry(e.target.value)}
                     placeholder="India"
-                    className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                    className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                   />
                 </div>
               </div>
@@ -772,7 +772,7 @@ export function CrmCustomerDetailPage() {
                 <select
                   value={editPlan}
                   onChange={(e) => setEditPlan(e.target.value)}
-                  className="w-full p-2.5 rounded-lg border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
+                  className="w-full p-2.5  border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
                 >
                   <option value="free">Free Tier</option>
                   <option value="plus">Plus Plan</option>
@@ -784,14 +784,14 @@ export function CrmCustomerDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowEditModal(false)}
-                  className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                  className="px-3.5 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={editLoading}
-                  className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
+                  className="px-4 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
                 >
                   {editLoading ? 'Saving...' : 'Save Profile'}
                 </button>
@@ -804,9 +804,9 @@ export function CrmCustomerDetailPage() {
       {/* Delete Customer Confirmation Modal (Admin only) */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-red-100 space-y-4">
+          <div className="bg-white  max-w-sm w-full p-6 shadow-xl border border-red-100 space-y-4">
             <div className="flex items-center gap-3 text-red-600">
-              <div className="size-10 rounded-full bg-red-100 flex items-center justify-center">
+              <div className="size-10  bg-red-100 flex items-center justify-center">
                 <AlertCircleIcon className="size-5" />
               </div>
               <div>
@@ -825,7 +825,7 @@ export function CrmCustomerDetailPage() {
               <button
                 type="button"
                 onClick={() => setShowDeleteModal(false)}
-                className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                className="px-3.5 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -833,7 +833,7 @@ export function CrmCustomerDetailPage() {
                 type="button"
                 onClick={handleDeleteCustomer}
                 disabled={deleteLoading}
-                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
+                className="px-4 py-2  bg-red-600 hover:bg-red-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
               >
                 {deleteLoading ? 'Deleting...' : 'Delete Permanently'}
               </button>

@@ -45,14 +45,14 @@ export function CrmDiscountsPage() {
         <div className="flex items-center gap-3">
           <Link
             to="/approvals"
-            className="px-3.5 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 text-xs font-semibold shadow-xs transition"
+            className="px-3.5 py-2  bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 text-xs font-semibold shadow-xs transition"
           >
             Pending Approvals Queue →
           </Link>
           <button
             onClick={fetchDiscounts}
             disabled={loading}
-            className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50"
+            className="p-2  bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50"
             title="Refresh"
           >
             <RefreshCwIcon className={`size-4 ${loading ? 'animate-spin' : ''}`} />
@@ -61,7 +61,7 @@ export function CrmDiscountsPage() {
       </div>
 
       {/* Role Policy Notice Banner */}
-      <div className="p-4 rounded-xl bg-purple-50/70 border border-purple-200/80 text-xs text-purple-900 space-y-1">
+      <div className="p-4  bg-purple-50/70 border border-purple-200/80 text-xs text-purple-900 space-y-1">
         <div className="font-bold flex items-center gap-2">
           <span>🛡️ Server-Enforced Discount Policy Guardrails</span>
         </div>
@@ -75,14 +75,14 @@ export function CrmDiscountsPage() {
       </div>
 
       {error && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
+        <div className="p-4  bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
           <AlertCircleIcon className="size-4 text-red-500 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Filter Tabs */}
-      <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex items-center justify-between">
+      <div className="bg-white p-3  border border-slate-200 shadow-xs flex items-center justify-between">
         <div className="flex items-center gap-2">
           {['all', 'active', 'pending_approval', 'expired', 'revoked'].map((st) => (
             <button
@@ -91,7 +91,7 @@ export function CrmDiscountsPage() {
                 setStatus(st);
                 setPage(1);
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition ${
+              className={`px-3 py-1.5  text-xs font-semibold capitalize transition ${
                 status === st
                   ? 'bg-purple-600 text-white'
                   : 'text-slate-600 hover:bg-slate-100'
@@ -104,7 +104,7 @@ export function CrmDiscountsPage() {
       </div>
 
       {/* Discounts Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
@@ -122,7 +122,7 @@ export function CrmDiscountsPage() {
               {loading ? (
                 <tr>
                   <td colSpan="7" className="py-12 text-center text-slate-400">
-                    <div className="size-6 border-2 border-slate-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-2" />
+                    <div className="size-6 border-2 border-slate-200 border-t-purple-600  animate-spin mx-auto mb-2" />
                     Loading discounts...
                   </td>
                 </tr>
@@ -155,7 +155,7 @@ export function CrmDiscountsPage() {
                       {d.applicablePlan}
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                      <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                         d.approvalStatus === 'active'
                           ? 'bg-emerald-100 text-emerald-800'
                           : d.approvalStatus === 'pending_approval'

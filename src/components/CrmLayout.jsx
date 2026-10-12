@@ -15,10 +15,10 @@ import {
 } from './CrmIcons';
 
 const roleMeta = {
-  admin: { label: 'Administrator', bg: 'bg-indigo-100 text-indigo-800 border-indigo-200' },
-  manager: { label: 'Operations Manager', bg: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
-  sales_executive: { label: 'Sales Executive', bg: 'bg-amber-100 text-amber-800 border-amber-200' },
-  support_executive: { label: 'Support Executive', bg: 'bg-sky-100 text-sky-800 border-sky-200' },
+  admin: { label: 'Administrator', bg: 'bg-indigo-50 text-indigo-800 border-indigo-200' },
+  manager: { label: 'Operations Manager', bg: 'bg-emerald-50 text-emerald-800 border-emerald-200' },
+  sales_executive: { label: 'Sales Executive', bg: 'bg-amber-50 text-amber-800 border-amber-200' },
+  support_executive: { label: 'Support Executive', bg: 'bg-sky-50 text-sky-800 border-sky-200' },
 };
 
 export function CrmLayout() {
@@ -43,19 +43,17 @@ export function CrmLayout() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans text-slate-800">
       {/* Mobile Header Bar */}
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-slate-200 shadow-sm sticky top-0 z-30">
+      <div className="md:hidden flex items-center justify-between px-4 py-2.5 bg-white border-b border-slate-200 sticky top-0 z-30">
         <Link to="/dashboard" className="flex items-center gap-2.5">
-          <div className="size-8 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow">
-            IN
-          </div>
-          <span className="font-bold text-base tracking-tight text-slate-900">Invio CRM</span>
+          <img src="/appLogo.png" alt="Invio Logo" className="size-6 object-contain" />
+          <span className="font-bold text-sm tracking-tight text-slate-900">Invio CRM</span>
         </Link>
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-1.5 rounded-md text-slate-600 hover:bg-slate-100"
+          className="p-1 text-slate-600 hover:bg-slate-100 cursor-pointer"
           aria-label="Toggle Navigation"
         >
-          <svg className="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
           </svg>
         </button>
@@ -65,38 +63,36 @@ export function CrmLayout() {
       <aside
         className={`${
           mobileMenuOpen ? 'block' : 'hidden'
-        } md:block w-full md:w-64 bg-white border-r border-slate-200 flex-shrink-0 flex flex-col z-20`}
+        } md:block w-full md:w-60 bg-white border-r border-slate-200 flex-shrink-0 flex flex-col z-20`}
       >
         {/* Brand header */}
-        <Link to="/dashboard" className="p-5 border-b border-slate-100 hidden md:flex items-center gap-3 hover:bg-slate-50/50 transition">
-          <div className="size-9 rounded-xl bg-gradient-to-tr from-[#7C3AED] to-[#4F46E5] flex items-center justify-center text-white font-black text-base shadow-sm">
-            IN
-          </div>
-          <div>
-            <div className="font-bold text-base text-slate-900 tracking-tight flex items-center gap-1.5">
-              Invio CRM
-              <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">
+        <Link to="/dashboard" className="px-4 py-3.5 border-b border-slate-200 hidden md:flex items-center gap-2.5 hover:bg-slate-50 transition">
+          <img src="/appLogo.png" alt="Invio" className="size-7 object-contain" />
+          <div className="flex-1 min-w-0">
+            <div className="font-bold text-sm text-slate-900 tracking-tight flex items-center gap-1.5">
+              <span>Invio CRM</span>
+              <span className="text-[9px] uppercase font-bold tracking-wider px-1 py-0.5 bg-purple-50 text-purple-700 border border-purple-200">
                 Staff
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-medium">Customer & Discount Admin</p>
+            <p className="text-[11px] text-slate-500 truncate">Customer & Ops Portal</p>
           </div>
         </Link>
 
         {/* Staff badge card */}
-        <div className="p-4 mx-3 my-3 bg-slate-50/80 rounded-xl border border-slate-200/80">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Signed In As</span>
-            <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${currentRole.bg}`}>
+        <div className="p-3 mx-2.5 my-2.5 bg-slate-50 border border-slate-200">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Signed In</span>
+            <span className={`text-[10px] font-bold px-1.5 py-0.5 border ${currentRole.bg}`}>
               {currentRole.label}
             </span>
           </div>
-          <p className="font-semibold text-sm text-slate-900 truncate">{staff?.fullName || 'Staff Member'}</p>
-          <p className="text-xs text-slate-500 truncate">{staff?.email}</p>
+          <p className="font-semibold text-xs text-slate-900 truncate">{staff?.fullName || 'Staff Member'}</p>
+          <p className="text-[11px] text-slate-500 font-mono truncate">{staff?.email}</p>
         </div>
 
-        {/* Navigation items */}
-        <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
+        {/* Navigation items (tight list) */}
+        <nav className="flex-1 px-2.5 py-1 space-y-0.5 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -106,59 +102,59 @@ export function CrmLayout() {
                 end={item.end}
                 onClick={() => setMobileMenuOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                  `flex items-center gap-2.5 px-3 py-1.5 text-xs font-medium transition-colors ${
                     isActive
-                      ? 'bg-purple-50 text-purple-700 font-semibold shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                      ? 'bg-purple-50 text-purple-700 font-bold border-l-2 border-purple-600'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border-l-2 border-transparent'
                   }`
                 }
               >
-                <Icon className="size-5" />
-                <span>{item.label}</span>
+                <Icon className="size-4 flex-shrink-0" />
+                <span className="truncate">{item.label}</span>
               </NavLink>
             );
           })}
         </nav>
 
         {/* Bottom actions */}
-        <div className="p-3 border-t border-slate-100 space-y-1">
+        <div className="p-2.5 border-t border-slate-200 space-y-0.5">
           <a
             href="https://invio.timrio.com"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center justify-between px-3.5 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+            className="flex items-center justify-between px-3 py-1.5 text-[11px] font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
           >
-            <span>Visit Public Website</span>
+            <span>Public Website</span>
             <span>↗</span>
           </a>
           <button
             onClick={logout}
-            className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] font-semibold text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors cursor-pointer"
           >
-            <LogOutIcon className="size-4" />
-            <span>Sign Out Session</span>
+            <LogOutIcon className="size-3.5" />
+            <span>Sign Out</span>
           </button>
         </div>
       </aside>
 
-      {/* Main Content Area */}
+      {/* Main Content Area (tight, compact header & content padding) */}
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+        <header className="bg-white border-b border-slate-200 px-5 py-3 flex items-center justify-between sticky top-0 z-10">
           <div>
-            <h1 className="text-xl font-bold text-slate-900 capitalize">
+            <h1 className="text-base font-bold text-slate-900 capitalize tracking-tight">
               {location.pathname === '/' ? 'Dashboard' : location.pathname.slice(1).replace('-', ' ')}
             </h1>
-            <p className="text-xs text-slate-500">Authoritative real-time administrative operations</p>
+            <p className="text-[11px] text-slate-500">Internal operations & RBAC control center</p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="hidden sm:inline-block text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md font-mono">
+            <span className="hidden sm:inline-block text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 border border-slate-200 font-mono">
               crm.invio.timrio.com
             </span>
-            <div className="size-2 rounded-full bg-emerald-500 animate-pulse" title="System Operational" />
+            <div className="size-2 bg-emerald-500" title="System Operational" />
           </div>
         </header>
 
-        <div className="p-6 md:p-8 flex-1">
+        <div className="p-4 md:p-5 flex-1">
           <Outlet />
         </div>
       </main>

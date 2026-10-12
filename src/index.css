@@ -13,3 +13,19 @@ body {
   color: #1e293b;
   -webkit-font-smoothing: antialiased;
 }
+
+/* Strict sharp corners enforcement across CRM */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+}
+
+/* Tight compact professional UI styling for dense data presentation */
+table {
+  border-spacing: 0;
+}
+
+input, select, textarea, button {
+  border-radius: 0 !important;
+}

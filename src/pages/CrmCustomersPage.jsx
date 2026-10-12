@@ -143,7 +143,7 @@ export function CrmCustomersPage() {
           {isManagerOrAdmin && (
             <button
               onClick={exportCsv}
-              className="px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-xs transition cursor-pointer"
+              className="px-3.5 py-2  bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-xs transition cursor-pointer"
             >
               Export CSV ↓
             </button>
@@ -151,7 +151,7 @@ export function CrmCustomersPage() {
           <button
             onClick={fetchCustomers}
             disabled={loading}
-            className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50 cursor-pointer"
+            className="p-2  bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50 cursor-pointer"
             title="Refresh"
           >
             <RefreshCwIcon className={`size-4 ${loading ? 'animate-spin' : ''}`} />
@@ -160,21 +160,21 @@ export function CrmCustomersPage() {
       </div>
 
       {error && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
+        <div className="p-4  bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
           <AlertCircleIcon className="size-4 text-red-500 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Filter and Search Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200/90 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
+      <div className="bg-white p-4  border border-slate-200/90 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
         <form onSubmit={handleSearch} className="relative w-full md:w-80">
           <input
             type="text"
             placeholder="Search name, email, ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3.5 py-2 rounded-lg border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+            className="w-full pl-9 pr-3.5 py-2  border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
           />
           <SearchIcon className="size-4 text-slate-400 absolute left-3 top-2.5" />
         </form>
@@ -190,7 +190,7 @@ export function CrmCustomersPage() {
               setPlan(e.target.value);
               setPage(1);
             }}
-            className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white text-slate-700 focus:outline-none focus:border-purple-600"
+            className="px-3 py-1.5  border border-slate-200 text-xs bg-white text-slate-700 focus:outline-none focus:border-purple-600"
           >
             <option value="all">All Plans</option>
             <option value="free">Free Tier</option>
@@ -201,7 +201,7 @@ export function CrmCustomersPage() {
       </div>
 
       {/* Customers Table */}
-      <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs overflow-hidden">
+      <div className="bg-white  border border-slate-200/90 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
@@ -218,7 +218,7 @@ export function CrmCustomersPage() {
               {loading ? (
                 <tr>
                   <td colSpan="6" className="py-12 text-center text-slate-400">
-                    <div className="size-6 border-2 border-slate-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-2" />
+                    <div className="size-6 border-2 border-slate-200 border-t-purple-600  animate-spin mx-auto mb-2" />
                     Loading customer directory...
                   </td>
                 </tr>
@@ -240,7 +240,7 @@ export function CrmCustomersPage() {
                       <div className="text-slate-400 text-[10px]">{c.phone || 'No phone'}</div>
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className="capitalize font-semibold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full text-[11px] border border-purple-200">
+                      <span className="capitalize font-semibold text-purple-700 bg-purple-50 px-2.5 py-0.5  text-[11px] border border-purple-200">
                         {c.currentPlan}
                       </span>
                     </td>
@@ -252,10 +252,10 @@ export function CrmCustomersPage() {
                       )}
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${
+                      <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5  ${
                         c.emailVerified ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200'
                       }`}>
-                        <span className={`size-1.5 rounded-full ${c.emailVerified ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                        <span className={`size-1.5  ${c.emailVerified ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                         {c.emailVerified ? 'Verified' : 'Unverified'}
                       </span>
                     </td>
@@ -263,7 +263,7 @@ export function CrmCustomersPage() {
                       <div className="flex items-center justify-end gap-1.5">
                         <Link
                           to={`/customers/${encodeURIComponent(c.id)}`}
-                          className="px-2.5 py-1 rounded-md bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-xs transition"
+                          className="px-2.5 py-1  bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-xs transition"
                         >
                           Profile →
                         </Link>
@@ -271,7 +271,7 @@ export function CrmCustomersPage() {
                         {isManagerOrAdmin && (
                           <button
                             onClick={() => openEditModal(c)}
-                            className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition cursor-pointer"
+                            className="px-2.5 py-1  bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition cursor-pointer"
                             title="Edit customer account"
                           >
                             Edit
@@ -281,7 +281,7 @@ export function CrmCustomersPage() {
                         {isAdmin && (
                           <button
                             onClick={() => setDeletingCustomer(c)}
-                            className="px-2.5 py-1 rounded-md bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs transition cursor-pointer"
+                            className="px-2.5 py-1  bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs transition cursor-pointer"
                             title="Delete customer account"
                           >
                             Delete
@@ -306,14 +306,14 @@ export function CrmCustomersPage() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1 rounded border border-slate-200 disabled:opacity-40 hover:bg-slate-50 transition cursor-pointer"
+                className="px-3 py-1  border border-slate-200 disabled:opacity-40 hover:bg-slate-50 transition cursor-pointer"
               >
                 Previous
               </button>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1 rounded border border-slate-200 disabled:opacity-40 hover:bg-slate-50 transition cursor-pointer"
+                className="px-3 py-1  border border-slate-200 disabled:opacity-40 hover:bg-slate-50 transition cursor-pointer"
               >
                 Next
               </button>
@@ -325,7 +325,7 @@ export function CrmCustomersPage() {
       {/* Edit Customer Modal */}
       {editingCustomer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="bg-white  max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Update Customer Details</h3>
@@ -347,7 +347,7 @@ export function CrmCustomersPage() {
                     type="text"
                     value={editFirstName}
                     onChange={(e) => setEditFirstName(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                    className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                   />
                 </div>
                 <div>
@@ -356,7 +356,7 @@ export function CrmCustomersPage() {
                     type="text"
                     value={editLastName}
                     onChange={(e) => setEditLastName(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                    className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                   />
                 </div>
               </div>
@@ -368,7 +368,7 @@ export function CrmCustomersPage() {
                   value={editEmail}
                   onChange={(e) => setEditEmail(e.target.value)}
                   required
-                  className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                  className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                 />
               </div>
 
@@ -379,7 +379,7 @@ export function CrmCustomersPage() {
                   value={editBusinessName}
                   onChange={(e) => setEditBusinessName(e.target.value)}
                   placeholder="e.g. Acme Studio"
-                  className="w-full p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                  className="w-full p-2.5  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                 />
               </div>
 
@@ -389,7 +389,7 @@ export function CrmCustomersPage() {
                   <select
                     value={editPlan}
                     onChange={(e) => setEditPlan(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
+                    className="w-full p-2.5  border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
                   >
                     <option value="free">Free Tier</option>
                     <option value="plus">Plus Plan</option>
@@ -401,7 +401,7 @@ export function CrmCustomersPage() {
                   <select
                     value={editEmailVerified ? 'verified' : 'unverified'}
                     onChange={(e) => setEditEmailVerified(e.target.value === 'verified')}
-                    className="w-full p-2.5 rounded-lg border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
+                    className="w-full p-2.5  border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
                   >
                     <option value="verified">Verified</option>
                     <option value="unverified">Unverified</option>
@@ -413,14 +413,14 @@ export function CrmCustomersPage() {
                 <button
                   type="button"
                   onClick={() => setEditingCustomer(null)}
-                  className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                  className="px-3.5 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={editLoading}
-                  className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
+                  className="px-4 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
                 >
                   {editLoading ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -433,9 +433,9 @@ export function CrmCustomersPage() {
       {/* Delete Customer Confirmation Modal (Admin only) */}
       {deletingCustomer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-red-100 space-y-4">
+          <div className="bg-white  max-w-sm w-full p-6 shadow-xl border border-red-100 space-y-4">
             <div className="flex items-center gap-3 text-red-600">
-              <div className="size-10 rounded-full bg-red-100 flex items-center justify-center">
+              <div className="size-10  bg-red-100 flex items-center justify-center">
                 <AlertCircleIcon className="size-5" />
               </div>
               <div>
@@ -454,7 +454,7 @@ export function CrmCustomersPage() {
               <button
                 type="button"
                 onClick={() => setDeletingCustomer(null)}
-                className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                className="px-3.5 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -462,7 +462,7 @@ export function CrmCustomersPage() {
                 type="button"
                 onClick={handleDeleteCustomer}
                 disabled={deleteLoading}
-                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
+                className="px-4 py-2  bg-red-600 hover:bg-red-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
               >
                 {deleteLoading ? 'Deleting...' : 'Delete Permanently'}
               </button>

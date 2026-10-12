@@ -74,7 +74,7 @@ export function CrmTicketDetailPage() {
   if (loading) {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-slate-400">
-        <div className="size-8 border-2 border-slate-200 border-t-purple-600 rounded-full animate-spin mb-3" />
+        <div className="size-8 border-2 border-slate-200 border-t-purple-600  animate-spin mb-3" />
         <p className="text-xs">Loading support thread...</p>
       </div>
     );
@@ -82,7 +82,7 @@ export function CrmTicketDetailPage() {
 
   if (error || !ticketData) {
     return (
-      <div className="p-6 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700">
+      <div className="p-6  bg-red-50 border border-red-200 text-xs text-red-700">
         <h3 className="font-bold mb-1">Ticket Not Found</h3>
         <p>{error || 'The requested ticket could not be found.'}</p>
         <Link to="/tickets" className="mt-3 inline-block font-semibold text-purple-700">
@@ -108,13 +108,13 @@ export function CrmTicketDetailPage() {
       </div>
 
       {/* Ticket Header Banner */}
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="bg-white p-6  border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
             <span className="font-mono font-bold text-purple-700 text-sm">
               {ticket.ticketNumber}
             </span>
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+            <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
               ticket.status === 'open'
                 ? 'bg-blue-100 text-blue-800'
                 : ticket.status === 'resolved'
@@ -123,7 +123,7 @@ export function CrmTicketDetailPage() {
             }`}>
               {ticket.status.replace('_', ' ')}
             </span>
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+            <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
               ticket.priority === 'urgent' ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-700'
             }`}>
               {ticket.priority} Priority
@@ -152,7 +152,7 @@ export function CrmTicketDetailPage() {
           <select
             value={newStatus}
             onChange={(e) => setNewStatus(e.target.value)}
-            className="p-2 rounded-lg border border-slate-200 bg-white font-medium text-slate-800"
+            className="p-2  border border-slate-200 bg-white font-medium text-slate-800"
           >
             <option value="open">Open</option>
             <option value="in_progress">In Progress</option>
@@ -164,7 +164,7 @@ export function CrmTicketDetailPage() {
           <button
             type="submit"
             disabled={statusLoading}
-            className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold transition"
+            className="px-3.5 py-2  bg-slate-900 hover:bg-slate-800 text-white font-semibold transition"
           >
             {statusLoading ? '...' : 'Update'}
           </button>
@@ -172,14 +172,14 @@ export function CrmTicketDetailPage() {
       </div>
 
       {ticket.resolution && (
-        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
+        <div className="p-4  bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
           <strong className="block font-bold mb-1">Final Resolution:</strong>
           <p>{ticket.resolution}</p>
         </div>
       )}
 
       {/* Discussion Thread */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-6 space-y-6">
+      <div className="bg-white  border border-slate-200 shadow-xs p-6 space-y-6">
         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 border-b border-slate-100 pb-3">
           Discussion Thread ({comments.length} message{comments.length === 1 ? '' : 's'})
         </h3>
@@ -188,7 +188,7 @@ export function CrmTicketDetailPage() {
           {comments.map((comment) => (
             <div
               key={comment.id}
-              className={`p-4 rounded-xl border text-xs space-y-1.5 ${
+              className={`p-4  border text-xs space-y-1.5 ${
                 comment.isInternal
                   ? 'bg-amber-50/70 border-amber-200 text-amber-950'
                   : 'bg-slate-50/80 border-slate-200 text-slate-800'
@@ -198,7 +198,7 @@ export function CrmTicketDetailPage() {
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-slate-900">{comment.authorName}</span>
                   {comment.isInternal ? (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-200 text-amber-800 uppercase tracking-wider">
+                    <span className="text-[10px] font-bold px-2 py-0.5  bg-amber-200 text-amber-800 uppercase tracking-wider">
                       🔒 Internal Note
                     </span>
                   ) : (
@@ -224,7 +224,7 @@ export function CrmTicketDetailPage() {
                 id="internal-toggle"
                 checked={isInternal}
                 onChange={(e) => setIsInternal(e.target.checked)}
-                className="rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                className=" border-slate-300 text-amber-600 focus:ring-amber-500"
               />
               <label htmlFor="internal-toggle" className="text-amber-800 font-semibold cursor-pointer">
                 🔒 Post as Internal Staff Note
@@ -242,7 +242,7 @@ export function CrmTicketDetailPage() {
                 : 'Write a response to the customer...'
             }
             required
-            className={`w-full p-3 rounded-lg border text-xs focus:outline-none transition ${
+            className={`w-full p-3  border text-xs focus:outline-none transition ${
               isInternal
                 ? 'bg-amber-50/30 border-amber-300 focus:border-amber-500'
                 : 'border-slate-200 focus:border-purple-600'
@@ -253,7 +253,7 @@ export function CrmTicketDetailPage() {
             <button
               type="submit"
               disabled={commentLoading}
-              className={`px-4 py-2 rounded-lg font-semibold text-white shadow-xs transition disabled:opacity-50 ${
+              className={`px-4 py-2  font-semibold text-white shadow-xs transition disabled:opacity-50 ${
                 isInternal
                   ? 'bg-amber-600 hover:bg-amber-700'
                   : 'bg-purple-600 hover:bg-purple-700'

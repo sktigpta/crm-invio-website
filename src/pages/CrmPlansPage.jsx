@@ -69,14 +69,14 @@ export function CrmPlansPage() {
         {planDefinitions.map((plan) => (
           <div
             key={plan.id}
-            className={`bg-white rounded-2xl p-6 border transition flex flex-col justify-between shadow-xs ${
+            className={`bg-white  p-6 border transition flex flex-col justify-between shadow-xs ${
               plan.popular ? 'border-purple-300 ring-2 ring-purple-600/10' : 'border-slate-200'
             }`}
           >
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="font-bold text-base text-slate-900">{plan.name}</span>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                   plan.popular ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-700'
                 }`}>
                   {plan.badge}

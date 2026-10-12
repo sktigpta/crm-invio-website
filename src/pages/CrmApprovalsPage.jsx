@@ -64,7 +64,7 @@ export function CrmApprovalsPage() {
         <button
           onClick={fetchRequests}
           disabled={loading}
-          className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50"
+          className="p-2  bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50"
           title="Refresh"
         >
           <RefreshCwIcon className={`size-4 ${loading ? 'animate-spin' : ''}`} />
@@ -72,7 +72,7 @@ export function CrmApprovalsPage() {
       </div>
 
       {/* Anti-self-approval rule notice */}
-      <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
+      <div className="p-4  bg-amber-50 border border-amber-200 text-xs text-amber-900">
         <h4 className="font-bold flex items-center gap-1.5 mb-1">
           <span>⚠️ Anti-Self-Approval Enforcement</span>
         </h4>
@@ -82,19 +82,19 @@ export function CrmApprovalsPage() {
       </div>
 
       {error && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
+        <div className="p-4  bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
           <AlertCircleIcon className="size-4 text-red-500 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 bg-white p-2.5 rounded-xl border border-slate-200 shadow-xs">
+      <div className="flex items-center gap-2 bg-white p-2.5  border border-slate-200 shadow-xs">
         {['pending', 'approved', 'rejected', 'all'].map((st) => (
           <button
             key={st}
             onClick={() => setStatus(st)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition ${
+            className={`px-3 py-1.5  text-xs font-semibold capitalize transition ${
               status === st
                 ? 'bg-purple-600 text-white'
                 : 'text-slate-600 hover:bg-slate-100'
@@ -106,7 +106,7 @@ export function CrmApprovalsPage() {
       </div>
 
       {/* Approvals Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
@@ -124,7 +124,7 @@ export function CrmApprovalsPage() {
               {loading ? (
                 <tr>
                   <td colSpan="7" className="py-12 text-center text-slate-400">
-                    <div className="size-6 border-2 border-slate-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-2" />
+                    <div className="size-6 border-2 border-slate-200 border-t-purple-600  animate-spin mx-auto mb-2" />
                     Loading approval requests...
                   </td>
                 </tr>
@@ -156,7 +156,7 @@ export function CrmApprovalsPage() {
                         {r.reason}
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                        <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                           r.status === 'pending'
                             ? 'bg-amber-100 text-amber-800'
                             : r.status === 'approved'
@@ -186,7 +186,7 @@ export function CrmApprovalsPage() {
                               setDecision('approved');
                               setComment('');
                             }}
-                            className="px-3 py-1 rounded-md bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition"
+                            className="px-3 py-1  bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition"
                           >
                             Review Request
                           </button>
@@ -206,7 +206,7 @@ export function CrmApprovalsPage() {
       {/* Review Modal */}
       {selectedRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="bg-white  max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Review Discount Request</h3>
               <button
@@ -219,12 +219,12 @@ export function CrmApprovalsPage() {
 
             {/* Anti-self-approval rule warning */}
             {staff?.id === selectedRequest.requestedByStaffId ? (
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 font-semibold">
+              <div className="p-3  bg-red-50 border border-red-200 text-xs text-red-700 font-semibold">
                 ⚠️ Anti-Self-Approval Prohibited: You created this discount request. You cannot approve or reject your own request.
               </div>
             ) : null}
 
-            <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs space-y-1">
+            <div className="bg-slate-50 p-3  border border-slate-100 text-xs space-y-1">
               <div><strong>Customer:</strong> {selectedRequest.customerEmail}</div>
               <div><strong>Discount:</strong> {selectedRequest.discountValue}% ({selectedRequest.applicablePlan} Plan)</div>
               <div><strong>Requested By:</strong> {selectedRequest.requestedByName}</div>
@@ -238,7 +238,7 @@ export function CrmApprovalsPage() {
                   <button
                     type="button"
                     onClick={() => setDecision('approved')}
-                    className={`py-2 px-3 rounded-lg font-bold border transition ${
+                    className={`py-2 px-3  font-bold border transition ${
                       decision === 'approved'
                         ? 'bg-emerald-600 text-white border-emerald-600'
                         : 'border-slate-200 text-slate-700 hover:bg-slate-50'
@@ -249,7 +249,7 @@ export function CrmApprovalsPage() {
                   <button
                     type="button"
                     onClick={() => setDecision('rejected')}
-                    className={`py-2 px-3 rounded-lg font-bold border transition ${
+                    className={`py-2 px-3  font-bold border transition ${
                       decision === 'rejected'
                         ? 'bg-red-600 text-white border-red-600'
                         : 'border-slate-200 text-slate-700 hover:bg-slate-50'
@@ -269,7 +269,7 @@ export function CrmApprovalsPage() {
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   placeholder="e.g. Approved per annual contract terms..."
-                  className="w-full p-2.5 rounded-lg border border-slate-200"
+                  className="w-full p-2.5  border border-slate-200"
                 />
               </div>
 
@@ -277,14 +277,14 @@ export function CrmApprovalsPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedRequest(null)}
-                  className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
+                  className="px-3.5 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={reviewLoading || staff?.id === selectedRequest.requestedByStaffId}
-                  className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50"
+                  className="px-4 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50"
                 >
                   {reviewLoading ? 'Submitting...' : 'Confirm Decision'}
                 </button>

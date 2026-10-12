@@ -77,7 +77,7 @@ export function CrmTicketsPage() {
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-3.5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition flex items-center gap-1.5"
+            className="px-3.5 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition flex items-center gap-1.5"
           >
             <PlusIcon className="size-4" />
             <span>Open Ticket</span>
@@ -85,7 +85,7 @@ export function CrmTicketsPage() {
           <button
             onClick={fetchTickets}
             disabled={loading}
-            className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50"
+            className="p-2  bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50"
             title="Refresh"
           >
             <RefreshCwIcon className={`size-4 ${loading ? 'animate-spin' : ''}`} />
@@ -94,21 +94,21 @@ export function CrmTicketsPage() {
       </div>
 
       {error && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
+        <div className="p-4  bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
           <AlertCircleIcon className="size-4 text-red-500 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between text-xs">
+      <div className="bg-white p-4  border border-slate-200 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between text-xs">
         <div className="relative w-full md:w-72">
           <input
             type="text"
             placeholder="Search tickets, subject, email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3.5 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-purple-600"
+            className="w-full pl-9 pr-3.5 py-2  border border-slate-200 focus:outline-none focus:border-purple-600"
           />
           <SearchIcon className="size-4 text-slate-400 absolute left-3 top-2.5" />
         </div>
@@ -118,7 +118,7 @@ export function CrmTicketsPage() {
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700"
+              className="px-3 py-1.5  border border-slate-200 bg-white text-slate-700"
             >
               <option value="all">All Statuses</option>
               <option value="open">Open</option>
@@ -134,7 +134,7 @@ export function CrmTicketsPage() {
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700"
+              className="px-3 py-1.5  border border-slate-200 bg-white text-slate-700"
             >
               <option value="all">All Priorities</option>
               <option value="urgent">Urgent</option>
@@ -148,7 +148,7 @@ export function CrmTicketsPage() {
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700"
+              className="px-3 py-1.5  border border-slate-200 bg-white text-slate-700"
             >
               <option value="all">All Categories</option>
               <option value="billing">Billing</option>
@@ -162,7 +162,7 @@ export function CrmTicketsPage() {
       </div>
 
       {/* Tickets Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
@@ -180,7 +180,7 @@ export function CrmTicketsPage() {
               {loading ? (
                 <tr>
                   <td colSpan="7" className="py-12 text-center text-slate-400">
-                    <div className="size-6 border-2 border-slate-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-2" />
+                    <div className="size-6 border-2 border-slate-200 border-t-purple-600  animate-spin mx-auto mb-2" />
                     Loading support tickets...
                   </td>
                 </tr>
@@ -205,7 +205,7 @@ export function CrmTicketsPage() {
                       {t.category}
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                      <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                         t.priority === 'urgent'
                           ? 'bg-red-100 text-red-800'
                           : t.priority === 'high'
@@ -216,7 +216,7 @@ export function CrmTicketsPage() {
                       </span>
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                      <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                         t.status === 'open'
                           ? 'bg-blue-100 text-blue-800'
                           : t.status === 'resolved'
@@ -234,7 +234,7 @@ export function CrmTicketsPage() {
                     <td className="py-3.5 px-4 text-right">
                       <Link
                         to={`/tickets/${encodeURIComponent(t.id)}`}
-                        className="inline-flex px-3 py-1 rounded-md bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold transition"
+                        className="inline-flex px-3 py-1  bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold transition"
                       >
                         Discussion →
                       </Link>
@@ -250,7 +250,7 @@ export function CrmTicketsPage() {
       {/* Create Ticket Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="bg-white  max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Open Support Ticket</h3>
               <button
@@ -270,7 +270,7 @@ export function CrmTicketsPage() {
                   onChange={(e) => setTicketEmail(e.target.value)}
                   placeholder="customer@domain.com"
                   required
-                  className="w-full p-2.5 rounded-lg border border-slate-200"
+                  className="w-full p-2.5  border border-slate-200"
                 />
               </div>
 
@@ -282,7 +282,7 @@ export function CrmTicketsPage() {
                   onChange={(e) => setTicketSubject(e.target.value)}
                   placeholder="Brief summary of the inquiry or issue"
                   required
-                  className="w-full p-2.5 rounded-lg border border-slate-200"
+                  className="w-full p-2.5  border border-slate-200"
                 />
               </div>
 
@@ -292,7 +292,7 @@ export function CrmTicketsPage() {
                   <select
                     value={ticketCategory}
                     onChange={(e) => setTicketCategory(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-slate-200 bg-white"
+                    className="w-full p-2.5  border border-slate-200 bg-white"
                   >
                     <option value="billing">Billing & Payments</option>
                     <option value="technical">Technical Support</option>
@@ -306,7 +306,7 @@ export function CrmTicketsPage() {
                   <select
                     value={ticketPriority}
                     onChange={(e) => setTicketPriority(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-slate-200 bg-white"
+                    className="w-full p-2.5  border border-slate-200 bg-white"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -324,7 +324,7 @@ export function CrmTicketsPage() {
                   onChange={(e) => setTicketMessage(e.target.value)}
                   placeholder="Describe the issue, reproduction steps, or request details..."
                   required
-                  className="w-full p-2.5 rounded-lg border border-slate-200"
+                  className="w-full p-2.5  border border-slate-200"
                 />
               </div>
 
@@ -332,14 +332,14 @@ export function CrmTicketsPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
+                  className="px-3.5 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createLoading}
-                  className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50"
+                  className="px-4 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50"
                 >
                   {createLoading ? 'Submitting...' : 'Open Ticket'}
                 </button>

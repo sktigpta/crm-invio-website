@@ -129,7 +129,7 @@ export function CrmCouponsPage() {
           {isManagerOrAdmin && (
             <button
               onClick={() => setShowCreateModal(true)}
-              className="px-3.5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition flex items-center gap-1.5"
+              className="px-3.5 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition flex items-center gap-1.5"
             >
               <PlusIcon className="size-4" />
               <span>Create Coupon</span>
@@ -138,7 +138,7 @@ export function CrmCouponsPage() {
           <button
             onClick={fetchCoupons}
             disabled={loading}
-            className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50"
+            className="p-2  bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-xs transition disabled:opacity-50"
             title="Refresh"
           >
             <RefreshCwIcon className={`size-4 ${loading ? 'animate-spin' : ''}`} />
@@ -147,14 +147,14 @@ export function CrmCouponsPage() {
       </div>
 
       {error && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
+        <div className="p-4  bg-red-50 border border-red-200 text-xs font-medium text-red-700 flex items-center gap-2">
           <AlertCircleIcon className="size-4 text-red-500 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Live Coupon Testing Sandbox */}
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3">
+      <div className="bg-white p-5  border border-slate-200 shadow-xs space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
             Authoritative Server-Side Validation Sandbox
@@ -171,7 +171,7 @@ export function CrmCouponsPage() {
               value={testCode}
               onChange={(e) => setTestCode(e.target.value.toUpperCase())}
               required
-              className="w-full p-2 rounded-lg border border-slate-200 uppercase font-mono font-bold"
+              className="w-full p-2  border border-slate-200 uppercase font-mono font-bold"
             />
           </div>
           <div>
@@ -180,7 +180,7 @@ export function CrmCouponsPage() {
               type="number"
               value={testAmount}
               onChange={(e) => setTestAmount(e.target.value)}
-              className="w-full p-2 rounded-lg border border-slate-200 font-mono"
+              className="w-full p-2  border border-slate-200 font-mono"
             />
           </div>
           <div>
@@ -188,7 +188,7 @@ export function CrmCouponsPage() {
             <select
               value={testPlan}
               onChange={(e) => setTestPlan(e.target.value)}
-              className="w-full p-2 rounded-lg border border-slate-200 bg-white"
+              className="w-full p-2  border border-slate-200 bg-white"
             >
               <option value="plus">Plus Plan</option>
               <option value="pro">Pro Plan</option>
@@ -198,7 +198,7 @@ export function CrmCouponsPage() {
             <button
               type="submit"
               disabled={validationLoading}
-              className="w-full py-2 px-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold transition"
+              className="w-full py-2 px-3  bg-slate-900 hover:bg-slate-800 text-white font-semibold transition"
             >
               {validationLoading ? 'Validating...' : 'Test Eligibility →'}
             </button>
@@ -206,7 +206,7 @@ export function CrmCouponsPage() {
         </form>
 
         {validationResult && (
-          <div className={`p-3 rounded-lg text-xs font-medium border ${
+          <div className={`p-3  text-xs font-medium border ${
             validationResult.valid
               ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
               : 'bg-red-50 text-red-800 border-red-200'
@@ -224,7 +224,7 @@ export function CrmCouponsPage() {
       </div>
 
       {/* Coupons Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-white  border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
@@ -242,7 +242,7 @@ export function CrmCouponsPage() {
               {loading ? (
                 <tr>
                   <td colSpan="7" className="py-12 text-center text-slate-400">
-                    <div className="size-6 border-2 border-slate-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-2" />
+                    <div className="size-6 border-2 border-slate-200 border-t-purple-600  animate-spin mx-auto mb-2" />
                     Loading coupons...
                   </td>
                 </tr>
@@ -274,7 +274,7 @@ export function CrmCouponsPage() {
                       </span>
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                      <span className={`text-[10px] font-bold px-2 py-0.5  uppercase ${
                         c.status === 'active'
                           ? 'bg-emerald-100 text-emerald-800'
                           : 'bg-slate-100 text-slate-700'
@@ -289,7 +289,7 @@ export function CrmCouponsPage() {
                       <td className="py-3.5 px-4 text-right">
                         <button
                           onClick={() => handleToggleStatus(c)}
-                          className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
+                          className={`px-3 py-1  text-xs font-semibold transition ${
                             c.status === 'active'
                               ? 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                               : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800'
@@ -310,7 +310,7 @@ export function CrmCouponsPage() {
       {/* Create Coupon Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white  max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Create New Coupon Code</h3>
               <button
@@ -331,7 +331,7 @@ export function CrmCouponsPage() {
                     value={createCode}
                     onChange={(e) => setCreateCode(e.target.value.toUpperCase())}
                     required
-                    className="w-full p-2.5 rounded-lg border border-slate-200 uppercase font-mono font-bold"
+                    className="w-full p-2.5  border border-slate-200 uppercase font-mono font-bold"
                   />
                 </div>
                 <div>
@@ -339,7 +339,7 @@ export function CrmCouponsPage() {
                   <select
                     value={createType}
                     onChange={(e) => setCreateType(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-slate-200 bg-white"
+                    className="w-full p-2.5  border border-slate-200 bg-white"
                   >
                     <option value="percentage">Percentage (%)</option>
                     <option value="fixed">Fixed Amount (₹)</option>
@@ -356,7 +356,7 @@ export function CrmCouponsPage() {
                   value={createValue}
                   onChange={(e) => setCreateValue(e.target.value)}
                   required
-                  className="w-full p-2.5 rounded-lg border border-slate-200 font-bold"
+                  className="w-full p-2.5  border border-slate-200 font-bold"
                 />
               </div>
 
@@ -367,7 +367,7 @@ export function CrmCouponsPage() {
                   placeholder="e.g. 15% discount for festival campaign"
                   value={createDesc}
                   onChange={(e) => setCreateDesc(e.target.value)}
-                  className="w-full p-2.5 rounded-lg border border-slate-200"
+                  className="w-full p-2.5  border border-slate-200"
                 />
               </div>
 
@@ -377,7 +377,7 @@ export function CrmCouponsPage() {
                   <select
                     value={createPlan}
                     onChange={(e) => setCreatePlan(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-slate-200 bg-white"
+                    className="w-full p-2.5  border border-slate-200 bg-white"
                   >
                     <option value="all">All Plans</option>
                     <option value="plus">Plus Plan</option>
@@ -389,7 +389,7 @@ export function CrmCouponsPage() {
                   <select
                     value={createRegion}
                     onChange={(e) => setCreateRegion(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-slate-200 bg-white"
+                    className="w-full p-2.5  border border-slate-200 bg-white"
                   >
                     <option value="all">Global (All Regions)</option>
                     <option value="IN">India (IN)</option>
@@ -406,7 +406,7 @@ export function CrmCouponsPage() {
                     min="0"
                     value={createMinPurchase}
                     onChange={(e) => setCreateMinPurchase(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-slate-200"
+                    className="w-full p-2.5  border border-slate-200"
                   />
                 </div>
                 <div>
@@ -416,7 +416,7 @@ export function CrmCouponsPage() {
                     min="1"
                     value={createExpiryDays}
                     onChange={(e) => setCreateExpiryDays(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-slate-200"
+                    className="w-full p-2.5  border border-slate-200"
                   />
                 </div>
               </div>
@@ -427,7 +427,7 @@ export function CrmCouponsPage() {
                   id="first-time-only"
                   checked={createFirstTimeOnly}
                   onChange={(e) => setCreateFirstTimeOnly(e.target.checked)}
-                  className="rounded border-slate-300 text-purple-600 focus:ring-purple-500"
+                  className=" border-slate-300 text-purple-600 focus:ring-purple-500"
                 />
                 <label htmlFor="first-time-only" className="text-slate-700 select-none">
                   Exclusively for first-time customers
@@ -438,14 +438,14 @@ export function CrmCouponsPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
+                  className="px-3.5 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createLoading}
-                  className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50"
+                  className="px-4 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50"
                 >
                   {createLoading ? 'Creating...' : 'Create & Publish Coupon'}
                 </button>

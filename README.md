@@ -1,10 +1,10 @@
-# Invio CRM (`crm.invio.timrio.com`)
+# Invio CRM (`crm.inv.timrio.com`)
 
 Production-ready internal CRM, Customer Directory, Support Ticket Management & Discount Administration Web Portal for Invio (Timrio).
 
 ## Architecture & Overview
 
-- **Domain:** `https://crm.invio.timrio.com`
+- **Domain:** `https://crm.inv.timrio.com`
 - **Backend API:** Connects securely to Invio PostgreSQL cloud backend via `https://api.invio.timrio.com/api/crm/*`
 - **Internal Only:** Configured with `noindex, nofollow` and `robots.txt Disallow: /` (no SEO required).
 - **Security & RBAC:** Centralized role-based access control with server-side enforcement across 4 internal roles:

@@ -160,6 +160,7 @@ export function CrmBroadcastsPage() {
           actionUrl: middleCard.actionUrl,
           htmlContent: middleCard.htmlContent,
           active: middleCard.active,
+          createNewVersion: true,
         };
         const res = await crmApi.updateMiddleCard(payload);
         if (res && res.success) {
@@ -178,6 +179,7 @@ export function CrmBroadcastsPage() {
           actionLabel: noticeCard.actionLabel,
           actionUrl: noticeCard.actionUrl,
           active: noticeCard.active,
+          createNewVersion: true,
         };
         const res = await crmApi.updateNotificationCard(payload);
         if (res && res.success) {
@@ -234,6 +236,7 @@ export function CrmBroadcastsPage() {
           flex-direction: column;
           width: min(520px, 100%);
           min-width: 0;
+          font-family: 'Avenir Next', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
           border-radius: 20px !important;
           overflow: hidden;
           box-shadow: 0 24px 64px rgba(15, 23, 42, 0.28) !important;
@@ -287,6 +290,7 @@ export function CrmBroadcastsPage() {
           display: inline-flex;
           align-items: center;
           gap: 5px;
+          font-family: 'Avenir Next', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
           font-size: 11px;
           font-weight: 700;
           letter-spacing: 0.05em;
@@ -301,6 +305,7 @@ export function CrmBroadcastsPage() {
 
         .desktop-card-title {
           margin: 0 0 6px;
+          font-family: Georgia, 'Times New Roman', serif !important;
           font-size: 21px;
           font-weight: 600;
           line-height: 1.25;
@@ -311,6 +316,7 @@ export function CrmBroadcastsPage() {
 
         .desktop-card-subtitle {
           margin: 0;
+          font-family: 'Avenir Next', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
           font-size: 12.5px;
           line-height: 1.45;
           color: rgba(255, 255, 255, 0.94);
@@ -385,6 +391,7 @@ export function CrmBroadcastsPage() {
         .desktop-html-container h2,
         .desktop-html-container h3,
         .desktop-html-container h4 {
+          font-family: Georgia, 'Times New Roman', serif !important;
           margin: 0 0 8px;
           font-weight: 700;
           line-height: 1.3;
@@ -453,6 +460,7 @@ export function CrmBroadcastsPage() {
           border: none;
           border-radius: 8px !important;
           padding: 11px 20px;
+          font-family: 'Avenir Next', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
           font-size: 13.5px;
           font-weight: 600;
           letter-spacing: 0.01em;
@@ -470,6 +478,7 @@ export function CrmBroadcastsPage() {
           background: none;
           border: none;
           color: #94a3b8;
+          font-family: 'Avenir Next', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
           font-size: 11.5px;
           cursor: pointer;
           padding: 4px;
@@ -484,6 +493,7 @@ export function CrmBroadcastsPage() {
         .desktop-notice-card {
           width: 320px;
           max-width: 100%;
+          font-family: 'Avenir Next', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
           border-radius: 14px !important;
           padding: 13px 15px;
           display: flex;
@@ -556,6 +566,7 @@ export function CrmBroadcastsPage() {
           display: inline-flex;
           align-items: center;
           gap: 6px;
+          font-family: 'Avenir Next', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
           font-size: 11.5px;
           font-weight: 600;
           color: #8646f4;

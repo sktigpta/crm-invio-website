@@ -14,6 +14,7 @@ import {
   LogOutIcon,
   BugIcon,
   MailIcon,
+  BroadcastIcon,
 } from './CrmIcons';
 
 const roleMeta = {
@@ -38,6 +39,7 @@ export function CrmLayout() {
     { to: '/bugs', label: 'Bug Reports', icon: BugIcon },
     ...(isManagerOrAdmin ? [{ to: '/contacts', label: 'Contact Messages', icon: MailIcon }] : []),
     { to: '/plans', label: 'Subscription Plans', icon: LayersIcon },
+    ...(isManagerOrAdmin ? [{ to: '/broadcasts', label: 'In-App Cards & Broadcasts', icon: BroadcastIcon }] : []),
     ...(isManagerOrAdmin ? [{ to: '/staff', label: 'Staff Management', icon: ShieldCheckIcon }] : []),
     ...(isAdmin ? [{ to: '/audit-logs', label: 'Audit Logs', icon: FileTextIcon }] : []),
   ];

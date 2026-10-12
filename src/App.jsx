@@ -19,6 +19,7 @@ import { CrmStaffPage } from './pages/CrmStaffPage';
 import { CrmAuditLogsPage } from './pages/CrmAuditLogsPage';
 import { CrmBugsPage } from './pages/CrmBugsPage';
 import { CrmContactsPage } from './pages/CrmContactsPage';
+import { CrmBroadcastsPage } from './pages/CrmBroadcastsPage';
 
 export function App() {
   return (
@@ -51,6 +52,14 @@ export function App() {
           <Route path="/bugs" element={<CrmBugsPage />} />
           <Route path="/contacts" element={<CrmContactsPage />} />
           <Route path="/plans" element={<CrmPlansPage />} />
+          <Route
+            path="/broadcasts"
+            element={
+              <CrmProtectedRoute requiredRoles={['admin', 'manager']}>
+                <CrmBroadcastsPage />
+              </CrmProtectedRoute>
+            }
+          />
           <Route
             path="/staff"
             element={

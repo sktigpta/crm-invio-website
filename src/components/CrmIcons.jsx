@@ -18,6 +18,7 @@ import {
   FiAlertCircle,
   FiTool,
   FiMail,
+  FiRadio,
 } from 'react-icons/fi';
 
 export function DashboardIcon({ className = 'size-4' }) {
@@ -90,4 +91,8 @@ export function BugIcon({ className = 'size-4' }) {
 
 export function MailIcon({ className = 'size-4' }) {
   return <FiMail className={className} />;
+}
+
+export function BroadcastIcon({ className = 'size-4' }) {
+  return <FiRadio className={className} />;
 }

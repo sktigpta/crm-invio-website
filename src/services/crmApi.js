@@ -451,4 +451,23 @@ export const crmApi = {
     });
     return request(`/audit-logs?${params.toString()}`);
   },
+
+  // 13. In-App Broadcasts & Cards (Center Middle Card and Bottom-Right Notification Card)
+  async getBroadcasts() {
+    return request('/broadcasts');
+  },
+
+  async updateMiddleCard(payload) {
+    return request('/broadcasts/middle-card', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateNotificationCard(payload) {
+    return request('/broadcasts/notification-card', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
 };

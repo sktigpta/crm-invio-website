@@ -101,22 +101,20 @@ export function CrmLoginPage() {
   // Forced password-change screen for temporary-password holders
   if (isAuthenticated && (mustChangePassword || forceChange)) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-          <Link to="/" title="Invio Home" className="inline-flex items-center gap-2.5 mb-3 group">
-            <img src="/appLogo.png" alt="Invio Logo" className="size-9 object-contain" />
-            <span className="text-base font-bold text-slate-900 tracking-tight">Invio CRM</span>
+      <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 relative">
+        {/* Top Left Logo Only */}
+        <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
+          <Link to="/" title="Invio" className="inline-flex items-center hover:opacity-85 transition">
+            <img src="/appLogo.png" alt="Invio" className="size-6 object-contain" />
           </Link>
-          <div className="inline-block mx-auto mb-2">
-            <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 uppercase tracking-wider">
-              Temporary Credentials Detected
-            </span>
-          </div>
+        </div>
+
+        <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
           <h2 className="text-xl font-bold tracking-tight text-slate-900">
             Set Your Permanent Password
           </h2>
-          <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
-            Your administrator created this account with temporary access. Choose a secure permanent password to proceed.
+          <p className="mt-1.5 text-xs text-slate-500 max-w-sm mx-auto">
+            Your account was initialized with temporary access. Choose a secure permanent password to continue.
           </p>
         </div>
 
@@ -217,22 +215,20 @@ export function CrmLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8">
-      {/* Header & Logo */}
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <Link to="/" title="Invio Home" className="inline-flex items-center gap-2.5 mb-3 group">
-          <img src="/appLogo.png" alt="Invio Logo" className="size-9 object-contain group-hover:scale-105 transition-transform" />
-          <span className="text-base font-bold text-slate-900 tracking-tight">Invio CRM</span>
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 relative">
+      {/* Top Left Logo Only */}
+      <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
+        <Link to="/" title="Invio" className="inline-flex items-center hover:opacity-85 transition">
+          <img src="/appLogo.png" alt="Invio" className="size-6 object-contain" />
         </Link>
-        <div className="inline-block mx-auto mb-2">
-          <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200 uppercase tracking-wider">
-            Staff Portal
-          </span>
-        </div>
+      </div>
+
+      {/* Header */}
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <h2 className="text-xl font-bold tracking-tight text-slate-900">
-          Sign In to Invio CRM
+          Sign In
         </h2>
-        <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
+        <p className="mt-1.5 text-xs text-slate-500 max-w-sm mx-auto">
           Authorized personnel only. All access, discount overrides, and audit trails are logged.
         </p>
       </div>

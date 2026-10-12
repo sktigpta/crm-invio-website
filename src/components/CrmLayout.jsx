@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, Link } from 'react-router-dom';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import {
   DashboardIcon,
@@ -27,7 +27,7 @@ export function CrmLayout() {
   const location = useLocation();
 
   const navItems = [
-    { to: '/', label: 'Dashboard', icon: DashboardIcon, end: true },
+    { to: '/dashboard', label: 'Dashboard', icon: DashboardIcon },
     { to: '/customers', label: 'Customers', icon: UsersIcon },
     { to: '/discounts', label: 'Discounts', icon: PercentIcon },
     { to: '/approvals', label: 'Discount Approvals', icon: CheckCircleIcon },
@@ -44,12 +44,12 @@ export function CrmLayout() {
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans text-slate-800">
       {/* Mobile Header Bar */}
       <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-slate-200 shadow-sm sticky top-0 z-30">
-        <div className="flex items-center gap-2.5">
+        <Link to="/dashboard" className="flex items-center gap-2.5">
           <div className="size-8 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow">
             IN
           </div>
           <span className="font-bold text-base tracking-tight text-slate-900">Invio CRM</span>
-        </div>
+        </Link>
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="p-1.5 rounded-md text-slate-600 hover:bg-slate-100"
@@ -68,7 +68,7 @@ export function CrmLayout() {
         } md:block w-full md:w-64 bg-white border-r border-slate-200 flex-shrink-0 flex flex-col z-20`}
       >
         {/* Brand header */}
-        <div className="p-5 border-b border-slate-100 hidden md:flex items-center gap-3">
+        <Link to="/dashboard" className="p-5 border-b border-slate-100 hidden md:flex items-center gap-3 hover:bg-slate-50/50 transition">
           <div className="size-9 rounded-xl bg-gradient-to-tr from-[#7C3AED] to-[#4F46E5] flex items-center justify-center text-white font-black text-base shadow-sm">
             IN
           </div>
@@ -81,7 +81,7 @@ export function CrmLayout() {
             </div>
             <p className="text-xs text-slate-500 font-medium">Customer & Discount Admin</p>
           </div>
-        </div>
+        </Link>
 
         {/* Staff badge card */}
         <div className="p-4 mx-3 my-3 bg-slate-50/80 rounded-xl border border-slate-200/80">

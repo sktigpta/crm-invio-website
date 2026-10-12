@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { CrmAuthProvider } from './context/CrmAuthContext';
 import { CrmLayout } from './components/CrmLayout';
 import { CrmProtectedRoute } from './components/CrmProtectedRoute';
+import { CrmHomePage } from './pages/CrmHomePage';
 import { CrmLoginPage } from './pages/CrmLoginPage';
 import { CrmDashboardPage } from './pages/CrmDashboardPage';
 import { CrmCustomersPage } from './pages/CrmCustomersPage';
@@ -19,29 +20,31 @@ export function App() {
   return (
     <CrmAuthProvider>
       <Routes>
-        {/* Authentication */}
+        {/* Public 100% W x H Home Landing Page */}
+        <Route path="/" element={<CrmHomePage />} />
+
+        {/* Staff Authentication */}
         <Route path="/login" element={<CrmLoginPage />} />
 
         {/* Protected Staff Operations Shell */}
         <Route
-          path="/"
           element={
             <CrmProtectedRoute>
               <CrmLayout />
             </CrmProtectedRoute>
           }
         >
-          <Route index element={<CrmDashboardPage />} />
-          <Route path="customers" element={<CrmCustomersPage />} />
-          <Route path="customers/:id" element={<CrmCustomerDetailPage />} />
-          <Route path="discounts" element={<CrmDiscountsPage />} />
-          <Route path="approvals" element={<CrmApprovalsPage />} />
-          <Route path="coupons" element={<CrmCouponsPage />} />
-          <Route path="tickets" element={<CrmTicketsPage />} />
-          <Route path="tickets/:id" element={<CrmTicketDetailPage />} />
-          <Route path="plans" element={<CrmPlansPage />} />
+          <Route path="/dashboard" element={<CrmDashboardPage />} />
+          <Route path="/customers" element={<CrmCustomersPage />} />
+          <Route path="/customers/:id" element={<CrmCustomerDetailPage />} />
+          <Route path="/discounts" element={<CrmDiscountsPage />} />
+          <Route path="/approvals" element={<CrmApprovalsPage />} />
+          <Route path="/coupons" element={<CrmCouponsPage />} />
+          <Route path="/tickets" element={<CrmTicketsPage />} />
+          <Route path="/tickets/:id" element={<CrmTicketDetailPage />} />
+          <Route path="/plans" element={<CrmPlansPage />} />
           <Route
-            path="staff"
+            path="/staff"
             element={
               <CrmProtectedRoute requiredRoles={['admin', 'manager']}>
                 <CrmStaffPage />
@@ -49,7 +52,7 @@ export function App() {
             }
           />
           <Route
-            path="audit-logs"
+            path="/audit-logs"
             element={
               <CrmProtectedRoute requiredRoles={['admin']}>
                 <CrmAuditLogsPage />
@@ -59,6 +62,7 @@ export function App() {
         </Route>
 
         {/* Legacy /crm path backward compatibility redirects */}
+        <Route path="/crm" element={<Navigate to="/" replace />} />
         <Route path="/crm/*" element={<Navigate to="/" replace />} />
 
         {/* Catch-all redirect */}

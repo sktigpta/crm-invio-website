@@ -4,7 +4,8 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 const packageJson = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
-const APP_VERSION = packageJson.version || '1.0.2';
+// VITE_APP_VERSION env (e.g. Vercel) wins when set; otherwise fall back to package.json.
+const APP_VERSION = process.env.VITE_APP_VERSION || packageJson.version || '1.0.2';
 
 export default defineConfig({
   plugins: [

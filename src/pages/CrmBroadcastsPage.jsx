@@ -63,7 +63,6 @@ export function CrmBroadcastsPage() {
     id: '',
     title: 'Happy Festive Season!',
     message: 'Wishing you and your business immense joy, growth, and prosperity from the Invio team! ✨',
-    badge: 'Festive Wishes',
     actionType: 'info', // 'info' | 'success' | 'warning' | 'danger'
     actionLabel: 'Learn more',
     actionUrl: 'https://invio.timrio.com',
@@ -98,7 +97,6 @@ export function CrmBroadcastsPage() {
             id: n.id || '',
             title: n.title || '',
             message: n.message || '',
-            badge: n.badge || '',
             actionType: n.actionType || 'info',
             actionLabel: n.actionLabel || '',
             actionUrl: n.actionUrl || '',
@@ -174,7 +172,6 @@ export function CrmBroadcastsPage() {
           id: noticeCard.id || undefined,
           title: noticeCard.title,
           message: noticeCard.message,
-          badge: noticeCard.badge,
           actionType: noticeCard.actionType,
           actionLabel: noticeCard.actionLabel,
           actionUrl: noticeCard.actionUrl,
@@ -539,28 +536,6 @@ export function CrmBroadcastsPage() {
 
         .desktop-theme-light .desktop-notice-title { color: #0f172a; }
         .desktop-theme-dark .desktop-notice-title { color: #f8fafc; }
-
-        .desktop-notice-badge {
-          display: inline-flex;
-          align-items: center;
-          padding: 1px 7px;
-          font-size: 9.5px;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.04em;
-          border-radius: 9999px !important;
-          background: #ede9fe;
-          color: #8646f4;
-          border: 1px solid rgba(134, 70, 244, 0.25);
-          margin-left: 6px;
-          flex-shrink: 0;
-        }
-
-        .desktop-theme-dark .desktop-notice-badge {
-          background: rgba(134, 70, 244, 0.2);
-          color: #c4b5fd;
-          border-color: rgba(134, 70, 244, 0.4);
-        }
 
         .desktop-notice-action-btn {
           display: inline-flex;
@@ -951,7 +926,7 @@ export function CrmBroadcastsPage() {
                 </label>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Title Header</label>
                   <input
@@ -975,17 +950,6 @@ export function CrmBroadcastsPage() {
                     <option value="warning">🟡 Warning / Advisory (Amber)</option>
                     <option value="danger">🔴 Danger / Critical (Red)</option>
                   </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Badge Pill Text</label>
-                  <input
-                    type="text"
-                    value={noticeCard.badge}
-                    onChange={(e) => setNoticeCard({ ...noticeCard, badge: e.target.value })}
-                    placeholder="e.g. Advisory or Notice"
-                    className="w-full text-xs px-3 py-1.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
-                  />
                 </div>
               </div>
 
@@ -1217,12 +1181,6 @@ export function CrmBroadcastsPage() {
                   <h4 className="desktop-notice-title truncate">
                     {noticeCard.title || 'System notification'}
                   </h4>
-
-                  {noticeCard.badge ? (
-                    <span className="desktop-notice-badge">
-                      {noticeCard.badge}
-                    </span>
-                  ) : null}
                 </div>
 
                 <button

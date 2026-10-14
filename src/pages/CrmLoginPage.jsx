@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { crmApi } from '../services/crmApi';
+import { CrmServerHealthDot } from '../components/CrmServerHealthDot';
 
 function formatLoginError(rawError) {
   if (!rawError) return '';
@@ -107,6 +108,10 @@ export function CrmLoginPage() {
           <Link to="/" title="Invio" className="inline-flex items-center hover:opacity-85 transition">
             <img src="/appLogo.png" alt="Invio" className="size-6 object-contain" />
           </Link>
+        </div>
+        {/* Top Right: live server health */}
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+          <CrmServerHealthDot />
         </div>
 
         <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
@@ -221,6 +226,10 @@ export function CrmLoginPage() {
         <Link to="/" title="Invio" className="inline-flex items-center hover:opacity-85 transition">
           <img src="/appLogo.png" alt="Invio" className="size-6 object-contain" />
         </Link>
+      </div>
+      {/* Top Right: live server health (public — works logged out) */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+        <CrmServerHealthDot />
       </div>
 
       {/* Header */}

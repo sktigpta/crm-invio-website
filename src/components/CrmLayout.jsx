@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useLocation, Link } from 'react-router-dom';
 import { useCrmAuth } from '../context/CrmAuthContext';
+import { CrmServerHealthDot } from './CrmServerHealthDot';
 import {
   DashboardIcon,
   UsersIcon,
@@ -163,7 +164,10 @@ export function CrmLayout() {
             <span className="font-semibold text-xs text-slate-900 truncate max-w-[140px] sm:max-w-[200px]">
               {staff?.fullName || 'Staff'}
             </span>
-            <div className="size-2 bg-emerald-500 rounded-full ml-1 ring-2 ring-emerald-100" title="Connected & Active" />
+            {/* Live server health: admin + manager only. Green = healthy,
+                yellow = a service is degraded/misconfigured, red = unreachable.
+                Public endpoint — reflects server state, not login state. */}
+            {isManagerOrAdmin && <CrmServerHealthDot />}
           </div>
         </header>
 

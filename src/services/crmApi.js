@@ -85,6 +85,8 @@ function resolveApiUrl(path) {
   return `${API_BASE_URL}/api/crm${cleanPath}`;
 }
 
+const REQUEST_TIMEOUT_MS = 12000;
+
 async function request(endpoint, options = {}) {
   const url = resolveApiUrl(endpoint);
   const token = getCrmToken();
@@ -95,10 +97,23 @@ async function request(endpoint, options = {}) {
     ...(options.headers || {}),
   };
 
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  let response;
+  try {
+    response = await fetch(url, {
+      ...options,
+      headers,
+      signal: controller.signal,
+    });
+  } catch (err) {
+    if (err?.name === 'AbortError') {
+      throw new Error('Request timed out — the server is taking too long. Please retry.');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
 
   const data = await response.json().catch(() => ({}));
 

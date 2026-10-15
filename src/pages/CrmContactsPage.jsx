@@ -25,6 +25,7 @@ export function CrmContactsPage() {
   const [error, setError] = useState('');
   const [selected, setSelected] = useState(null);
   const [statusLoading, setStatusLoading] = useState(false);
+  const [unconfigured, setUnconfigured] = useState(false);
   const debouncedSearch = useDebouncedValue(search, 600);
 
   const fetchContacts = useCallback(async () => {
@@ -34,6 +35,7 @@ export function CrmContactsPage() {
       const res = await crmApi.getContacts({ status, breached: breachedOnly, search: debouncedSearch, page, limit: 20 });
       setContacts(res.contacts || []);
       setTotalPages(res.totalPages || 1);
+      setUnconfigured(Boolean(res.unconfigured));
     } catch (err) {
       if (isRateLimitError(err)) {
         toast.warning('Too many requests — pausing briefly, then try again.');
@@ -120,7 +122,7 @@ export function CrmContactsPage() {
               {loading ? (
                 <tr><td colSpan="6" className="py-12 text-center text-slate-400"><div className="size-6 border-2 border-slate-200 border-t-purple-600 animate-spin mx-auto mb-2" />Loading messages...</td></tr>
               ) : contacts.length === 0 ? (
-                <tr><td colSpan="6" className="py-12 text-center text-slate-400">No contact messages found.</td></tr>
+                <tr><td colSpan="6" className="py-12 text-center text-slate-400">{unconfigured ? 'Contact store is not configured yet (Google Sheets key missing) — nothing to show.' : 'No contact messages found.'}</td></tr>
               ) : (
                 contacts.map((c) => (
                   <tr key={c.id} className="hover:bg-slate-50/70 transition">

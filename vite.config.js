@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 
 const packageJson = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 // VITE_APP_VERSION env (e.g. Vercel) wins when set; otherwise fall back to package.json.
-const APP_VERSION = process.env.VITE_APP_VERSION || packageJson.version || '1.0.3';
+const APP_VERSION = process.env.VITE_APP_VERSION || packageJson.version || '1.0.2';
 
 export default defineConfig({
   plugins: [
@@ -23,7 +23,7 @@ export default defineConfig({
           ? `http://localhost:${process.env.VITE_BACKEND_PORT}`
           : process.env.BACKEND_PORT
             ? `http://localhost:${process.env.BACKEND_PORT}`
-            : 'http://localhost:3000',
+            : 'http://localhost:5000',
         changeOrigin: true,
       },
     },

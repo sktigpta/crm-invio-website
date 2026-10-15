@@ -23,6 +23,7 @@ export function CrmBugsPage() {
   const [error, setError] = useState('');
   const [selected, setSelected] = useState(null);
   const [statusLoading, setStatusLoading] = useState(false);
+  const [unconfigured, setUnconfigured] = useState(false);
   const debouncedSearch = useDebouncedValue(search, 600);
 
   const fetchBugs = useCallback(async () => {
@@ -32,6 +33,7 @@ export function CrmBugsPage() {
       const res = await crmApi.getBugs({ status, search: debouncedSearch, page, limit: 20 });
       setBugs(res.bugs || []);
       setTotalPages(res.totalPages || 1);
+      setUnconfigured(Boolean(res.unconfigured));
     } catch (err) {
       if (isRateLimitError(err)) {
         toast.warning('Too many requests — pausing briefly, then try again.');
@@ -115,7 +117,7 @@ export function CrmBugsPage() {
               {loading ? (
                 <tr><td colSpan="7" className="py-12 text-center text-slate-400"><div className="size-6 border-2 border-slate-200 border-t-purple-600 animate-spin mx-auto mb-2" />Loading bug reports...</td></tr>
               ) : bugs.length === 0 ? (
-                <tr><td colSpan="7" className="py-12 text-center text-slate-400">No bug reports found.</td></tr>
+                <tr><td colSpan="7" className="py-12 text-center text-slate-400">{unconfigured ? 'Bug store is not configured yet (Google Sheets key missing) — nothing to show.' : 'No bug reports found.'}</td></tr>
               ) : (
                 bugs.map((b) => (
                   <tr key={b.ticketId} className="hover:bg-slate-50/70 transition">

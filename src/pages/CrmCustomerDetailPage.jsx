@@ -16,7 +16,7 @@ import {
 export function CrmCustomerDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAdmin, isManagerOrAdmin, isSales, isSupport } = useCrmAuth();
+  const { isAdmin, isManagerOrAdmin, isSales, isSupport, canViewTickets } = useCrmAuth();
   const { toast } = useCrmToast();
 
   const [customerData, setCustomerData] = useState(null);
@@ -48,6 +48,39 @@ export function CrmCustomerDetailPage() {
   // New Note State
   const [noteText, setNoteText] = useState('');
   const [noteLoading, setNoteLoading] = useState(false);
+
+  // Service Request Modal State
+  const [showTicketModal, setShowTicketModal] = useState(false);
+  const [ticketSubject, setTicketSubject] = useState('');
+  const [ticketCategory, setTicketCategory] = useState('general');
+  const [ticketPriority, setTicketPriority] = useState('medium');
+  const [ticketMessage, setTicketMessage] = useState('');
+  const [ticketLoading, setTicketLoading] = useState(false);
+
+  async function handleRaiseTicket(e) {
+    e.preventDefault();
+    if (!ticketSubject.trim() || !ticketMessage.trim()) return;
+    setTicketLoading(true);
+    try {
+      await crmApi.createTicket({
+        customerUserId: id,
+        customerEmail: customerData?.profile?.email || '',
+        subject: ticketSubject.trim(),
+        category: ticketCategory,
+        priority: ticketPriority,
+        initialMessage: ticketMessage.trim(),
+      });
+      setShowTicketModal(false);
+      setTicketSubject('');
+      setTicketMessage('');
+      toast.success('Service request raised.');
+      fetchCustomer();
+    } catch (err) {
+      toast.error(err.message || 'Failed to raise service request.');
+    } finally {
+      setTicketLoading(false);
+    }
+  }
 
   // Discount Modal State
   const [showDiscountModal, setShowDiscountModal] = useState(false);
@@ -276,12 +309,21 @@ export function CrmCustomerDetailPage() {
               Delete
             </button>
           )}
-          <Link
-            to={`/tickets?search=${encodeURIComponent(profile.email)}`}
-            className="px-3.5 py-2  bg-white border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-50 transition"
-          >
-            View Tickets ({tickets.length})
-          </Link>
+          {canViewTickets ? (
+            <Link
+              to={`/tickets?search=${encodeURIComponent(profile.email)}`}
+              className="px-3.5 py-2  bg-white border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-50 transition"
+            >
+              View Tickets ({tickets.length})
+            </Link>
+          ) : (
+            <button
+              onClick={() => setShowTicketModal(true)}
+              className="px-3.5 py-2  bg-white border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-50 transition cursor-pointer"
+            >
+              Raise Service Request
+            </button>
+          )}
         </div>
       </div>
 
@@ -595,6 +637,53 @@ export function CrmCustomerDetailPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <div className="bg-white  max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      {/* Raise Service Request Modal */}
+      {showTicketModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
+          <div className="bg-white max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-900 text-sm">Raise Service Request</h3>
+              <button onClick={() => setShowTicketModal(false)} className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer">✕</button>
+            </div>
+            <form onSubmit={handleRaiseTicket} className="space-y-3 text-xs">
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Subject *</label>
+                <input type="text" value={ticketSubject} onChange={(e) => setTicketSubject(e.target.value)} required className="w-full p-2.5 border border-slate-200 focus:outline-none focus:border-purple-600" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Category</label>
+                  <select value={ticketCategory} onChange={(e) => setTicketCategory(e.target.value)} className="w-full p-2.5 border border-slate-200 bg-white focus:outline-none focus:border-purple-600">
+                    <option value="general">General</option>
+                    <option value="billing">Billing</option>
+                    <option value="technical">Technical</option>
+                    <option value="license">License</option>
+                    <option value="discount">Discount</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Priority</label>
+                  <select value={ticketPriority} onChange={(e) => setTicketPriority(e.target.value)} className="w-full p-2.5 border border-slate-200 bg-white focus:outline-none focus:border-purple-600">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Message *</label>
+                <textarea rows="4" value={ticketMessage} onChange={(e) => setTicketMessage(e.target.value)} required className="w-full p-2.5 border border-slate-200 focus:outline-none focus:border-purple-600" />
+              </div>
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <button type="button" onClick={() => setShowTicketModal(false)} className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer">Cancel</button>
+                <button type="submit" disabled={ticketLoading} className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer">{ticketLoading ? 'Raising…' : 'Raise Request'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
               <h3 className="font-bold text-slate-900 text-sm">Assign Discount to Customer</h3>
               <button
                 onClick={() => setShowDiscountModal(false)}

@@ -19,6 +19,7 @@ import {
 } from './CrmIcons';
 
 const roleMeta = {
+  super_admin: { label: 'Super Admin', bg: 'bg-purple-50 text-purple-700 border-purple-200' },
   admin: { label: 'Admin', bg: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
   manager: { label: 'Manager', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
   sales_executive: { label: 'Sales Exec', bg: 'bg-amber-50 text-amber-700 border-amber-200' },
@@ -26,23 +27,23 @@ const roleMeta = {
 };
 
 export function CrmLayout() {
-  const { staff, logout, isAdmin, isManagerOrAdmin } = useCrmAuth();
+  const { staff, logout, isManagerOrAdmin, canViewDirectory, canViewTickets, canViewDiscounts, canViewCoupons, canViewBugs, canViewApprovals, canViewContacts, canViewStaff, canViewBroadcasts } = useCrmAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   const navItems = [
     { to: '/dashboard', label: 'Dashboard', icon: DashboardIcon },
-    { to: '/customers', label: 'Customers', icon: UsersIcon },
-    { to: '/discounts', label: 'Discounts', icon: PercentIcon },
-    { to: '/approvals', label: 'Discount Approvals', icon: CheckCircleIcon },
-    { to: '/coupons', label: 'Coupons', icon: TagIcon },
-    { to: '/tickets', label: 'Support Tickets', icon: TicketIcon },
-    { to: '/bugs', label: 'Bug Reports', icon: BugIcon },
-    ...(isManagerOrAdmin ? [{ to: '/contacts', label: 'Contact Messages', icon: MailIcon }] : []),
+    { to: '/customers', label: canViewDirectory ? 'Customers' : 'Customer Lookup', icon: UsersIcon },
+    ...(canViewDiscounts ? [{ to: '/discounts', label: 'Discounts', icon: PercentIcon }] : []),
+    ...(canViewApprovals ? [{ to: '/approvals', label: 'Discount Approvals', icon: CheckCircleIcon }] : []),
+    ...(canViewCoupons ? [{ to: '/coupons', label: 'Coupons', icon: TagIcon }] : []),
+    ...(canViewTickets ? [{ to: '/tickets', label: 'Support Tickets', icon: TicketIcon }] : []),
+    ...(canViewBugs ? [{ to: '/bugs', label: 'Bug Reports', icon: BugIcon }] : []),
+    ...(canViewContacts ? [{ to: '/contacts', label: 'Contact Messages', icon: MailIcon }] : []),
     { to: '/plans', label: 'Subscription Plans', icon: LayersIcon },
-    ...(isManagerOrAdmin ? [{ to: '/broadcasts', label: 'In-App Cards & Broadcasts', icon: BroadcastIcon }] : []),
-    ...(isManagerOrAdmin ? [{ to: '/staff', label: 'Staff Management', icon: ShieldCheckIcon }] : []),
-    ...(isAdmin ? [{ to: '/audit-logs', label: 'Audit Logs', icon: FileTextIcon }] : []),
+    ...(canViewBroadcasts ? [{ to: '/broadcasts', label: 'In-App Cards & Broadcasts', icon: BroadcastIcon }] : []),
+    ...(canViewStaff ? [{ to: '/staff', label: 'Staff Management', icon: ShieldCheckIcon }] : []),
+    { to: '/audit-logs', label: 'Audit Logs', icon: FileTextIcon },
   ];
 
   const currentRole = roleMeta[staff?.role] || { label: staff?.role || 'Staff', bg: 'bg-slate-100 text-slate-700 border-slate-200' };

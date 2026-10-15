@@ -375,6 +375,7 @@ export function CrmStaffPage() {
                     <>
                       <option value="manager">Operations Manager</option>
                       <option value="admin">System Administrator</option>
+                      <option value="super_admin">Super Administrator</option>
                     </>
                   )}
                 </select>
@@ -449,6 +450,7 @@ export function CrmStaffPage() {
                     <>
                       <option value="manager">Operations Manager</option>
                       <option value="admin">System Administrator</option>
+                      <option value="super_admin">Super Administrator</option>
                     </>
                   )}
                 </select>

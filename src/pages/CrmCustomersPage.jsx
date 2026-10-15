@@ -1,12 +1,45 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
 import { SearchIcon, FilterIcon, RefreshCwIcon, AlertCircleIcon, PlusIcon } from '../components/CrmIcons';
 
+function ExecCustomerLookup() {
+  const navigate = useNavigate();
+  const { toast } = useCrmToast();
+  const [email, setEmail] = useState('');
+  const [looking, setLooking] = useState(false);
+  async function handleLookup(e) {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setLooking(true);
+    try {
+      const res = await crmApi.lookupCustomer(email.trim());
+      if (res.profile?.id) navigate(`/customers/${encodeURIComponent(res.profile.id)}`);
+      else toast.error('No customer found with this email address.');
+    } catch (err) {
+      toast.error(err.message || 'Lookup failed.');
+    } finally {
+      setLooking(false);
+    }
+  }
+  return (
+    <div className="space-y-3 max-w-xl">
+      <div>
+        <h2 className="text-lg font-bold text-slate-900">Customer Lookup</h2>
+        <p className="text-xs text-slate-500">Enter a customer email to open their page — add notes, raise a service request, or request a discount there.</p>
+      </div>
+      <form onSubmit={handleLookup} className="bg-white p-4 border border-slate-200 shadow-xs flex gap-2">
+        <input type="email" required placeholder="customer@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="flex-1 px-3 py-2 border border-slate-200 text-sm focus:outline-none focus:border-purple-600" />
+        <button type="submit" disabled={looking} className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold transition disabled:opacity-50 cursor-pointer">{looking ? 'Looking…' : 'Open →'}</button>
+      </form>
+    </div>
+  );
+}
+
 export function CrmCustomersPage() {
-  const { isAdmin, isManagerOrAdmin } = useCrmAuth();
+  const { isAdmin, isManagerOrAdmin, canViewDirectory } = useCrmAuth();
   const { toast } = useCrmToast();
   const [customers, setCustomers] = useState([]);
   const [total, setTotal] = useState(0);
@@ -60,8 +93,13 @@ export function CrmCustomersPage() {
   }, [page, search, plan, toast]);
 
   useEffect(() => {
-    fetchCustomers();
-  }, [fetchCustomers]);
+    if (canViewDirectory) fetchCustomers();
+    else setLoading(false);
+  }, [fetchCustomers, canViewDirectory]);
+
+  if (!canViewDirectory) {
+    return <ExecCustomerLookup />;
+  }
 
   function handleSearch(e) {
     e.preventDefault();

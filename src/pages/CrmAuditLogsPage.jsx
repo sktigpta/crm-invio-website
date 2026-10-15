@@ -8,6 +8,67 @@ import {
 } from '../services/googleSheets';
 import { RefreshCwIcon, AlertCircleIcon, SearchIcon } from '../components/CrmIcons';
 
+function labelize(key) {
+  return String(key || '')
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (c) => c.toUpperCase()) || 'Field';
+}
+
+function prettyValue(value) {
+  if (value == null || value === '') return '—';
+  const s = typeof value === 'object' ? JSON.stringify(value) : String(value);
+  return s.length > 90 ? `${s.slice(0, 90)}…` : s;
+}
+
+function summarizeLog(log) {
+  const d = (log.details && typeof log.details === 'object' ? log.details : {}) || {};
+  const pick = (...keys) => {
+    for (const k of keys) {
+      if (d[k] != null && d[k] !== '') return prettyValue(d[k]);
+    }
+    return null;
+  };
+  const facts = [];
+  const add = (label, value) => {
+    if (value != null && value !== '—') facts.push([label, value]);
+  };
+  let headline = String(log.action || 'Event').replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  switch (log.action) {
+    case 'STAFF_LOGIN':
+      headline = 'Signed in to the CRM';
+      break;
+    case 'CREATE_STAFF_MEMBER':
+      headline = `Created staff ${pick('email') || ''}`.trim();
+      add('Role', pick('role'));
+      add('Name', pick('fullName', 'full_name'));
+      break;
+    case 'UPDATE_PLAN':
+      headline = `Updated plan ${pick('planId', 'plan') || log.target_id}`;
+      add('Price', pick('price', 'amount', 'priceInr', 'price_yearly'));
+      add('Fields', pick('fields', 'updates') && Array.isArray(d.fields || d.updates) ? (d.fields || d.updates).map(labelize).join(', ') : pick('fields', 'updates'));
+      break;
+    case 'REVOKE_DISCOUNT':
+    case 'DELETE_DISCOUNT':
+      headline = `${log.action === 'REVOKE_DISCOUNT' ? 'Revoked' : 'Deleted'} discount`;
+      add('Customer', pick('customerUserId', 'customerId', 'customerEmail'));
+      break;
+    case 'APPROVE_DISCOUNT_REQUEST':
+    case 'REJECT_DISCOUNT_REQUEST':
+      headline = `${log.action.startsWith('APPROVE') ? 'Approved' : 'Rejected'} discount request`;
+      add('Value', pick('discountValue', 'discount_value'));
+      add('Customer', pick('customerUserId', 'customerId'));
+      break;
+    default:
+      Object.entries(d).slice(0, 6).forEach(([k, v]) => add(labelize(k), prettyValue(v)));
+  }
+  add('Target', log.target_id ? `${labelize(log.target_type)} · ${prettyValue(log.target_id)}` : null);
+  add('IP', log.ip_address);
+  return { headline, facts: facts.slice(0, 6) };
+}
+
 export function CrmAuditLogsPage() {
   const { toast } = useCrmToast();
   const [logs, setLogs] = useState([]);
@@ -19,6 +80,7 @@ export function CrmAuditLogsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedLog, setSelectedLog] = useState(null);
+  const [scope, setScope] = useState('');
   const debouncedAction = useDebouncedValue(actionSearch, 600);
 
   const fetchLogs = useCallback(async () => {
@@ -34,6 +96,7 @@ export function CrmAuditLogsPage() {
       setLogs(res.logs || []);
       setTotal(res.total || 0);
       setTotalPages(res.totalPages || 1);
+      setScope(res.scope || '');
     } catch (err) {
       if (isRateLimitError(err)) {
         toast.warning('Too many requests — pausing briefly, then try again.');
@@ -69,7 +132,7 @@ export function CrmAuditLogsPage() {
         <div>
           <h2 className="text-lg font-bold text-slate-900">Immutable Audit Logs</h2>
           <p className="text-xs text-slate-500">
-            Every staff action is stored as a row in Google Sheets — no local database.
+            You see your own actions plus your juniors{scope === 'super_admin' ? ' — Super Admin sees everything' : ''}. Stored in Google Sheets.
           </p>
         </div>
 
@@ -253,28 +316,34 @@ export function CrmAuditLogsPage() {
             </div>
 
             <div className="p-4 overflow-y-auto space-y-3 text-xs">
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2 bg-slate-50 border border-slate-100 p-3">
-                <div><span className="text-slate-500">Timestamp:</span><div className="font-mono font-semibold text-slate-900">{selectedLog.created_at ? new Date(selectedLog.created_at).toLocaleString() : '—'}</div></div>
-                <div><span className="text-slate-500">Action:</span><div className="font-bold text-purple-700">{selectedLog.action || '—'}</div></div>
-                <div><span className="text-slate-500">Actor:</span><div className="font-semibold text-slate-900">{selectedLog.actor_name || 'Staff'}</div><div className="text-[10px] text-slate-500 capitalize">{(selectedLog.actor_role || '').replace('_', ' ')}</div></div>
-                <div><span className="text-slate-500">Actor ID:</span><div className="font-mono text-slate-800 break-all">{selectedLog.actor_id || selectedLog.actorId || '—'}</div></div>
-                <div><span className="text-slate-500">Target:</span><div className="font-semibold text-slate-900 capitalize">{selectedLog.target_type || '—'}: <span className="font-mono">{selectedLog.target_id || '—'}</span></div></div>
-                <div><span className="text-slate-500">IP Address:</span><div className="font-mono text-slate-800">{selectedLog.ip_address || '—'}</div></div>
-              </div>
+              {(() => {
+                const summary = summarizeLog(selectedLog);
+                return (
+                  <div className="border border-purple-100 bg-purple-50/50 p-3">
+                    <p className="font-bold text-slate-900 text-sm">{summary.headline}</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      {selectedLog.actor_name || 'Staff'} · <span className="capitalize">{(selectedLog.actor_role || '').replace(/_/g, ' ')}</span> · {selectedLog.created_at ? new Date(selectedLog.created_at).toLocaleString() : '—'}
+                    </p>
+                    {summary.facts.length > 0 && (
+                      <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1.5">
+                        {summary.facts.map(([label, value]) => (
+                          <div key={label} className="min-w-0">
+                            <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</dt>
+                            <dd className="font-semibold text-slate-800 break-words">{value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    )}
+                  </div>
+                );
+              })()}
 
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Details JSON</p>
-                <div className="p-3 bg-slate-900 text-slate-200 font-mono text-[11px] overflow-x-auto">
-                  <pre className="whitespace-pre-wrap break-words">{JSON.stringify(selectedLog.details ?? {}, null, 2)}</pre>
-                </div>
-              </div>
-
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Full Raw Record</p>
-                <div className="p-3 bg-slate-50 border border-slate-200 font-mono text-[10px] text-slate-700 overflow-x-auto">
+              <details>
+                <summary className="text-[10px] font-bold uppercase tracking-wider text-slate-400 cursor-pointer hover:text-slate-600">Raw JSON</summary>
+                <div className="mt-1 p-3 bg-slate-900 text-slate-200 font-mono text-[11px] overflow-x-auto">
                   <pre className="whitespace-pre-wrap break-words">{JSON.stringify(selectedLog, null, 2)}</pre>
                 </div>
-              </div>
+              </details>
             </div>
 
             <div className="flex justify-end gap-2 p-4 border-t border-slate-100 text-xs">

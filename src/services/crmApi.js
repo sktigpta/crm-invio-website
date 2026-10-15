@@ -177,6 +177,10 @@ export const crmApi = {
     return request(`/customers/${encodeURIComponent(customerId)}`);
   },
 
+  async lookupCustomer(email) {
+    return request(`/customers/lookup?email=${encodeURIComponent(email)}`);
+  },
+
   async createCustomer(payload) {
     return request('/customers', {
       method: 'POST',

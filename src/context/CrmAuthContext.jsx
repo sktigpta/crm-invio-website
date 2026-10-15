@@ -66,6 +66,32 @@ export function CrmAuthProvider({ children }) {
     window.location.href = '/login';
   }, []);
 
+  useEffect(() => {
+    if (!token) return;
+    let timer;
+    const idleFor = 10 * 60 * 1000;
+    const goIdle = () => {
+      try {
+        sessionStorage.setItem('crm_idle_logout', '1');
+      } catch { /* best-effort */ }
+      clearCrmAuth();
+      setToken(null);
+      setStaff(null);
+      window.location.href = '/login?idle=1';
+    };
+    const reset = () => {
+      clearTimeout(timer);
+      timer = setTimeout(goIdle, idleFor);
+    };
+    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+    events.forEach((e) => window.addEventListener(e, reset, { passive: true }));
+    reset();
+    return () => {
+      clearTimeout(timer);
+      events.forEach((e) => window.removeEventListener(e, reset));
+    };
+  }, [token]);
+
   const hasRole = useCallback(
     (...roles) => {
       if (!staff || !staff.role) return false;

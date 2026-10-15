@@ -10,12 +10,15 @@ function ExecCustomerLookup() {
   const { toast } = useCrmToast();
   const [email, setEmail] = useState('');
   const [looking, setLooking] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+  const [reg, setReg] = useState({ firstName: '', lastName: '', email: '', phone: '', businessName: '' });
+  const [regLoading, setRegLoading] = useState(false);
   async function handleLookup(e) {
     e.preventDefault();
     if (!email.trim()) return;
     setLooking(true);
     try {
-      const res = await crmApi.lookupCustomer(email.trim());
+      const res = await crmApi.lookupCustomer(email.trim().toLowerCase());
       if (res.profile?.id) navigate(`/customers/${encodeURIComponent(res.profile.id)}`);
       else toast.error('No customer found with this email address.');
     } catch (err) {
@@ -24,6 +27,27 @@ function ExecCustomerLookup() {
       setLooking(false);
     }
   }
+  async function handleRegister(e) {
+    e.preventDefault();
+    if (!reg.email.trim()) return;
+    setRegLoading(true);
+    try {
+      const res = await crmApi.registerCustomer({
+        firstName: reg.firstName.trim(),
+        lastName: reg.lastName.trim(),
+        email: reg.email.trim().toLowerCase(),
+        phone: reg.phone.trim(),
+        businessName: reg.businessName.trim(),
+      });
+      toast.success('Customer onboarded.');
+      if (res.customerId) navigate(`/customers/${encodeURIComponent(res.customerId)}`);
+    } catch (err) {
+      toast.error(err.message || 'Registration failed.');
+    } finally {
+      setRegLoading(false);
+    }
+  }
+  const set = (k) => (e) => setReg((r) => ({ ...r, [k]: e.target.value }));
   return (
     <div className="space-y-3 max-w-xl">
       <div>
@@ -31,9 +55,20 @@ function ExecCustomerLookup() {
         <p className="text-xs text-slate-500">Enter a customer email to open their page — add notes, raise a service request, or request a discount there.</p>
       </div>
       <form onSubmit={handleLookup} className="bg-white p-4 border border-slate-200 shadow-xs flex gap-2">
-        <input type="email" required placeholder="customer@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="flex-1 px-3 py-2 border border-slate-200 text-sm focus:outline-none focus:border-purple-600" />
+        <input type="email" required placeholder="customer@example.com" value={email} onChange={(e) => setEmail(e.target.value.toLowerCase())} className="flex-1 px-3 py-2 border border-slate-200 text-sm focus:outline-none focus:border-purple-600" />
         <button type="submit" disabled={looking} className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold transition disabled:opacity-50 cursor-pointer">{looking ? 'Looking…' : 'Open →'}</button>
       </form>
+      <button onClick={() => setShowRegister((v) => !v)} className="text-xs font-semibold text-purple-700 hover:text-purple-800 cursor-pointer">+ Onboard new customer</button>
+      {showRegister && (
+        <form onSubmit={handleRegister} className="bg-white p-4 border border-slate-200 shadow-xs grid grid-cols-2 gap-2.5 text-xs">
+          <input placeholder="First name" value={reg.firstName} onChange={set('firstName')} className="px-3 py-2 border border-slate-200 focus:outline-none focus:border-purple-600" />
+          <input placeholder="Last name" value={reg.lastName} onChange={set('lastName')} className="px-3 py-2 border border-slate-200 focus:outline-none focus:border-purple-600" />
+          <input type="email" required placeholder="Email *" value={reg.email} onChange={(e) => setReg((r) => ({ ...r, email: e.target.value.toLowerCase() }))} className="col-span-2 px-3 py-2 border border-slate-200 focus:outline-none focus:border-purple-600" />
+          <input placeholder="Phone" value={reg.phone} onChange={set('phone')} className="px-3 py-2 border border-slate-200 focus:outline-none focus:border-purple-600" />
+          <input placeholder="Business name" value={reg.businessName} onChange={set('businessName')} className="px-3 py-2 border border-slate-200 focus:outline-none focus:border-purple-600" />
+          <button type="submit" disabled={regLoading} className="col-span-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold transition disabled:opacity-50 cursor-pointer">{regLoading ? 'Onboarding…' : 'Onboard Customer'}</button>
+        </form>
+      )}
     </div>
   );
 }

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { crmApi } from '../services/crmApi';
-import { CrmServerHealthDot } from '../components/CrmServerHealthDot';
 
 function formatLoginError(rawError) {
   if (!rawError) return '';
@@ -36,7 +35,11 @@ export function CrmLoginPage() {
   const [remember, setRemember] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(
-    location.search.includes('expired=1') ? 'Your CRM staff session expired. Please sign in again.' : ''
+    location.search.includes('idle=1')
+      ? 'Signed out after 10 minutes of inactivity. Please sign in again.'
+      : location.search.includes('expired=1')
+        ? 'Your CRM staff session expired. Please sign in again.'
+        : ''
   );
 
   // Change-password mode (temporary credentials)
@@ -49,9 +52,9 @@ export function CrmLoginPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const cleanEmail = email.trim();
+    const cleanEmail = email.trim().toLowerCase();
     if (!cleanEmail || !password) {
-      setError('Please provide both your staff email and password.');
+      setError('Please provide both your login and password.');
       return;
     }
 
@@ -109,11 +112,6 @@ export function CrmLoginPage() {
             <img src="/appLogo.png" alt="Invio" className="size-6 object-contain" />
           </Link>
         </div>
-        {/* Top Right: live server health */}
-        <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
-          <CrmServerHealthDot />
-        </div>
-
         <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
           <h2 className="text-xl font-bold tracking-tight text-slate-900">
             Set Your Permanent Password
@@ -227,19 +225,11 @@ export function CrmLoginPage() {
           <img src="/appLogo.png" alt="Invio" className="size-6 object-contain" />
         </Link>
       </div>
-      {/* Top Right: live server health (public — works logged out) */}
-      <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
-        <CrmServerHealthDot />
-      </div>
-
       {/* Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <h2 className="text-xl font-bold tracking-tight text-slate-900">
-          Sign In
+          Staff Sign In
         </h2>
-        <p className="mt-1.5 text-xs text-slate-500 max-w-sm mx-auto">
-          Authorized personnel only. All access, discount overrides, and audit trails are logged.
-        </p>
       </div>
 
       {/* Main Login Card */}
@@ -263,7 +253,7 @@ export function CrmLoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5" htmlFor="staff-email">
-                Staff Email Address
+                Email or Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -273,12 +263,12 @@ export function CrmLoginPage() {
                 </div>
                 <input
                   id="staff-email"
-                  type="email"
+                  type="text"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@invio.com"
+                  onChange={(e) => setEmail(e.target.value.toLowerCase())}
+                  placeholder="name@invio.com or username"
                   required
-                  autoComplete="email"
+                  autoComplete="username"
                   className="w-full pl-9 pr-3 py-2 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600 transition"
                 />
               </div>

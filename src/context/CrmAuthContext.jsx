@@ -112,18 +112,63 @@ export function CrmAuthProvider({ children }) {
       isManager: staff?.role === 'manager',
       isSales: staff?.role === 'sales_executive',
       isSupport: staff?.role === 'support_executive',
-      isExecutive: staff?.role === 'sales_executive' || staff?.role === 'support_executive',
+      isDigitalMarketer: staff?.role === 'digital_marketer',
+      isBillingAccountant: staff?.role === 'billing_accountant',
+      isExecutive:
+        staff?.role === 'sales_executive' ||
+        staff?.role === 'support_executive' ||
+        staff?.role === 'digital_marketer' ||
+        staff?.role === 'billing_accountant',
       isManagerOrAdmin: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
       canViewUnmaskedPii: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
-      canViewDirectory: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
-      canViewTickets: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
-      canViewDiscounts: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
-      canViewCoupons: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
-      canViewBugs: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
-      canViewApprovals: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
-      canViewContacts: staff?.role !== 'sales_executive',
+      canViewDirectory:
+        staff?.role === 'admin' ||
+        staff?.role === 'super_admin' ||
+        staff?.role === 'manager' ||
+        staff?.role === 'sales_executive' ||
+        staff?.role === 'support_executive' ||
+        staff?.role === 'billing_accountant',
+      canViewTickets:
+        staff?.role === 'admin' ||
+        staff?.role === 'super_admin' ||
+        staff?.role === 'manager' ||
+        staff?.role === 'support_executive',
+      canViewDiscounts:
+        staff?.role === 'admin' ||
+        staff?.role === 'super_admin' ||
+        staff?.role === 'manager' ||
+        staff?.role === 'sales_executive' ||
+        staff?.role === 'billing_accountant',
+      canViewCoupons:
+        staff?.role === 'admin' ||
+        staff?.role === 'super_admin' ||
+        staff?.role === 'manager' ||
+        staff?.role === 'sales_executive' ||
+        staff?.role === 'digital_marketer' ||
+        staff?.role === 'billing_accountant',
+      canViewBugs:
+        staff?.role === 'admin' ||
+        staff?.role === 'super_admin' ||
+        staff?.role === 'manager' ||
+        staff?.role === 'support_executive',
+      canViewApprovals:
+        staff?.role === 'admin' ||
+        staff?.role === 'super_admin' ||
+        staff?.role === 'manager' ||
+        staff?.role === 'sales_executive',
+      canViewContacts:
+        staff?.role === 'admin' ||
+        staff?.role === 'super_admin' ||
+        staff?.role === 'manager' ||
+        staff?.role === 'support_executive' ||
+        staff?.role === 'sales_executive' ||
+        staff?.role === 'digital_marketer',
       canViewStaff: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
-      canViewBroadcasts: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
+      canViewBroadcasts:
+        staff?.role === 'admin' ||
+        staff?.role === 'super_admin' ||
+        staff?.role === 'manager' ||
+        staff?.role === 'digital_marketer',
       login,
       logout,
       refreshStaff,

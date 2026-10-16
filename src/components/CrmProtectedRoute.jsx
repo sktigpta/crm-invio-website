@@ -24,11 +24,13 @@ export function CrmProtectedRoute({ children, requiredRoles }) {
     return <Navigate to="/login?change=1" replace />;
   }
 
-  const effectiveRoles = [...(requiredRoles || [])];
-  if (staff?.role === 'super_admin' && !effectiveRoles.includes('super_admin')) {
-    effectiveRoles.push('admin');
+  // Super Admin and Admin can access EVERYTHING unconditionally
+  if (staff?.role === 'super_admin' || staff?.role === 'admin') {
+    return children;
   }
-  if (requiredRoles && !effectiveRoles.includes(staff?.role)) {
+
+  // If specific roles are required, verify that the current staff has one of them
+  if (requiredRoles && requiredRoles.length > 0 && !requiredRoles.includes(staff?.role)) {
     return (
       <div className="bg-white  p-8 border border-red-200 max-w-lg mx-auto my-12 text-center shadow-sm">
         <div className="size-12  bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4 font-bold text-xl">

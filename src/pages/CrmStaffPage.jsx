@@ -60,8 +60,9 @@ export function CrmStaffPage() {
       toast.warning('Only the System Owner account can change its own status.');
       return;
     }
-    if (isManager && staffMember.role !== 'sales_executive' && staffMember.role !== 'support_executive') {
-      toast.warning('Managers can only toggle status for Sales and Support Executives.');
+    const juniorRoles = ['sales_executive', 'support_executive', 'digital_marketer', 'billing_accountant'];
+    if (isManager && !juniorRoles.includes(staffMember.role)) {
+      toast.warning('Managers can only toggle status for Junior and Executive staff.');
       return;
     }
     const nextStatus = staffMember.status === 'active' ? 'suspended' : 'active';
@@ -220,9 +221,10 @@ export function CrmStaffPage() {
                 staffList.map((st) => {
                   const isCurrent = st.id === currentStaff?.id;
                   const isOwnerRow = isOwner(st.email);
+                  const juniorRoles = ['sales_executive', 'support_executive', 'digital_marketer', 'billing_accountant'];
                   const canEdit = isOwnerRow
                     ? amOwner || isCurrent
-                    : isAdmin || (isManager && (st.role === 'sales_executive' || st.role === 'support_executive'));
+                    : isAdmin || (isManager && juniorRoles.includes(st.role));
                   const canToggle = !isCurrent && canEdit && (!isOwnerRow || amOwner);
                   const canDelete = isAdmin && !isCurrent && !isOwnerRow;
 
@@ -371,6 +373,8 @@ export function CrmStaffPage() {
                 >
                   <option value="sales_executive">Sales Executive</option>
                   <option value="support_executive">Support Executive</option>
+                  <option value="digital_marketer">Digital Marketer</option>
+                  <option value="billing_accountant">Billing Accountant</option>
                   {isAdmin && (
                     <>
                       <option value="manager">Operations Manager</option>
@@ -381,7 +385,7 @@ export function CrmStaffPage() {
                 </select>
                 {isManager && (
                   <p className="mt-1 text-[11px] text-slate-500">
-                    As an Operations Manager, you can provision Sales and Support Executives.
+                    As an Operations Manager, you can provision Sales, Support, Marketing, and Billing accounts.
                   </p>
                 )}
               </div>
@@ -446,6 +450,8 @@ export function CrmStaffPage() {
                 >
                   <option value="sales_executive">Sales Executive</option>
                   <option value="support_executive">Support Executive</option>
+                  <option value="digital_marketer">Digital Marketer</option>
+                  <option value="billing_accountant">Billing Accountant</option>
                   {isAdmin && (
                     <>
                       <option value="manager">Operations Manager</option>

@@ -174,8 +174,8 @@ export function CrmLayout() {
           </div>
         </header>
 
-        {/* Scrollable content area: only this container scrolls */}
-        <main className="flex-1 overflow-y-auto p-3 md:p-3.5 min-w-0">
+        {/* Scrollable content area: broadcast section uses full size with zero margin/padding */}
+        <main className={`flex-1 min-w-0 ${location.pathname.startsWith('/broadcasts') ? 'overflow-hidden p-0' : 'overflow-y-auto p-3 md:p-3.5'}`}>
           <Outlet />
         </main>
       </div>

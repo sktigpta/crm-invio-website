@@ -681,7 +681,7 @@ export function CrmBroadcastsPage() {
                       value={middleCard.htmlContent}
                       onChange={(e) => setMiddleCard({ ...middleCard, htmlContent: e.target.value })}
                       placeholder="Write HTML content here..."
-                      className="w-full text-xs font-mono p-3 bg-slate-900 text-slate-100 focus:outline-none selection:bg-indigo-600 leading-relaxed resize-none"
+                      className="w-full text-xs font-mono p-3 bg-white text-slate-800 border-t border-slate-200 focus:outline-none selection:bg-indigo-100 leading-relaxed resize-none"
                     />
                   </div>
                 ) : (
@@ -846,7 +846,7 @@ export function CrmBroadcastsPage() {
                       value={noticeCard.message}
                       onChange={(e) => setNoticeCard({ ...noticeCard, message: e.target.value })}
                       placeholder="Enter notification message here..."
-                      className="w-full text-xs font-mono p-3 bg-slate-900 text-slate-100 focus:outline-none selection:bg-indigo-600 leading-relaxed resize-none"
+                      className="w-full text-xs font-mono p-3 bg-white text-slate-800 border-t border-slate-200 focus:outline-none selection:bg-indigo-100 leading-relaxed resize-none"
                     />
                   </div>
                 ) : (
@@ -950,33 +950,34 @@ export function CrmBroadcastsPage() {
               </div>
             </div>
           ) : (
-            /* Notification Notice Card Live Preview (320px) */
+            /* Notification Notice Card Live Preview (320px) - Desktop App Replica */
             <div
-              className={`desktop-preview-modal w-80 rounded-xl p-4 shadow-xl border relative transition-all duration-200 ${
+              className={`desktop-preview-modal w-80 rounded-[14px] p-[13px_15px] border relative transition-all duration-200 flex flex-col gap-1.5 ${
                 previewTheme === 'dark'
-                  ? 'bg-[#151928] border-slate-700/80 text-slate-100 shadow-[0_16px_36px_-8px_rgba(0,0,0,0.5)]'
-                  : 'bg-white border-slate-200 text-slate-800 shadow-[0_16px_36px_-8px_rgba(15,23,42,0.14)]'
+                  ? 'bg-[#181920] border-[rgba(255,255,255,0.12)] text-slate-100 shadow-[0_14px_30px_rgba(0,0,0,0.5)]'
+                  : 'bg-white border-slate-200 text-slate-800 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.05)]'
               }`}
             >
-              {/* Severity Glow */}
+              {/* Radial Glow */}
               <div
-                className={`absolute -top-4 -right-4 size-20 rounded-full blur-xl pointer-events-none opacity-40 ${
-                  noticeCard.actionType === 'danger'
-                    ? 'bg-rose-500'
-                    : noticeCard.actionType === 'warning'
-                    ? 'bg-amber-500'
-                    : noticeCard.actionType === 'success'
-                    ? 'bg-emerald-500'
-                    : 'bg-blue-500'
-                }`}
-                style={{ animation: 'desktopGlowPulse 4s ease-in-out infinite' }}
+                className="absolute -top-5 -right-5 size-[90px] rounded-full pointer-events-none opacity-40 blur-xs"
+                style={{
+                  background:
+                    noticeCard.actionType === 'danger'
+                      ? 'radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, transparent 70%)'
+                      : noticeCard.actionType === 'warning'
+                      ? 'radial-gradient(circle, rgba(245, 158, 11, 0.3) 0%, transparent 70%)'
+                      : noticeCard.actionType === 'success'
+                      ? 'radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 70%)'
+                      : 'radial-gradient(circle, rgba(134, 70, 244, 0.25) 0%, transparent 70%)',
+                }}
               />
 
               {/* Header */}
-              <div className="flex items-center justify-between gap-2 mb-2 relative z-10">
-                <div className="flex items-center gap-2 min-w-0">
+              <div className="flex items-center justify-between gap-2 relative z-10 min-h-5">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
                   <span
-                    className={`size-4 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    className={`size-4 inline-flex items-center justify-center shrink-0 ${
                       noticeCard.actionType === 'danger'
                         ? 'text-rose-500'
                         : noticeCard.actionType === 'warning'
@@ -996,16 +997,18 @@ export function CrmBroadcastsPage() {
                       <FiInfo className="size-4" />
                     )}
                   </span>
-                  <h4 className="text-xs font-bold truncate">
-                    {noticeCard.title || 'System Notification'}
-                  </h4>
+                  {noticeCard.title ? (
+                    <h4 className="text-[13px] font-bold leading-tight truncate text-slate-900 dark:text-white">
+                      {noticeCard.title}
+                    </h4>
+                  ) : null}
                 </div>
 
                 <button
                   type="button"
-                  className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-0.5 cursor-pointer"
-                  title="Dismiss"
-                  aria-label="Dismiss"
+                  className="text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors p-0.5 cursor-pointer shrink-0"
+                  title="Dismiss notification"
+                  aria-label="Dismiss notification"
                 >
                   <FiX className="size-3.5" />
                 </button>
@@ -1013,7 +1016,7 @@ export function CrmBroadcastsPage() {
 
               {/* Message */}
               <div
-                className={`text-xs leading-relaxed mb-3 desktop-html-scroll max-h-36 overflow-y-auto relative z-10 ${
+                className={`text-xs leading-[1.45] desktop-html-scroll max-h-36 overflow-y-auto relative z-10 ${
                   previewTheme === 'dark' ? 'text-slate-300' : 'text-slate-600'
                 }`}
                 dangerouslySetInnerHTML={{
@@ -1026,7 +1029,7 @@ export function CrmBroadcastsPage() {
                 <div className="pt-0.5 flex items-center relative z-10">
                   <button
                     type="button"
-                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 hover:underline flex items-center gap-1 transition cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-[#8646f4] hover:opacity-80 transition cursor-pointer"
                   >
                     <span>{noticeCard.actionLabel}</span>
                     <FiExternalLink className="size-3" />

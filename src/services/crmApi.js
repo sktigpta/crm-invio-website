@@ -85,7 +85,7 @@ function resolveApiUrl(path) {
   return `${API_BASE_URL}/api/crm${cleanPath}`;
 }
 
-const REQUEST_TIMEOUT_MS = 25000;
+const REQUEST_TIMEOUT_MS = 30000;
 
 async function request(endpoint, options = {}) {
   const url = resolveApiUrl(endpoint);

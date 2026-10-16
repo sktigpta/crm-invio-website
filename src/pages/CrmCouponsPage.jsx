@@ -38,10 +38,18 @@ export function CrmCouponsPage() {
 
   // Edit + Delete state
   const [editingCoupon, setEditingCoupon] = useState(null);
+  const [editCode, setEditCode] = useState('');
   const [editDesc, setEditDesc] = useState('');
+  const [editType, setEditType] = useState('percentage');
   const [editValue, setEditValue] = useState(10);
   const [editMinPurchase, setEditMinPurchase] = useState(0);
-  const [editExpiryDays, setEditExpiryDays] = useState(30);
+  const [editPlan, setEditPlan] = useState('all');
+  const [editRegion, setEditRegion] = useState('all');
+  const [editMaxRedemptions, setEditMaxRedemptions] = useState('');
+  const [editPerCustomer, setEditPerCustomer] = useState(1);
+  const [editFirstTimeOnly, setEditFirstTimeOnly] = useState(false);
+  const [editStatus, setEditStatus] = useState('active');
+  const [editExpiryDate, setEditExpiryDate] = useState('');
   const [editLoading, setEditLoading] = useState(false);
   const [deletingCoupon, setDeletingCoupon] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -82,10 +90,26 @@ export function CrmCouponsPage() {
 
   function openEditModal(c) {
     setEditingCoupon(c);
+    setEditCode(c.code || '');
     setEditDesc(c.description || '');
-    setEditValue(c.discountValue || 10);
-    setEditMinPurchase(c.minPurchaseAmount || 0);
-    setEditExpiryDays(30);
+    setEditType(c.discountType || 'percentage');
+    setEditValue(c.discountValue !== undefined && c.discountValue !== null ? Number(c.discountValue) : 10);
+    setEditMinPurchase(c.minPurchaseAmount !== undefined && c.minPurchaseAmount !== null ? Number(c.minPurchaseAmount) : 0);
+    setEditPlan(c.applicablePlan || 'all');
+    setEditRegion(c.applicableRegion || 'all');
+    setEditMaxRedemptions(c.maxTotalRedemptions ? String(c.maxTotalRedemptions) : '');
+    setEditPerCustomer(c.perCustomerLimit ? Number(c.perCustomerLimit) : 1);
+    setEditFirstTimeOnly(Boolean(c.firstTimeOnly));
+    setEditStatus(c.status || 'active');
+    if (c.expiryDate) {
+      try {
+        setEditExpiryDate(new Date(c.expiryDate).toISOString().split('T')[0]);
+      } catch {
+        setEditExpiryDate('');
+      }
+    } else {
+      setEditExpiryDate('');
+    }
   }
 
   async function handleUpdateCoupon(e) {
@@ -93,17 +117,25 @@ export function CrmCouponsPage() {
     if (!editingCoupon) return;
     setEditLoading(true);
     try {
-      const expiry = new Date();
-      expiry.setDate(expiry.getDate() + Number(editExpiryDays));
-      await crmApi.updateCoupon(editingCoupon.id, {
-        description: editDesc,
+      const payload = {
+        code: editCode.trim().toUpperCase(),
+        description: editDesc.trim(),
+        discountType: editType,
         discountValue: Number(editValue),
         minPurchaseAmount: Number(editMinPurchase) || 0,
-        expiryDate: expiry.toISOString(),
-      });
+        applicablePlan: editPlan,
+        applicableRegion: editRegion,
+        maxTotalRedemptions: editMaxRedemptions ? Number(editMaxRedemptions) : null,
+        perCustomerLimit: Number(editPerCustomer) || 1,
+        firstTimeOnly: editFirstTimeOnly,
+        status: editStatus,
+        expiryDate: editExpiryDate ? new Date(`${editExpiryDate}T23:59:59Z`).toISOString() : null,
+      };
+
+      await crmApi.updateCoupon(editingCoupon.id, payload);
       setEditingCoupon(null);
-      toast.success(`Coupon ${editingCoupon.code} updated.`);
-      fetchCoupons();
+      toast.success(`Coupon ${payload.code} updated successfully.`);
+      await fetchCoupons();
     } catch (err) {
       toast.error(err.message || 'Failed to update coupon.');
     } finally {
@@ -537,36 +569,184 @@ export function CrmCouponsPage() {
       {/* Edit Coupon Modal */}
       {editingCoupon && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="bg-white max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
+          <div className="bg-white max-w-lg w-full p-4 shadow-xl border border-slate-200 space-y-2.5 max-h-[92vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Update Coupon</h3>
                 <p className="text-[11px] font-mono text-slate-400 mt-0.5">{editingCoupon.code}</p>
               </div>
-              <button onClick={() => setEditingCoupon(null)} className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer">✕</button>
+              <button
+                type="button"
+                onClick={() => setEditingCoupon(null)}
+                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+              >
+                ✕
+              </button>
             </div>
+
             <form onSubmit={handleUpdateCoupon} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Description</label>
-                <input type="text" value={editDesc} onChange={(e) => setEditDesc(e.target.value)} className="w-full p-2.5 border border-slate-200" />
-              </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Discount Value</label>
-                  <input type="number" min="1" value={editValue} onChange={(e) => setEditValue(e.target.value)} required className="w-full p-2.5 border border-slate-200 font-bold" />
+                  <label className="block font-semibold text-slate-700 mb-1">Coupon Code *</label>
+                  <input
+                    type="text"
+                    value={editCode}
+                    onChange={(e) => setEditCode(e.target.value.toUpperCase())}
+                    required
+                    className="w-full p-2.5 border border-slate-200 uppercase font-mono font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Discount Type</label>
+                  <select
+                    value={editType}
+                    onChange={(e) => setEditType(e.target.value)}
+                    className="w-full p-2.5 border border-slate-200 bg-white"
+                  >
+                    <option value="percentage">Percentage (%)</option>
+                    <option value="fixed">Fixed Amount (₹)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Discount Value *</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max={editType === 'percentage' ? 100 : 100000}
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    required
+                    className="w-full p-2.5 border border-slate-200 font-bold"
+                  />
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">Min Order (₹)</label>
-                  <input type="number" min="0" value={editMinPurchase} onChange={(e) => setEditMinPurchase(e.target.value)} className="w-full p-2.5 border border-slate-200" />
+                  <input
+                    type="number"
+                    min="0"
+                    value={editMinPurchase}
+                    onChange={(e) => setEditMinPurchase(e.target.value)}
+                    className="w-full p-2.5 border border-slate-200"
+                  />
                 </div>
               </div>
+
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Extend Validity (days from now)</label>
-                <input type="number" min="1" value={editExpiryDays} onChange={(e) => setEditExpiryDays(e.target.value)} className="w-full p-2.5 border border-slate-200" />
+                <label className="block font-semibold text-slate-700 mb-1">Description / Campaign Label</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 15% discount for festival campaign"
+                  value={editDesc}
+                  onChange={(e) => setEditDesc(e.target.value)}
+                  className="w-full p-2.5 border border-slate-200"
+                />
               </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Applicable Plan</label>
+                  <select
+                    value={editPlan}
+                    onChange={(e) => setEditPlan(e.target.value)}
+                    className="w-full p-2.5 border border-slate-200 bg-white"
+                  >
+                    <option value="all">All Plans</option>
+                    <option value="plus">Plus Plan</option>
+                    <option value="pro">Pro Plan</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Applicable Region</label>
+                  <select
+                    value={editRegion}
+                    onChange={(e) => setEditRegion(e.target.value)}
+                    className="w-full p-2.5 border border-slate-200 bg-white"
+                  >
+                    <option value="all">Global (All Regions)</option>
+                    <option value="IN">India (IN)</option>
+                    <option value="US">United States (US)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Max Total Uses</label>
+                  <input
+                    type="number"
+                    min="1"
+                    placeholder="Unlimited"
+                    value={editMaxRedemptions}
+                    onChange={(e) => setEditMaxRedemptions(e.target.value)}
+                    className="w-full p-2.5 border border-slate-200"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Per-User Limit</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={editPerCustomer}
+                    onChange={(e) => setEditPerCustomer(e.target.value)}
+                    className="w-full p-2.5 border border-slate-200"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Status</label>
+                  <select
+                    value={editStatus}
+                    onChange={(e) => setEditStatus(e.target.value)}
+                    className="w-full p-2.5 border border-slate-200 bg-white font-semibold"
+                  >
+                    <option value="active">Active</option>
+                    <option value="draft">Draft</option>
+                    <option value="revoked">Revoked</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 items-end">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Expiry Date</label>
+                  <input
+                    type="date"
+                    value={editExpiryDate}
+                    onChange={(e) => setEditExpiryDate(e.target.value)}
+                    className="w-full p-2.5 border border-slate-200 bg-white"
+                  />
+                </div>
+                <div className="flex items-center gap-2 pb-2">
+                  <input
+                    type="checkbox"
+                    id="editFirstTimeOnly"
+                    checked={editFirstTimeOnly}
+                    onChange={(e) => setEditFirstTimeOnly(e.target.checked)}
+                    className="size-4 text-purple-600 rounded border-slate-300 cursor-pointer"
+                  />
+                  <label htmlFor="editFirstTimeOnly" className="text-slate-700 font-medium cursor-pointer">
+                    First-Time Customers Only
+                  </label>
+                </div>
+              </div>
+
               <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
-                <button type="button" onClick={() => setEditingCoupon(null)} className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer">Cancel</button>
-                <button type="submit" disabled={editLoading} className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer">{editLoading ? 'Saving...' : 'Save Changes'}</button>
+                <button
+                  type="button"
+                  onClick={() => setEditingCoupon(null)}
+                  className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={editLoading}
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
+                >
+                  {editLoading ? 'Saving Changes...' : 'Save Changes'}
+                </button>
               </div>
             </form>
           </div>

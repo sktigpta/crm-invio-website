@@ -89,7 +89,7 @@ function normalizePlans(raw) {
       _raw: r,
       id: r.id ?? r.planId ?? r.plan_id ?? r.code ?? fb.id,
       name: r.name ?? r.title ?? r.planName ?? fb.name,
-      price: r.price ?? r.amount ?? r.priceInr ?? r.price_inr ?? fb.price,
+      price: r.price ?? r.amount ?? r.priceInr ?? r.price_inr ?? r.price_yearly ?? r.prices?.yearly ?? fb.price,
       interval: r.interval ?? r.validity ?? r.billingInterval ?? r.duration ?? fb.interval,
       badge: r.badge ?? r.tag ?? r.label ?? fb.badge,
       popular: Boolean(r.popular ?? r.isPopular ?? r.is_popular ?? r.highlighted ?? fb.popular),

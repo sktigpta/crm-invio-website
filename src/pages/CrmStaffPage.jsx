@@ -5,7 +5,7 @@ import { useCrmToast } from '../context/CrmToastContext';
 import { RefreshCwIcon, AlertCircleIcon, PlusIcon } from '../components/CrmIcons';
 
 export function CrmStaffPage() {
-  const { staff: currentStaff, isAdmin, isManager, isManagerOrAdmin } = useCrmAuth();
+  const { staff: currentStaff, isAdmin, isManager, isManagerOrAdmin, isSuperAdmin } = useCrmAuth();
   const { toast } = useCrmToast();
   const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,14 +50,13 @@ export function CrmStaffPage() {
     fetchStaff();
   }, [fetchStaff]);
 
-  const OWNER_EMAIL = 'sktigpta@gmail.com';
-  const isOwner = (email) => (email || '').toLowerCase() === OWNER_EMAIL;
-  const amOwner = isOwner(currentStaff?.email);
+  const isSuperAdminAccount = (st) => st?.role === 'super_admin';
+  const amSuperAdmin = isSuperAdmin || currentStaff?.role === 'super_admin';
 
   async function handleToggleStatus(staffMember) {
     if (!isManagerOrAdmin || staffMember.id === currentStaff.id) return;
-    if (isOwner(staffMember.email) && !amOwner) {
-      toast.warning('Only the System Owner account can change its own status.');
+    if (isSuperAdminAccount(staffMember) && !amSuperAdmin) {
+      toast.warning('Only a System Owner (Super Admin) account can change its own status.');
       return;
     }
     const juniorRoles = ['sales_executive', 'support_executive', 'digital_marketer', 'billing_accountant'];
@@ -86,8 +85,8 @@ export function CrmStaffPage() {
   async function handleUpdateStaff(e) {
     e.preventDefault();
     if (!editingStaff) return;
-    if (isOwner(editingStaff.email) && !amOwner) {
-      toast.warning('Only the System Owner account can edit its own record.');
+    if (isSuperAdminAccount(editingStaff) && !amSuperAdmin) {
+      toast.warning('Only a System Owner (Super Admin) account can edit its own record.');
       return;
     }
     setEditLoading(true);
@@ -220,12 +219,12 @@ export function CrmStaffPage() {
               ) : (
                 staffList.map((st) => {
                   const isCurrent = st.id === currentStaff?.id;
-                  const isOwnerRow = isOwner(st.email);
+                  const isOwnerRow = isSuperAdminAccount(st);
                   const juniorRoles = ['sales_executive', 'support_executive', 'digital_marketer', 'billing_accountant'];
                   const canEdit = isOwnerRow
-                    ? amOwner || isCurrent
+                    ? amSuperAdmin || isCurrent
                     : isAdmin || (isManager && juniorRoles.includes(st.role));
-                  const canToggle = !isCurrent && canEdit && (!isOwnerRow || amOwner);
+                  const canToggle = !isCurrent && canEdit && (!isOwnerRow || amSuperAdmin);
                   const canDelete = isAdmin && !isCurrent && !isOwnerRow;
 
                   return (
@@ -238,7 +237,7 @@ export function CrmStaffPage() {
                               You
                             </span>
                           )}
-                          {st.email.toLowerCase() === 'sktigpta@gmail.com' && (
+                          {st.role === 'super_admin' && (
                             <span className="text-[10px] text-indigo-700 bg-indigo-50 font-bold px-2 py-0.5 rounded-full border border-indigo-200">
                               System Owner
                             </span>

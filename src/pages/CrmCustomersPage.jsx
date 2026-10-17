@@ -236,24 +236,34 @@ export function CrmCustomersPage() {
       toast.warning('Nothing to export — customer list is empty.');
       return;
     }
+    const escapeCsvCell = (val) => {
+      if (val === null || val === undefined) return '""';
+      let str = String(val);
+      if (/^[=+\-@\t\r]/.test(str)) {
+        str = `'${str}`;
+      }
+      return `"${str.replace(/"/g, '""')}"`;
+    };
     const headers = ['ID', 'Name', 'Email', 'Phone', 'Plan', 'Country', 'RegistrationDate'];
     const rows = customers.map((c) => [
-      c.id,
-      `"${c.fullName || ''}"`,
-      `"${c.email || ''}"`,
-      `"${c.phone || ''}"`,
-      c.currentPlan,
-      c.country || 'N/A',
-      c.registrationDate,
+      escapeCsvCell(c.id),
+      escapeCsvCell(c.fullName || ''),
+      escapeCsvCell(c.email || ''),
+      escapeCsvCell(c.phone || ''),
+      escapeCsvCell(c.currentPlan || ''),
+      escapeCsvCell(c.country || 'N/A'),
+      escapeCsvCell(c.registrationDate || ''),
     ]);
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
+    const csvContent = [headers.join(','), ...rows.map((e) => e.join(','))].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
+    link.setAttribute('href', url);
     link.setAttribute('download', `invio-customers-export-${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
     toast.success('Customer CSV exported.');
   }
 

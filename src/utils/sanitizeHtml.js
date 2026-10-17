@@ -19,7 +19,7 @@ export function sanitizeHtml(rawHtml) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(rawHtml, 'text/html');
 
-    const disallowedTags = ['script', 'iframe', 'object', 'embed', 'form', 'base', 'meta', 'link'];
+    const disallowedTags = ['script', 'iframe', 'object', 'embed', 'form', 'base', 'meta', 'link', 'style', 'template', 'applet'];
     disallowedTags.forEach((tag) => {
       const elements = doc.querySelectorAll(tag);
       elements.forEach((el) => el.remove());
@@ -30,12 +30,18 @@ export function sanitizeHtml(rawHtml) {
       const attrs = Array.from(el.attributes);
       for (const attr of attrs) {
         const name = attr.name.toLowerCase();
-        const value = attr.value.trim().toLowerCase();
+        const rawVal = attr.value || '';
+        const value = rawVal.replace(/[\u0000-\u0020]/g, '').toLowerCase();
 
-        if (name.startsWith('on')) {
+        if (name.startsWith('on') || name === 'srcdoc') {
           el.removeAttribute(attr.name);
         }
-        if ((name === 'href' || name === 'src' || name === 'xlink:href') && (value.startsWith('javascript:') || value.startsWith('data:text/html'))) {
+        if (
+          (name === 'href' || name === 'src' || name === 'xlink:href' || name === 'action') &&
+          (value.startsWith('javascript:') ||
+           value.startsWith('vbscript:') ||
+           (value.startsWith('data:') && !value.startsWith('data:image/')))
+        ) {
           el.removeAttribute(attr.name);
         }
       }

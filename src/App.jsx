@@ -1,34 +1,45 @@
+import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { CrmAuthProvider } from './context/CrmAuthContext';
 import { CrmToastProvider } from './context/CrmToastContext';
 import { CrmToaster } from './components/CrmToaster';
 import { CrmLayout } from './components/CrmLayout';
 import { CrmProtectedRoute } from './components/CrmProtectedRoute';
-import { CrmHomePage } from './pages/CrmHomePage';
-import { CrmLoginPage } from './pages/CrmLoginPage';
-import { CrmDashboardPage } from './pages/CrmDashboardPage';
-import { CrmCustomersPage } from './pages/CrmCustomersPage';
-import { CrmCustomerDetailPage } from './pages/CrmCustomerDetailPage';
-import { CrmDiscountsPage } from './pages/CrmDiscountsPage';
-import { CrmApprovalsPage } from './pages/CrmApprovalsPage';
-import { CrmCouponsPage } from './pages/CrmCouponsPage';
-import { CrmTicketsPage } from './pages/CrmTicketsPage';
-import { CrmTicketDetailPage } from './pages/CrmTicketDetailPage';
-import { CrmPlansPage } from './pages/CrmPlansPage';
-import { CrmStaffPage } from './pages/CrmStaffPage';
-import { CrmAuditLogsPage } from './pages/CrmAuditLogsPage';
-import { CrmBugsPage } from './pages/CrmBugsPage';
-import { CrmContactsPage } from './pages/CrmContactsPage';
-import { CrmBroadcastsPage } from './pages/CrmBroadcastsPage';
+
+const CrmHomePage = lazy(() => import('./pages/CrmHomePage').then(m => ({ default: m.CrmHomePage })));
+const CrmLoginPage = lazy(() => import('./pages/CrmLoginPage').then(m => ({ default: m.CrmLoginPage })));
+const CrmDashboardPage = lazy(() => import('./pages/CrmDashboardPage').then(m => ({ default: m.CrmDashboardPage })));
+const CrmCustomersPage = lazy(() => import('./pages/CrmCustomersPage').then(m => ({ default: m.CrmCustomersPage })));
+const CrmCustomerDetailPage = lazy(() => import('./pages/CrmCustomerDetailPage').then(m => ({ default: m.CrmCustomerDetailPage })));
+const CrmDiscountsPage = lazy(() => import('./pages/CrmDiscountsPage').then(m => ({ default: m.CrmDiscountsPage })));
+const CrmApprovalsPage = lazy(() => import('./pages/CrmApprovalsPage').then(m => ({ default: m.CrmApprovalsPage })));
+const CrmCouponsPage = lazy(() => import('./pages/CrmCouponsPage').then(m => ({ default: m.CrmCouponsPage })));
+const CrmTicketsPage = lazy(() => import('./pages/CrmTicketsPage').then(m => ({ default: m.CrmTicketsPage })));
+const CrmTicketDetailPage = lazy(() => import('./pages/CrmTicketDetailPage').then(m => ({ default: m.CrmTicketDetailPage })));
+const CrmPlansPage = lazy(() => import('./pages/CrmPlansPage').then(m => ({ default: m.CrmPlansPage })));
+const CrmStaffPage = lazy(() => import('./pages/CrmStaffPage').then(m => ({ default: m.CrmStaffPage })));
+const CrmAuditLogsPage = lazy(() => import('./pages/CrmAuditLogsPage').then(m => ({ default: m.CrmAuditLogsPage })));
+const CrmBugsPage = lazy(() => import('./pages/CrmBugsPage').then(m => ({ default: m.CrmBugsPage })));
+const CrmContactsPage = lazy(() => import('./pages/CrmContactsPage').then(m => ({ default: m.CrmContactsPage })));
+const CrmBroadcastsPage = lazy(() => import('./pages/CrmBroadcastsPage').then(m => ({ default: m.CrmBroadcastsPage })));
+
+function PageFallback() {
+  return (
+    <div className="flex-1 flex items-center justify-center min-h-[50vh]">
+      <div className="size-8 rounded-full border-2 border-slate-200 border-t-purple-600 animate-spin" />
+    </div>
+  );
+}
 
 export function App() {
   return (
     <CrmAuthProvider>
       <CrmToastProvider>
         <CrmToaster />
-        <Routes>
-        {/* Public 100% W x H Home Landing Page */}
-        <Route path="/" element={<CrmHomePage />} />
+        <Suspense fallback={<PageFallback />}>
+          <Routes>
+          {/* Public 100% W x H Home Landing Page */}
+          <Route path="/" element={<CrmHomePage />} />
 
         {/* Staff Authentication */}
         <Route path="/login" element={<CrmLoginPage />} />
@@ -134,6 +145,7 @@ export function App() {
         {/* Catch-all redirect */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </Suspense>
       </CrmToastProvider>
     </CrmAuthProvider>
   );

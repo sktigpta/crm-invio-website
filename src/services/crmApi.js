@@ -12,8 +12,10 @@ export function getCrmToken() {
 export function setCrmToken(token, remember = true) {
   try {
     if (remember) {
+      sessionStorage.removeItem(TOKEN_KEY);
       localStorage.setItem(TOKEN_KEY, token);
     } else {
+      localStorage.removeItem(TOKEN_KEY);
       sessionStorage.setItem(TOKEN_KEY, token);
     }
   } catch (e) {
@@ -45,8 +47,10 @@ export function setStoredStaff(staff, remember = true) {
   try {
     const json = JSON.stringify(staff);
     if (remember) {
+      sessionStorage.removeItem(STAFF_KEY);
       localStorage.setItem(STAFF_KEY, json);
     } else {
+      localStorage.removeItem(STAFF_KEY);
       sessionStorage.setItem(STAFF_KEY, json);
     }
   } catch (e) {

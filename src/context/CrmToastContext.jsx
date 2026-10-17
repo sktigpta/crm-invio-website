@@ -45,6 +45,7 @@ export function CrmToastProvider({ children }) {
       dismiss,
       toast,
       notify: push,
+      addToast: (msg, type = 'info') => push(type, msg),
     }),
     [toasts, dismiss, toast, push]
   );

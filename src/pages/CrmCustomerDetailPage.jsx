@@ -244,7 +244,12 @@ export function CrmCustomerDetailPage() {
     );
   }
 
-  const { profile, payments, discounts, couponRedemptions, tickets, notes } = customerData;
+  const profile = customerData?.profile || {};
+  const payments = customerData?.payments || [];
+  const discounts = customerData?.discounts || [];
+  const couponRedemptions = customerData?.couponRedemptions || [];
+  const tickets = customerData?.tickets || [];
+  const notes = customerData?.notes || [];
 
   return (
     <div className="space-y-3">
@@ -256,20 +261,20 @@ export function CrmCustomerDetailPage() {
         >
           ← Back to Customers Directory
         </Link>
-        <span className="text-[11px] font-mono text-slate-400">ID: {profile.id}</span>
+        <span className="text-[11px] font-mono text-slate-400">ID: {profile.id || 'N/A'}</span>
       </div>
 
       {/* Customer Header Card */}
       <div className="bg-white p-6  border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-5">
         <div className="flex items-center gap-4">
           <div className="size-14  bg-purple-100 text-purple-700 font-bold text-xl flex items-center justify-center flex-shrink-0">
-            {profile.fullName.charAt(0) || 'C'}
+            {(profile.fullName || 'Customer').charAt(0).toUpperCase() || 'C'}
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-lg font-bold text-slate-900">{profile.fullName}</h2>
+              <h2 className="text-lg font-bold text-slate-900">{profile.fullName || 'Unnamed Customer'}</h2>
               <span className="capitalize text-xs font-semibold px-2 py-0.5  bg-purple-50 text-purple-700 border border-purple-200">
-                {profile.currentPlan} Plan
+                {profile.currentPlan || 'Free'} Plan
               </span>
               <span className={`text-[11px] font-medium px-2 py-0.5  ${
                 profile.emailVerified ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'
@@ -632,11 +637,6 @@ export function CrmCustomerDetailPage() {
         </div>
       )}
 
-      {/* Grant / Request Discount Modal */}
-      {showDiscountModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="bg-white  max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
       {/* Raise Service Request Modal */}
       {showTicketModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
@@ -684,6 +684,11 @@ export function CrmCustomerDetailPage() {
         </div>
       )}
 
+      {/* Grant / Request Discount Modal */}
+      {showDiscountModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
+          <div className="bg-white  max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Assign Discount to Customer</h3>
               <button
                 onClick={() => setShowDiscountModal(false)}

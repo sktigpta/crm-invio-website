@@ -29,8 +29,8 @@ import {
 } from 'react-icons/fi';
 
 export function CrmBroadcastsPage() {
-  const { addToast } = useCrmToast();
-  const { isManagerOrAdmin } = useCrmAuth();
+  const { toast } = useCrmToast();
+  const { isManagerOrAdmin, canViewBroadcasts } = useCrmAuth();
 
   const [activeTab, setActiveTab] = useState('middle'); // 'middle' | 'notification'
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -120,7 +120,7 @@ export function CrmBroadcastsPage() {
         }
       }
     } catch (err) {
-      addToast(err?.message || 'Failed to load broadcasts', 'error');
+      toast.error(err?.message || 'Failed to load broadcasts');
     } finally {
       setLoading(false);
     }
@@ -177,7 +177,7 @@ export function CrmBroadcastsPage() {
         };
         const res = await crmApi.updateMiddleCard(payload);
         if (res && res.success) {
-          addToast(res.message || 'Center Modal Card broadcast updated & activated.', 'success');
+          toast.success(res.message || 'Center Modal Card broadcast updated & activated.');
           if (res.campaign?.id) {
             setMiddleCard((prev) => ({ ...prev, id: res.campaign.id }));
           }
@@ -195,14 +195,14 @@ export function CrmBroadcastsPage() {
         };
         const res = await crmApi.updateNotificationCard(payload);
         if (res && res.success) {
-          addToast(res.message || 'Notification Card notice updated & activated.', 'success');
+          toast.success(res.message || 'Notification Card notice updated & activated.');
           if (res.notice?.id) {
             setNoticeCard((prev) => ({ ...prev, id: res.notice.id }));
           }
         }
       }
     } catch (err) {
-      addToast(err?.message || 'Failed to save broadcast', 'error');
+      toast.error(err?.message || 'Failed to save broadcast');
     } finally {
       setSaving(false);
     }
@@ -424,7 +424,7 @@ export function CrmBroadcastsPage() {
           </button>
 
           {/* Publish & Activate Button */}
-          {isManagerOrAdmin && (
+          {canViewBroadcasts && (
             <button
               type="button"
               onClick={handleSave}

@@ -3,6 +3,7 @@ import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
 import { RefreshCwIcon, AlertCircleIcon, PlusIcon } from '../components/CrmIcons';
+import { TableSkeleton } from '../components/common/Skeleton';
 
 export function CrmCouponsPage() {
   const { isManagerOrAdmin } = useCrmAuth();
@@ -337,12 +338,7 @@ export function CrmCouponsPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr>
-                  <td colSpan="7" className="py-12 text-center text-slate-400">
-                    <div className="size-6 border-2 border-slate-200 border-t-purple-600  animate-spin mx-auto mb-2" />
-                    Loading coupons...
-                  </td>
-                </tr>
+                <TableSkeleton rows={5} cols={7} />
               ) : coupons.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="py-12 text-center text-slate-400">

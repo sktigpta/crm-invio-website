@@ -4,6 +4,7 @@ import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
 import { SearchIcon, FilterIcon, RefreshCwIcon, AlertCircleIcon, PlusIcon } from '../components/CrmIcons';
+import { TableSkeleton } from '../components/common/Skeleton';
 
 function ExecCustomerLookup() {
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ function ExecCustomerLookup() {
         <p className="text-xs text-slate-500">Enter a customer email to open their page — add notes, raise a service request, or request a discount there.</p>
       </div>
       <form onSubmit={handleLookup} className="bg-white p-4 border border-slate-200 shadow-xs flex gap-2">
-        <input type="email" required placeholder="customer@example.com" value={email} onChange={(e) => setEmail(e.target.value.toLowerCase())} className="flex-1 px-3 py-2 border border-slate-200 text-sm focus:outline-none focus:border-purple-600" />
+        <input type="email" required placeholder="billing@retailstore.in" value={email} onChange={(e) => setEmail(e.target.value.toLowerCase())} className="flex-1 px-3 py-2 border border-slate-200 text-sm focus:outline-none focus:border-purple-600" />
         <button type="submit" disabled={looking} className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold transition disabled:opacity-50 cursor-pointer">{looking ? 'Looking…' : 'Open →'}</button>
       </form>
       <button onClick={() => setShowRegister((v) => !v)} className="text-xs font-semibold text-purple-700 hover:text-purple-800 cursor-pointer">+ Onboard new customer</button>
@@ -369,12 +370,7 @@ export function CrmCustomersPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr>
-                  <td colSpan="6" className="py-12 text-center text-slate-400">
-                    <div className="size-6 border-2 border-slate-200 border-t-purple-600 animate-spin mx-auto mb-2" />
-                    Loading customer directory...
-                  </td>
-                </tr>
+                <TableSkeleton rows={6} cols={6} />
               ) : customers.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="py-12 text-center text-slate-400">
@@ -515,7 +511,7 @@ export function CrmCustomersPage() {
               </div>
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Business Name</label>
-                <input type="text" value={regBusinessName} onChange={(e) => setRegBusinessName(e.target.value)} placeholder="e.g. Acme Studio" className="w-full p-2.5 border border-slate-200 focus:outline-none focus:border-purple-600" />
+                <input type="text" value={regBusinessName} onChange={(e) => setRegBusinessName(e.target.value)} placeholder="e.g. Metro Retail Mart" className="w-full p-2.5 border border-slate-200 focus:outline-none focus:border-purple-600" />
               </div>
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Plan</label>
@@ -594,7 +590,7 @@ export function CrmCustomersPage() {
                   type="text"
                   value={editBusinessName}
                   onChange={(e) => setEditBusinessName(e.target.value)}
-                  placeholder="e.g. Acme Studio"
+                  placeholder="e.g. Metro Retail Mart"
                   className="w-full p-2.5 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
                 />
               </div>

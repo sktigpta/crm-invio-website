@@ -3,6 +3,7 @@ import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
 import { CheckCircleIcon, RefreshCwIcon, AlertCircleIcon } from '../components/CrmIcons';
+import { PricingCardSkeleton } from '../components/common/Skeleton';
 
 const FALLBACK_PLANS = [
   {
@@ -43,7 +44,7 @@ const FALLBACK_PLANS = [
   {
     id: 'pro',
     name: 'Pro Enterprise',
-    price: 2499,
+    price: 4999,
     interval: '/ year',
     badge: 'Enterprise',
     popular: false,
@@ -242,9 +243,10 @@ export function CrmPlansPage() {
 
       {/* Plans Grid — real data */}
       {loading && !plans.length ? (
-        <div className="py-20 flex flex-col items-center justify-center text-slate-400">
-          <div className="size-8 border-2 border-slate-200 border-t-purple-600 animate-spin mb-3" />
-          <p className="text-xs">Loading live plan catalog…</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6" aria-busy="true" aria-label="Loading plans">
+          <PricingCardSkeleton />
+          <PricingCardSkeleton isFeatured={true} />
+          <PricingCardSkeleton />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

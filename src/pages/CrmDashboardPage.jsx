@@ -10,6 +10,7 @@ import {
   RefreshCwIcon,
   AlertCircleIcon,
 } from '../components/CrmIcons';
+import { Skeleton } from '../components/common/Skeleton';
 
 export function CrmDashboardPage() {
   const { staff, isManagerOrAdmin } = useCrmAuth();
@@ -92,7 +93,7 @@ export function CrmDashboardPage() {
             </div>
           </div>
           <div className="text-xl font-bold text-slate-900">
-            {loading ? '...' : (overview.totalCustomers ?? 0).toLocaleString()}
+            {loading ? <Skeleton className="h-6 w-16 my-0.5" /> : (overview.totalCustomers ?? 0).toLocaleString()}
           </div>
           <p className="text-[10px] text-slate-400 mt-0.5">
             {overview.newCustomersLast30Days ?? 0} new past 30 days
@@ -108,7 +109,7 @@ export function CrmDashboardPage() {
             </div>
           </div>
           <div className="text-xl font-bold text-slate-900">
-            {loading ? '...' : (overview.verifiedCustomers ?? 0).toLocaleString()}
+            {loading ? <Skeleton className="h-6 w-16 my-0.5" /> : (overview.verifiedCustomers ?? 0).toLocaleString()}
           </div>
           <p className="text-[10px] text-emerald-600 font-medium mt-0.5">
             Email verification completed
@@ -124,7 +125,7 @@ export function CrmDashboardPage() {
             </div>
           </div>
           <div className="text-xl font-bold text-slate-900">
-            {loading ? '...' : overview.pendingApprovals ?? 0}
+            {loading ? <Skeleton className="h-6 w-12 my-0.5" /> : overview.pendingApprovals ?? 0}
           </div>
           <p className="text-[10px] text-slate-400 mt-0.5">
             Requires manager action
@@ -140,7 +141,7 @@ export function CrmDashboardPage() {
             </div>
           </div>
           <div className="text-xl font-bold text-slate-900">
-            {loading ? '...' : `₹${(overview.totalRevenue ?? 0).toLocaleString()}`}
+            {loading ? <Skeleton className="h-6 w-20 my-0.5" /> : `₹${(overview.totalRevenue ?? 0).toLocaleString()}`}
           </div>
           <p className="text-[10px] text-slate-400 mt-0.5">
             {overview.totalTransactions ?? 0} total transactions

@@ -6,7 +6,7 @@ const POLL_INTERVAL_MS = 60000;
 const CHECK_LABELS = {
   api: 'API',
   database: 'Database',
-  redis: 'Redis',
+  redis: 'Cache',
   payments: 'Payments',
   email: 'Email',
 };

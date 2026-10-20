@@ -3,13 +3,21 @@ const STAFF_KEY = 'invio_crm_staff_user';
 
 export function getCrmToken() {
   try {
-    return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY) || null;
+    return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || null;
   } catch {
     return null;
   }
 }
 
-export function setCrmToken(token, remember = true) {
+function isUsingLocalStorage() {
+  try {
+    return Boolean(localStorage.getItem(TOKEN_KEY));
+  } catch {
+    return false;
+  }
+}
+
+export function setCrmToken(token, remember = false) {
   try {
     if (remember) {
       sessionStorage.removeItem(TOKEN_KEY);
@@ -36,14 +44,14 @@ export function clearCrmAuth() {
 
 export function getStoredStaff() {
   try {
-    const raw = localStorage.getItem(STAFF_KEY) || sessionStorage.getItem(STAFF_KEY);
+    const raw = sessionStorage.getItem(STAFF_KEY) || localStorage.getItem(STAFF_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
 }
 
-export function setStoredStaff(staff, remember = true) {
+export function setStoredStaff(staff, remember = false) {
   try {
     const json = JSON.stringify(staff);
     if (remember) {
@@ -137,7 +145,7 @@ async function request(endpoint, options = {}) {
 
 export const crmApi = {
   // Auth
-  async login(email, password, remember = true) {
+  async login(email, password, remember = false) {
     const res = await request('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
@@ -154,10 +162,18 @@ export const crmApi = {
   },
 
   async changePassword(currentPassword, newPassword) {
-    return request('/auth/change-password', {
+    const remember = isUsingLocalStorage();
+    const res = await request('/auth/change-password', {
       method: 'POST',
       body: JSON.stringify({ currentPassword, newPassword }),
     });
+    if (res.token) {
+      setCrmToken(res.token, remember);
+    }
+    if (res.staff) {
+      setStoredStaff(res.staff, remember);
+    }
+    return res;
   },
 
   // Dashboard

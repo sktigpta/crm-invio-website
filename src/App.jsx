@@ -53,8 +53,22 @@ export function App() {
           }
         >
           <Route path="/dashboard" element={<CrmDashboardPage />} />
-          <Route path="/customers" element={<CrmCustomersPage />} />
-          <Route path="/customers/:id" element={<CrmCustomerDetailPage />} />
+          <Route
+            path="/customers"
+            element={
+              <CrmProtectedRoute requiredRoles={['admin', 'manager', 'sales_executive', 'support_executive', 'billing_accountant']}>
+                <CrmCustomersPage />
+              </CrmProtectedRoute>
+            }
+          />
+          <Route
+            path="/customers/:id"
+            element={
+              <CrmProtectedRoute requiredRoles={['admin', 'manager', 'sales_executive', 'support_executive', 'billing_accountant']}>
+                <CrmCustomerDetailPage />
+              </CrmProtectedRoute>
+            }
+          />
           <Route
             path="/discounts"
             element={
@@ -111,7 +125,14 @@ export function App() {
               </CrmProtectedRoute>
             }
           />
-          <Route path="/plans" element={<CrmPlansPage />} />
+          <Route
+            path="/plans"
+            element={
+              <CrmProtectedRoute requiredRoles={['admin', 'manager']}>
+                <CrmPlansPage />
+              </CrmProtectedRoute>
+            }
+          />
           <Route
             path="/broadcasts"
             element={
@@ -131,7 +152,7 @@ export function App() {
           <Route
             path="/audit-logs"
             element={
-              <CrmProtectedRoute>
+              <CrmProtectedRoute requiredRoles={['admin', 'manager']}>
                 <CrmAuditLogsPage />
               </CrmProtectedRoute>
             }

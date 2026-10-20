@@ -137,30 +137,88 @@ function sanitizeAttributes(tag, rawAttrs) {
   return sanitizedParts.length > 0 ? ` ${sanitizedParts.join(' ')}` : '';
 }
 
-/**
- * Strict allowlist-based HTML/SVG sanitizer for rich text notes and email previews.
- */
-export function sanitizeHtml(dirty) {
-  if (!dirty || typeof dirty !== 'string') return '';
-  let clean = dirty;
+function sanitizeWithDOM(rawHtml) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(rawHtml, 'text/html');
 
-  clean = clean.replace(/<!--[\s\S]*?-->/g, '');
+  for (const dropTag of DROP_CONTENT_TAGS) {
+    const forbidden = doc.querySelectorAll(dropTag);
+    forbidden.forEach((el) => el.remove());
+  }
 
-  let prev = '';
-  let passes = 0;
-  while (clean !== prev && passes < 3) {
-    prev = clean;
-    passes++;
-    clean = clean.replace(/<(?:\/?[a-zA-Z][a-zA-Z0-9:-]*|!)[^>]*?(?=<|$)/gi, '');
-    for (const dropTag of DROP_CONTENT_TAGS) {
-      const pairRegex = new RegExp(`<${dropTag}\\b[^>]*>[\\s\\S]*?<\\/${dropTag}\\s*>`, 'gi');
-      const singleRegex = new RegExp(`<\\/?${dropTag}\\b[^>]*\\/?>`, 'gi');
-      clean = clean.replace(pairRegex, '');
-      clean = clean.replace(singleRegex, '');
+  const allElements = Array.from(doc.body.querySelectorAll('*'));
+  for (const el of allElements) {
+    const tag = el.tagName.toLowerCase();
+    if (!ALLOWED_TAGS.has(tag)) {
+      el.remove();
+      continue;
+    }
+
+    const tagSpecific = TAG_ALLOWED_ATTRS[tag];
+    const attrs = Array.from(el.attributes);
+    for (const attr of attrs) {
+      const attrName = attr.name.toLowerCase();
+      const rawVal = attr.value;
+
+      if (attrName.startsWith('on') || attrName === 'srcdoc' || attrName === 'formaction' || attrName === 'xlink:href') {
+        el.removeAttribute(attr.name);
+        continue;
+      }
+
+      if (attrName === 'style') {
+        const cleanStyle = sanitizeStyleValue(rawVal);
+        if (cleanStyle) {
+          el.setAttribute('style', cleanStyle);
+        } else {
+          el.removeAttribute('style');
+        }
+        continue;
+      }
+
+      const isAllowed =
+        GLOBAL_ALLOWED_ATTRS.has(attrName) ||
+        Boolean(tagSpecific && tagSpecific.has(attrName)) ||
+        (attrName.startsWith('aria-') && /^[a-z0-9-]+$/.test(attrName));
+
+      if (!isAllowed) {
+        el.removeAttribute(attr.name);
+        continue;
+      }
+
+      if (attrName === 'href' || attrName === 'src') {
+        if (!isSafeUrlValue(rawVal, attrName)) {
+          el.removeAttribute(attr.name);
+          continue;
+        }
+      }
+
+      if (tag === 'a' && el.getAttribute('target') === '_blank') {
+        el.setAttribute('rel', 'noopener noreferrer');
+      }
     }
   }
 
-  clean = clean.replace(/<(\/?)([a-zA-Z0-9:-]+)([^>]*)>/g, (_full, slash, rawTagName, rawAttrs) => {
+  return doc.body.innerHTML;
+}
+
+function sanitizeWithFallback(clean) {
+  let sanitized = clean.replace(/<!--[\s\S]*?-->/g, '');
+
+  let prev = '';
+  let passes = 0;
+  while (sanitized !== prev && passes < 3) {
+    prev = sanitized;
+    passes++;
+    sanitized = sanitized.replace(/<(?:\/?[a-zA-Z][a-zA-Z0-9:-]*|!)[^>]*?(?=<|$)/gi, '');
+    for (const dropTag of DROP_CONTENT_TAGS) {
+      const pairRegex = new RegExp(`<${dropTag}\\b[^>]*>[\\s\\S]*?<\\/${dropTag}\\s*>`, 'gi');
+      const singleRegex = new RegExp(`<\\/?${dropTag}\\b[^>]*\\/?>`, 'gi');
+      sanitized = sanitized.replace(pairRegex, '');
+      sanitized = sanitized.replace(singleRegex, '');
+    }
+  }
+
+  sanitized = sanitized.replace(/<(\/?)([a-zA-Z0-9:-]+)([^>]*)>/g, (_full, slash, rawTagName, rawAttrs) => {
     const tag = rawTagName.toLowerCase();
     if (!ALLOWED_TAGS.has(tag)) {
       return '';
@@ -175,7 +233,20 @@ export function sanitizeHtml(dirty) {
     return selfClosing && VOID_TAGS.has(tag) ? `<${canonicalTag}${attrs} />` : `<${canonicalTag}${attrs}>`;
   });
 
-  clean = clean.replace(/<(?:\/?[a-zA-Z][a-zA-Z0-9:-]*|!)[^>]*?(?=<|$)/gi, '');
+  sanitized = sanitized.replace(/<(?:\/?[a-zA-Z][a-zA-Z0-9:-]*|!)[^>]*?(?=<|$)/gi, '');
 
-  return clean;
+  return sanitized;
+}
+
+/**
+ * Strict allowlist-based HTML/SVG sanitizer for rich text notes and email previews.
+ * In browser environments, uses native DOMParser tree walking.
+ * In non-DOM environments, uses allowlist-based token parsing.
+ */
+export function sanitizeHtml(dirty) {
+  if (!dirty || typeof dirty !== 'string') return '';
+  if (typeof DOMParser !== 'undefined') {
+    return sanitizeWithDOM(dirty);
+  }
+  return sanitizeWithFallback(dirty);
 }

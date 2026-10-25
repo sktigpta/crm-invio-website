@@ -16,7 +16,7 @@ import {
 export function CrmCustomerDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAdmin, isManagerOrAdmin, isSales, isSupport, canViewTickets } = useCrmAuth();
+  const { isAdmin, isManagerOrAdmin, isSales, isSupport, canViewTickets, staff } = useCrmAuth();
   const { toast } = useCrmToast();
 
   const [customerData, setCustomerData] = useState(null);
@@ -33,7 +33,17 @@ export function CrmCustomerDetailPage() {
   const [editPlan, setEditPlan] = useState('free');
   const [editPhone, setEditPhone] = useState('');
   const [editCountry, setEditCountry] = useState('');
+  const [editEmailVerified, setEditEmailVerified] = useState(true);
+  const [editUpgradeReason, setEditUpgradeReason] = useState('');
   const [editLoading, setEditLoading] = useState(false);
+
+  // Dedicated Plan Upgrade Modal State
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradePlan, setUpgradePlan] = useState('plus');
+  const [upgradeValidity, setUpgradeValidity] = useState('1_year');
+  const [upgradeCustomExpiry, setUpgradeCustomExpiry] = useState('');
+  const [upgradeReason, setUpgradeReason] = useState('');
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
 
   // Delete Customer State
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -115,11 +125,17 @@ export function CrmCustomerDetailPage() {
     setEditPlan(p.currentPlan || 'free');
     setEditPhone(p.phone || '');
     setEditCountry(p.country || '');
+    setEditEmailVerified(Boolean(p.emailVerified));
+    setEditUpgradeReason('');
     setShowEditModal(true);
   }
 
   async function handleUpdateCustomer(e) {
     e.preventDefault();
+    if (editPlan !== (customerData?.profile?.currentPlan || 'free') && !editUpgradeReason.trim()) {
+      toast.error('A documented reason is required to modify the subscription plan.');
+      return;
+    }
     setEditLoading(true);
     try {
       await crmApi.updateCustomer(id, {
@@ -130,6 +146,8 @@ export function CrmCustomerDetailPage() {
         plan: editPlan,
         phone: editPhone,
         country: editCountry,
+        emailVerified: editEmailVerified,
+        upgradeReason: editUpgradeReason.trim() || undefined,
       });
       setShowEditModal(false);
       toast.success('Customer profile updated.');
@@ -138,6 +156,41 @@ export function CrmCustomerDetailPage() {
       toast.error(err.message || 'Failed to update customer.');
     } finally {
       setEditLoading(false);
+    }
+  }
+
+  function openUpgradeModal() {
+    if (!customerData?.profile) return;
+    const current = customerData.profile.currentPlan || 'free';
+    setUpgradePlan(current === 'free' ? 'plus' : current === 'plus' ? 'pro' : 'plus');
+    setUpgradeValidity('1_year');
+    setUpgradeCustomExpiry('');
+    setUpgradeReason('');
+    setShowUpgradeModal(true);
+  }
+
+  async function handleUpgradePlan(e) {
+    e.preventDefault();
+    if (!upgradeReason.trim()) {
+      toast.error('Please enter a documented reason for this plan upgrade/adjustment.');
+      return;
+    }
+    setUpgradeLoading(true);
+    try {
+      await crmApi.upgradeCustomerSubscription(id, {
+        plan: upgradePlan,
+        validity: upgradeValidity,
+        customExpiryDate: upgradeValidity === 'custom' ? upgradeCustomExpiry : undefined,
+        reason: upgradeReason.trim(),
+      });
+      setShowUpgradeModal(false);
+      setUpgradeReason('');
+      toast.success(`Plan updated to ${upgradePlan.toUpperCase()} successfully.`);
+      fetchCustomer();
+    } catch (err) {
+      toast.error(err.message || 'Failed to update plan.');
+    } finally {
+      setUpgradeLoading(false);
     }
   }
 
@@ -250,6 +303,7 @@ export function CrmCustomerDetailPage() {
   const couponRedemptions = customerData?.couponRedemptions || [];
   const tickets = customerData?.tickets || [];
   const notes = customerData?.notes || [];
+  const subscriptionHistory = customerData?.subscriptionHistory || [];
 
   return (
     <div className="space-y-3">
@@ -292,6 +346,14 @@ export function CrmCustomerDetailPage() {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2.5 flex-wrap">
+          {isManagerOrAdmin && (
+            <button
+              onClick={openUpgradeModal}
+              className="px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold text-xs shadow-xs transition cursor-pointer flex items-center gap-1.5"
+            >
+              <span>⚡</span> Upgrade Plan
+            </button>
+          )}
           <button
             onClick={() => setShowDiscountModal(true)}
             className="px-3.5 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition cursor-pointer"
@@ -435,37 +497,135 @@ export function CrmCustomerDetailPage() {
 
       {/* Tab 2: Billing & Subscriptions History */}
       {activeTab === 'subscriptions' && (
-        <div className="bg-white  border border-slate-200 shadow-xs crm-table-wrap overflow-x-auto">
-          <table className="crm-table text-left text-xs">
-            <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
-              <tr>
-                <th className="py-1.5 px-3">Order ID</th>
-                <th className="py-1.5 px-3">Plan Purchased</th>
-                <th className="py-1.5 px-3">Validity</th>
-                <th className="py-1.5 px-3">Amount Paid</th>
-                <th className="py-1.5 px-3">Date</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {payments.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="py-8 text-center text-slate-400">
-                    No payment transactions recorded for this customer.
-                  </td>
-                </tr>
-              ) : (
-                payments.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50">
-                    <td className="py-1.5 px-3 font-mono font-medium">{p.order_id || p.id}</td>
-                    <td className="py-1.5 px-3 capitalize font-semibold text-purple-700">{p.plan}</td>
-                    <td className="py-1.5 px-3 capitalize text-slate-600">{p.validity}</td>
-                    <td className="py-1.5 px-3 font-bold text-slate-900">₹{p.amount}</td>
-                    <td className="py-1.5 px-3 text-slate-500">{new Date(p.created_at).toLocaleDateString()}</td>
+        <div className="space-y-4">
+          {/* Current Active Subscription Status Card */}
+          <div className="bg-white p-5 border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Current Subscription</div>
+              <div className="flex items-center gap-3 mt-1">
+                <span className="text-xl font-bold capitalize text-slate-900">
+                  {profile.currentPlan || 'Free'} Plan
+                </span>
+                <span className={`text-xs font-semibold px-2 py-0.5 uppercase ${
+                  profile.subscriptionStatus === 'active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
+                }`}>
+                  {profile.subscriptionStatus || 'active'}
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-1">
+                {profile.currentPlan === 'free'
+                  ? 'Standard free access tier.'
+                  : profile.subscriptionExpiresAt
+                  ? `Active through ${new Date(profile.subscriptionExpiresAt).toLocaleDateString()} (${new Date(profile.subscriptionExpiresAt).toLocaleTimeString()})`
+                  : 'Open-ended / Lifetime access'}
+              </p>
+            </div>
+            {isManagerOrAdmin && (
+              <button
+                onClick={openUpgradeModal}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs transition cursor-pointer self-start md:self-center flex items-center gap-1.5"
+              >
+                <span>⚡</span> Upgrade / Adjust Plan
+              </button>
+            )}
+          </div>
+
+          {/* Plan Upgrades & Change History from Google Sheets */}
+          <div className="bg-white border border-slate-200 shadow-xs">
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-slate-900 text-xs">CRM Plan Upgrade History (Google Sheet)</h3>
+                <p className="text-[11px] text-slate-500">Documented upgrade justifications recorded in the audit sheet.</p>
+              </div>
+              <span className="text-[10px] font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 border border-slate-200">
+                Google Sheet
+              </span>
+            </div>
+            <div className="crm-table-wrap overflow-x-auto">
+              <table className="crm-table text-left text-xs">
+                <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
+                  <tr>
+                    <th className="py-2 px-3">Date</th>
+                    <th className="py-2 px-3">Plan Change</th>
+                    <th className="py-2 px-3">Validity</th>
+                    <th className="py-2 px-3">Reason of Upgrade</th>
+                    <th className="py-2 px-3">Upgraded By</th>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {subscriptionHistory.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="py-6 text-center text-slate-400 text-xs">
+                        No CRM plan upgrades recorded in the audit sheet for this account yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    subscriptionHistory.map((sh, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/70">
+                        <td className="py-2 px-3 text-slate-500 whitespace-nowrap">
+                          {sh.timestamp ? new Date(sh.timestamp).toLocaleString() : 'N/A'}
+                        </td>
+                        <td className="py-2 px-3 whitespace-nowrap font-semibold">
+                          <span className="capitalize text-slate-600">{sh.previousPlan || 'free'}</span>
+                          <span className="mx-1.5 text-purple-600">→</span>
+                          <span className="capitalize text-purple-700 font-bold">{sh.newPlan}</span>
+                        </td>
+                        <td className="py-2 px-3 capitalize text-slate-700 whitespace-nowrap">
+                          {sh.validity ? sh.validity.replace('_', ' ') : '1 year'}
+                        </td>
+                        <td className="py-2 px-3 text-slate-800 font-medium max-w-xs break-words">
+                          {sh.reason || '—'}
+                        </td>
+                        <td className="py-2 px-3 whitespace-nowrap">
+                          <div className="font-semibold text-slate-800">{sh.upgradedByName || 'Staff'}</div>
+                          <div className="text-[10px] text-slate-400 capitalize">{sh.upgradedByRole?.replace('_', ' ')}</div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Payment & Checkout Transactions */}
+          <div className="bg-white border border-slate-200 shadow-xs">
+            <div className="p-4 border-b border-slate-100">
+              <h3 className="font-bold text-slate-900 text-xs">Payment & Checkout Transactions ({payments.length})</h3>
+            </div>
+            <div className="crm-table-wrap overflow-x-auto">
+              <table className="crm-table text-left text-xs">
+                <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
+                  <tr>
+                    <th className="py-1.5 px-3">Order ID</th>
+                    <th className="py-1.5 px-3">Plan Purchased</th>
+                    <th className="py-1.5 px-3">Validity</th>
+                    <th className="py-1.5 px-3">Amount Paid</th>
+                    <th className="py-1.5 px-3">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {payments.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="py-8 text-center text-slate-400">
+                        No payment transactions recorded for this customer.
+                      </td>
+                    </tr>
+                  ) : (
+                    payments.map((p) => (
+                      <tr key={p.id} className="hover:bg-slate-50">
+                        <td className="py-1.5 px-3 font-mono font-medium">{p.order_id || p.id}</td>
+                        <td className="py-1.5 px-3 capitalize font-semibold text-purple-700">{p.plan}</td>
+                        <td className="py-1.5 px-3 capitalize text-slate-600">{p.validity}</td>
+                        <td className="py-1.5 px-3 font-bold text-slate-900">₹{p.amount}</td>
+                        <td className="py-1.5 px-3 text-slate-500">{new Date(p.created_at).toLocaleDateString()}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
 
@@ -868,18 +1028,50 @@ export function CrmCustomerDetailPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Subscription Plan</label>
-                <select
-                  value={editPlan}
-                  onChange={(e) => setEditPlan(e.target.value)}
-                  className="w-full p-2.5  border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
-                >
-                  <option value="free">Free Tier</option>
-                  <option value="plus">Plus Plan</option>
-                  <option value="pro">Pro Plan</option>
-                </select>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Subscription Plan</label>
+                  <select
+                    value={editPlan}
+                    onChange={(e) => setEditPlan(e.target.value)}
+                    className="w-full p-2.5  border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
+                  >
+                    <option value="free">Free Tier</option>
+                    <option value="plus">Plus Plan</option>
+                    <option value="pro">Pro Plan</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Email Verification</label>
+                  <select
+                    value={editEmailVerified ? 'verified' : 'unverified'}
+                    onChange={(e) => setEditEmailVerified(e.target.value === 'verified')}
+                    className="w-full p-2.5  border border-slate-200 bg-white focus:outline-none focus:border-purple-600"
+                  >
+                    <option value="verified">Verified</option>
+                    <option value="unverified">Unverified</option>
+                  </select>
+                </div>
               </div>
+
+              {editPlan !== (profile.currentPlan || 'free') && (
+                <div className="p-3 bg-purple-50/70 border border-purple-200 rounded-xs space-y-1.5">
+                  <label className="block font-semibold text-purple-900 text-xs">
+                    Reason for Plan Change * (Saved to Google Sheet)
+                  </label>
+                  <textarea
+                    rows="2"
+                    value={editUpgradeReason}
+                    onChange={(e) => setEditUpgradeReason(e.target.value)}
+                    placeholder="Enter reason for modifying this customer's plan tier (e.g. enterprise negotiation, renewal, complimentary)..."
+                    required
+                    className="w-full p-2 border border-purple-200 bg-white focus:outline-none focus:border-purple-600 text-xs"
+                  />
+                  <p className="text-[10px] text-purple-700">
+                    Plan upgrades are authoritatively recorded and logged with your staff identity ({staff?.fullName}).
+                  </p>
+                </div>
+              )}
 
               <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
                 <button
@@ -895,6 +1087,126 @@ export function CrmCustomerDetailPage() {
                   className="px-4 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer"
                 >
                   {editLoading ? 'Saving...' : 'Save Profile'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Dedicated Upgrade / Change Plan Modal */}
+      {showUpgradeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
+          <div className="bg-white max-w-md w-full p-5 shadow-xl border border-slate-200 space-y-3.5">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="font-bold text-slate-900 text-sm">Upgrade / Adjust Customer Plan</h3>
+                <p className="text-[11px] text-slate-500 mt-0.5">{profile.fullName} ({profile.email})</p>
+              </div>
+              <button
+                onClick={() => setShowUpgradeModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Current Status banner */}
+            <div className="p-3 bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+              <div>
+                <span className="text-slate-500">Current Plan:</span>
+                <span className="font-bold capitalize ml-1.5 text-purple-700">{profile.currentPlan || 'Free'}</span>
+              </div>
+              <div className="text-slate-500">
+                {profile.subscriptionExpiresAt ? (
+                  <span>Expires: <strong>{new Date(profile.subscriptionExpiresAt).toLocaleDateString()}</strong></span>
+                ) : (
+                  <span>Access: <strong>Open-ended</strong></span>
+                )}
+              </div>
+            </div>
+
+            <form onSubmit={handleUpgradePlan} className="space-y-3 text-xs">
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Target Plan *</label>
+                <select
+                  value={upgradePlan}
+                  onChange={(e) => setUpgradePlan(e.target.value)}
+                  className="w-full p-2.5 border border-slate-200 bg-white font-semibold text-slate-800 focus:outline-none focus:border-purple-600"
+                >
+                  <option value="plus">Plus Plan (Recommended)</option>
+                  <option value="pro">Pro Plan</option>
+                  <option value="free">Free Tier (Downgrade/Reset)</option>
+                </select>
+              </div>
+
+              {upgradePlan !== 'free' && (
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Subscription Duration / Validity *</label>
+                  <select
+                    value={upgradeValidity}
+                    onChange={(e) => setUpgradeValidity(e.target.value)}
+                    className="w-full p-2.5 border border-slate-200 bg-white text-slate-800 focus:outline-none focus:border-purple-600"
+                  >
+                    <option value="1_year">1 Year (Standard Annual)</option>
+                    <option value="1_month">1 Month</option>
+                    <option value="3_months">3 Months</option>
+                    <option value="6_months">6 Months</option>
+                    <option value="2_years">2 Years</option>
+                    <option value="lifetime">Lifetime / Perpetual (No Expiry)</option>
+                    <option value="custom">Custom Expiry Date</option>
+                  </select>
+                </div>
+              )}
+
+              {upgradePlan !== 'free' && upgradeValidity === 'custom' && (
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Custom Expiration Date *</label>
+                  <input
+                    type="date"
+                    value={upgradeCustomExpiry}
+                    onChange={(e) => setUpgradeCustomExpiry(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    required
+                    className="w-full p-2.5 border border-slate-200 focus:outline-none focus:border-purple-600"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">
+                  Reason of Upgrade * (Recorded in Google Sheet)
+                </label>
+                <textarea
+                  rows="3"
+                  value={upgradeReason}
+                  onChange={(e) => setUpgradeReason(e.target.value)}
+                  placeholder="Document specific business reason (e.g. Offline bank transfer received, annual enterprise renewal, VIP customer courtesy access, promo deal)..."
+                  required
+                  className="w-full p-2.5 border border-slate-200 focus:outline-none focus:border-purple-600 placeholder:text-slate-400"
+                />
+              </div>
+
+              {/* Authorizing staff badge */}
+              <div className="p-2.5 bg-purple-50/60 border border-purple-100 text-[11px] text-purple-900 flex items-center justify-between">
+                <span>Authorized by:</span>
+                <span className="font-semibold">{staff?.fullName || 'Staff'} ({staff?.role?.replace('_', ' ') || 'Manager'})</span>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowUpgradeModal(false)}
+                  className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={upgradeLoading}
+                  className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold transition disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
+                >
+                  {upgradeLoading ? 'Applying…' : 'Confirm Plan Upgrade'}
                 </button>
               </div>
             </form>

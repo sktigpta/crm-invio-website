@@ -236,6 +236,13 @@ export const crmApi = {
     });
   },
 
+  async upgradeCustomerSubscription(customerId, payload) {
+    return request(`/customers/${encodeURIComponent(customerId)}/upgrade-plan`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
   async deleteCustomer(customerId) {
     return request(`/customers/${encodeURIComponent(customerId)}`, {
       method: 'DELETE',

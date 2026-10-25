@@ -75,7 +75,7 @@ function ExecCustomerLookup() {
 }
 
 export function CrmCustomersPage() {
-  const { isAdmin, isManagerOrAdmin, canViewDirectory } = useCrmAuth();
+  const { isAdmin, isManagerOrAdmin, canViewDirectory, staff } = useCrmAuth();
   const { toast } = useCrmToast();
   const [customers, setCustomers] = useState([]);
   const [total, setTotal] = useState(0);
@@ -92,8 +92,11 @@ export function CrmCustomersPage() {
   const [editLastName, setEditLastName] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [editBusinessName, setEditBusinessName] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editCountry, setEditCountry] = useState('India');
   const [editPlan, setEditPlan] = useState('free');
   const [editEmailVerified, setEditEmailVerified] = useState(true);
+  const [editUpgradeReason, setEditUpgradeReason] = useState('');
   const [editLoading, setEditLoading] = useState(false);
 
   // Delete Customer Confirmation Modal (Admin only)
@@ -145,18 +148,24 @@ export function CrmCustomersPage() {
 
   function openEditModal(c) {
     setEditingCustomer(c);
-    const names = (c.fullName || '').split(' ');
-    setEditFirstName(names[0] || '');
-    setEditLastName(names.slice(1).join(' ') || '');
+    setEditFirstName(c.firstName || '');
+    setEditLastName(c.lastName || '');
     setEditEmail(c.email || '');
     setEditBusinessName(c.businessName || '');
+    setEditPhone(c.phone || '');
+    setEditCountry(c.country || 'India');
     setEditPlan(c.currentPlan || 'free');
     setEditEmailVerified(Boolean(c.emailVerified));
+    setEditUpgradeReason('');
   }
 
   async function handleUpdateCustomer(e) {
     e.preventDefault();
     if (!editingCustomer) return;
+    if (editPlan !== editingCustomer.currentPlan && !editUpgradeReason.trim()) {
+      toast.error('A documented reason is required when changing the subscription plan.');
+      return;
+    }
     setEditLoading(true);
     try {
       await crmApi.updateCustomer(editingCustomer.id, {
@@ -164,8 +173,11 @@ export function CrmCustomersPage() {
         lastName: editLastName,
         email: editEmail,
         businessName: editBusinessName,
+        phone: editPhone,
+        country: editCountry,
         plan: editPlan,
         emailVerified: editEmailVerified,
+        upgradeReason: editUpgradeReason.trim() || undefined,
       });
       setEditingCustomer(null);
       toast.success('Customer details updated successfully.');
@@ -584,6 +596,29 @@ export function CrmCustomersPage() {
                 />
               </div>
 
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Phone Number</label>
+                  <input
+                    type="text"
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    placeholder="+91..."
+                    className="w-full p-2.5 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Country</label>
+                  <input
+                    type="text"
+                    value={editCountry}
+                    onChange={(e) => setEditCountry(e.target.value)}
+                    placeholder="India"
+                    className="w-full p-2.5 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600"
+                  />
+                </div>
+              </div>
+
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Business / Company Name</label>
                 <input
@@ -620,6 +655,26 @@ export function CrmCustomersPage() {
                   </select>
                 </div>
               </div>
+
+              {editPlan !== (editingCustomer.currentPlan || 'free') && (
+                <div className="p-3 bg-purple-50/70 border border-purple-200 rounded-xs space-y-1.5">
+                  <label className="block font-semibold text-purple-900 text-xs">
+                    Reason of Upgrade * (Recorded in Google Sheet)
+                  </label>
+                  <textarea
+                    rows="2"
+                    value={editUpgradeReason}
+                    onChange={(e) => setEditUpgradeReason(e.target.value)}
+                    placeholder="Enter reason for modifying plan (e.g. offline bank transfer, customer success renewal, courtesy access)..."
+                    required
+                    className="w-full p-2 border border-purple-200 bg-white focus:outline-none focus:border-purple-600 text-xs"
+                  />
+                  <div className="text-[10px] text-purple-700 flex items-center justify-between">
+                    <span>Authorized by: <strong>{staff?.fullName || 'Staff'}</strong> ({staff?.role?.replace('_', ' ') || 'Manager'})</span>
+                    <span>Audit Store: Google Sheet</span>
+                  </div>
+                </div>
+              )}
 
               <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
                 <button

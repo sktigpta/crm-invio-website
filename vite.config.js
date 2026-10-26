@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 
 const packageJson = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 // VITE_APP_VERSION env (e.g. Vercel) wins when set; otherwise fall back to package.json.
-const APP_VERSION = process.env.VITE_APP_VERSION || packageJson.version || '1.0.10';
+const APP_VERSION = process.env.VITE_APP_VERSION || packageJson.version || '1.1.0';
 
 export default defineConfig({
   plugins: [

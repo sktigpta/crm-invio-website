@@ -2,7 +2,7 @@
   "name": "crm-invio-website",
   "description": "Internal CRM, Customer Management & Discount Administration Portal for Invio (Timrio)",
   "private": true,
-  "version": "1.0.10",
+  "version": "1.1.0",
   "homepage": "https://crm.inv.timrio.com",
   "repository": {
     "type": "git",
@@ -31,5 +31,8 @@
     "postcss": "^8.5.28",
     "tailwindcss": "^3.4.19",
     "vite": "^8.3.0"
+  },
+  "overrides": {
+    "postcss-selector-parser": "^7.1.6"
   }
 }

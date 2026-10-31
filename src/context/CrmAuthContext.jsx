@@ -18,8 +18,10 @@ export function CrmAuthProvider({ children }) {
       }
       try {
         const res = await crmApi.me();
-        if (isMounted && res.staff) {
+        if (isMounted && res?.staff) {
           setStaff(res.staff);
+        } else if (isMounted) {
+          throw new Error('CRM session response did not include staff identity');
         }
       } catch (err) {
         console.warn('CRM session expired or invalid:', err);
@@ -169,6 +171,8 @@ export function CrmAuthProvider({ children }) {
         staff?.role === 'super_admin' ||
         staff?.role === 'manager' ||
         staff?.role === 'digital_marketer',
+      canViewPlans: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
+      canViewAuditLogs: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
       login,
       logout,
       refreshStaff,

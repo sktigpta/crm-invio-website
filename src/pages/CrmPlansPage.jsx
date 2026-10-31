@@ -10,6 +10,8 @@ const FALLBACK_PLANS = [
     id: 'free',
     name: 'Free Starter',
     price: 0,
+    priceYearly: 0,
+    priceMonthly: 0,
     interval: 'Lifetime',
     badge: 'Default Tier',
     popular: false,
@@ -27,6 +29,8 @@ const FALLBACK_PLANS = [
     id: 'plus',
     name: 'Plus Professional',
     price: 999,
+    priceYearly: 999,
+    priceMonthly: 149,
     interval: '/ year',
     badge: 'Most Popular',
     popular: true,
@@ -45,6 +49,8 @@ const FALLBACK_PLANS = [
     id: 'pro',
     name: 'Pro Enterprise',
     price: 4999,
+    priceYearly: 4999,
+    priceMonthly: 499,
     interval: '/ year',
     badge: 'Enterprise',
     popular: false,
@@ -86,11 +92,18 @@ function normalizePlans(raw) {
       : typeof featuresRaw === 'string'
         ? featuresRaw.split('\n').map((s) => s.trim()).filter(Boolean)
         : [...fb.features];
+    const key = String(r.id ?? r.planId ?? r.plan_id ?? r.code ?? fb.id).toLowerCase();
+    const defaultMonthly = key === 'plus' ? 149 : key === 'pro' ? 499 : 0;
+    const defaultYearly = key === 'plus' ? 999 : key === 'pro' ? 4999 : 0;
+    const priceYearly = toNumberPrice(r.prices?.yearly ?? r.price_yearly ?? r.yearlyPrice ?? r.price ?? r.amount ?? r.priceInr ?? fb.priceYearly ?? defaultYearly);
+    const priceMonthly = toNumberPrice(r.prices?.monthly ?? r.price_monthly ?? r.monthlyPrice ?? r.priceMonthly ?? fb.priceMonthly ?? defaultMonthly);
     return {
       _raw: r,
-      id: r.id ?? r.planId ?? r.plan_id ?? r.code ?? fb.id,
+      id: key,
       name: r.name ?? r.title ?? r.planName ?? fb.name,
-      price: r.price ?? r.amount ?? r.priceInr ?? r.price_inr ?? r.price_yearly ?? r.prices?.yearly ?? fb.price,
+      price: priceYearly,
+      priceYearly,
+      priceMonthly,
       interval: r.interval ?? r.validity ?? r.billingInterval ?? r.duration ?? fb.interval,
       badge: r.badge ?? r.tag ?? r.label ?? fb.badge,
       popular: Boolean(r.popular ?? r.isPopular ?? r.is_popular ?? r.highlighted ?? fb.popular),
@@ -116,7 +129,8 @@ export function CrmPlansPage() {
   // Edit modal (admin only)
   const [editing, setEditing] = useState(null);
   const [fName, setFName] = useState('');
-  const [fPrice, setFPrice] = useState(0);
+  const [fPriceYearly, setFPriceYearly] = useState(0);
+  const [fPriceMonthly, setFPriceMonthly] = useState(0);
   const [fInterval, setFInterval] = useState('/ year');
   const [fBadge, setFBadge] = useState('');
   const [fDescription, setFDescription] = useState('');
@@ -160,7 +174,8 @@ export function CrmPlansPage() {
     }
     setEditing(plan);
     setFName(plan.name || '');
-    setFPrice(toNumberPrice(plan.price));
+    setFPriceYearly(toNumberPrice(plan.priceYearly ?? plan.price));
+    setFPriceMonthly(toNumberPrice(plan.priceMonthly ?? (plan.id === 'plus' ? 149 : plan.id === 'pro' ? 499 : 0)));
     setFInterval(plan.interval || '/ year');
     setFBadge(plan.badge || '');
     setFDescription(plan.description || '');
@@ -175,13 +190,19 @@ export function CrmPlansPage() {
     setSaving(true);
     try {
       const features = fFeatures.split('\n').map((s) => s.trim()).filter(Boolean);
-      const price = Number(fPrice) || 0;
+      const priceYearly = Number(fPriceYearly) || 0;
+      const priceMonthly = Number(fPriceMonthly) || 0;
       // Send aliases to match any backend field naming
       const payload = {
         name: fName,
-        price,
-        amount: price,
-        priceInr: price,
+        price: priceYearly,
+        amount: priceYearly,
+        priceInr: priceYearly,
+        price_yearly: priceYearly,
+        yearlyPrice: priceYearly,
+        price_monthly: priceMonthly,
+        monthlyPrice: priceMonthly,
+        priceMonthly: priceMonthly,
         interval: fInterval,
         validity: fInterval,
         badge: fBadge,
@@ -267,9 +288,17 @@ export function CrmPlansPage() {
                   </span>
                 </div>
 
-                <div className="flex items-baseline gap-1 my-3">
-                  <span className="text-2xl font-black text-slate-900">{formatPrice(plan.price)}</span>
-                  <span className="text-xs text-slate-500">{plan.interval}</span>
+                <div className="my-3 space-y-1">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-2xl font-black text-slate-900">{formatPrice(plan.priceYearly ?? plan.price)}</span>
+                    <span className="text-xs text-slate-500">/ year</span>
+                  </div>
+                  {plan.id !== 'free' && (
+                    <div className="text-xs font-semibold text-purple-700">
+                      {formatPrice(plan.priceMonthly ?? (plan.id === 'plus' ? 149 : 499))}
+                      <span className="text-[11px] font-normal text-slate-500"> / month</span>
+                    </div>
+                  )}
                 </div>
 
                 <p className="text-xs text-slate-600 mb-4">{plan.description}</p>
@@ -333,18 +362,41 @@ export function CrmPlansPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Price (₹) *</label>
-                  <input type="number" min="0" value={fPrice} onChange={(e) => setFPrice(e.target.value)} required className="w-full p-2.5 border border-slate-200 font-bold focus:outline-none focus:border-purple-600" />
+                  <label className="block font-semibold text-slate-700 mb-1">Yearly Price (₹) *</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={fPriceYearly}
+                    onChange={(e) => setFPriceYearly(e.target.value)}
+                    required
+                    className="w-full p-2.5 border border-slate-200 font-bold focus:outline-none focus:border-purple-600"
+                    placeholder="e.g. 999"
+                  />
+                  <span className="text-[10px] text-slate-400">Billed annually</span>
                 </div>
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Interval *</label>
-                  <select value={fInterval} onChange={(e) => setFInterval(e.target.value)} className="w-full p-2.5 border border-slate-200 bg-white focus:outline-none focus:border-purple-600">
-                    <option value="Lifetime">Lifetime</option>
-                    <option value="/ year">/ year</option>
-                    <option value="/ month">/ month</option>
-                    <option value="/ quarter">/ quarter</option>
-                  </select>
+                  <label className="block font-semibold text-slate-700 mb-1">Monthly Price (₹) *</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={fPriceMonthly}
+                    onChange={(e) => setFPriceMonthly(e.target.value)}
+                    required
+                    className="w-full p-2.5 border border-slate-200 font-bold focus:outline-none focus:border-purple-600"
+                    placeholder="e.g. 149"
+                  />
+                  <span className="text-[10px] text-slate-400">Billed monthly</span>
                 </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Interval Display</label>
+                <select value={fInterval} onChange={(e) => setFInterval(e.target.value)} className="w-full p-2.5 border border-slate-200 bg-white focus:outline-none focus:border-purple-600">
+                  <option value="/ year">/ year</option>
+                  <option value="/ month">/ month</option>
+                  <option value="Lifetime">Lifetime</option>
+                  <option value="/ quarter">/ quarter</option>
+                </select>
               </div>
 
               <div>

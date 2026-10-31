@@ -886,14 +886,12 @@ export function CrmBroadcastsPage() {
                 }`}
               >
                 {/* Close Button X */}
-                <button
-                  type="button"
-                  className="absolute top-3.5 right-3.5 size-7.5 rounded-full bg-white/20 hover:bg-white/30 active:scale-95 flex items-center justify-center text-white text-xs backdrop-blur-xs transition cursor-pointer"
+                <div
+                  className="absolute top-3.5 right-3.5 size-7.5 rounded-full bg-white/20 flex items-center justify-center text-white text-xs backdrop-blur-xs"
                   title="Close"
-                  aria-label="Close"
                 >
                   <FiX className="size-4" />
-                </button>
+                </div>
 
                 {/* Badge Pill */}
                 {middleCard.badge && (
@@ -933,19 +931,13 @@ export function CrmBroadcastsPage() {
 
                 {/* Buttons with Real UI Effects */}
                 <div className="flex flex-col gap-2 pt-1">
-                  <button
-                    type="button"
-                    className="w-full py-2.5 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 active:scale-[0.99] text-white font-semibold text-xs rounded-xl shadow-md transition-all duration-150 cursor-pointer"
-                  >
+                  <div className="w-full py-2.5 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-xs rounded-xl shadow-md">
                     {middleCard.ctaLabel || 'Check on Website'}
-                  </button>
+                  </div>
 
-                  <button
-                    type="button"
-                    className="w-full py-1 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
-                  >
+                  <div className="w-full py-1 text-xs text-slate-400">
                     Maybe later
-                  </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1004,14 +996,12 @@ export function CrmBroadcastsPage() {
                   ) : null}
                 </div>
 
-                <button
-                  type="button"
-                  className="text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors p-0.5 cursor-pointer shrink-0"
+                <span
+                  className="text-slate-400 p-0.5 shrink-0"
                   title="Dismiss notification"
-                  aria-label="Dismiss notification"
                 >
                   <FiX className="size-3.5" />
-                </button>
+                </span>
               </div>
 
               {/* Message */}
@@ -1027,13 +1017,10 @@ export function CrmBroadcastsPage() {
               {/* Action Button */}
               {noticeCard.actionLabel && (
                 <div className="pt-0.5 flex items-center relative z-10">
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-[#8646f4] hover:opacity-80 transition cursor-pointer"
-                  >
+                  <span className="inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-[#8646f4]">
                     <span>{noticeCard.actionLabel}</span>
                     <FiExternalLink className="size-3" />
-                  </button>
+                  </span>
                 </div>
               )}
             </div>

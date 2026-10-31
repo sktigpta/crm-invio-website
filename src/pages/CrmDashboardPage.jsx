@@ -13,7 +13,7 @@ import {
 import { Skeleton } from '../components/common/Skeleton';
 
 export function CrmDashboardPage() {
-  const { staff, isManagerOrAdmin } = useCrmAuth();
+  const { canViewApprovals, canViewTickets, canViewCoupons, canViewAuditLogs } = useCrmAuth();
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -65,7 +65,7 @@ export function CrmDashboardPage() {
       )}
 
       {/* Pending Approvals Alert Banner */}
-      {overview.pendingApprovals > 0 && (
+      {canViewApprovals && overview.pendingApprovals > 0 && (
         <div className="p-2.5 bg-amber-50 border border-amber-200 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs text-amber-900">
             <span className="font-bold px-1.5 py-0.2 bg-amber-200 text-amber-800 text-[10px]">ALERT</span>
@@ -184,9 +184,11 @@ export function CrmDashboardPage() {
         <div className="bg-white p-3 border border-slate-200">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs font-bold text-slate-900">Support Ticket Statuses</h3>
-            <Link to="/tickets" className="text-[11px] text-purple-600 hover:text-purple-700 font-semibold">
-              Manage Tickets →
-            </Link>
+            {canViewTickets && (
+              <Link to="/tickets" className="text-[11px] text-purple-600 hover:text-purple-700 font-semibold">
+                Manage Tickets →
+              </Link>
+            )}
           </div>
           <div className="space-y-1.5">
             {metrics?.tickets?.length ? (
@@ -208,9 +210,11 @@ export function CrmDashboardPage() {
         <div className="bg-white p-3 border border-slate-200">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs font-bold text-slate-900">Coupon Codes & Redemptions</h3>
-            <Link to="/coupons" className="text-[11px] text-purple-600 hover:text-purple-700 font-semibold">
-              Manage Coupons →
-            </Link>
+            {canViewCoupons && (
+              <Link to="/coupons" className="text-[11px] text-purple-600 hover:text-purple-700 font-semibold">
+                Manage Coupons →
+              </Link>
+            )}
           </div>
           <div className="space-y-1.5">
             {metrics?.coupons?.length ? (
@@ -235,7 +239,7 @@ export function CrmDashboardPage() {
         <div className="bg-white p-3 border border-slate-200">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs font-bold text-slate-900">Recent Audit Events</h3>
-            {isManagerOrAdmin && (
+            {canViewAuditLogs && (
               <Link to="/audit-logs" className="text-[11px] text-purple-600 hover:text-purple-700 font-semibold">
                 Full Log →
               </Link>

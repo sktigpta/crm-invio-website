@@ -29,7 +29,7 @@ const roleMeta = {
 };
 
 export function CrmLayout() {
-  const { staff, logout, canViewDirectory, canViewTickets, canViewDiscounts, canViewCoupons, canViewBugs, canViewApprovals, canViewContacts, canViewStaff, canViewBroadcasts, canViewPlans, canViewAuditLogs } = useCrmAuth();
+  const { staff, logout, isManagerOrAdmin, canViewDirectory, canViewTickets, canViewDiscounts, canViewCoupons, canViewBugs, canViewApprovals, canViewContacts, canViewStaff, canViewBroadcasts, canViewPlans, canViewAuditLogs } = useCrmAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 

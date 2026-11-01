@@ -16,6 +16,7 @@ import {
   BugIcon,
   MailIcon,
   BroadcastIcon,
+  PackageIcon,
 } from './CrmIcons';
 
 const roleMeta = {
@@ -29,7 +30,7 @@ const roleMeta = {
 };
 
 export function CrmLayout() {
-  const { staff, logout, isManagerOrAdmin, canViewDirectory, canViewTickets, canViewDiscounts, canViewCoupons, canViewBugs, canViewApprovals, canViewContacts, canViewStaff, canViewBroadcasts, canViewPlans, canViewAuditLogs } = useCrmAuth();
+  const { staff, logout, isManagerOrAdmin, canViewDirectory, canViewTickets, canViewDiscounts, canViewCoupons, canViewBugs, canViewApprovals, canViewContacts, canViewStaff, canViewBroadcasts, canViewPlans, canViewExtensions, canViewAuditLogs } = useCrmAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -43,6 +44,7 @@ export function CrmLayout() {
     ...(canViewBugs ? [{ to: '/bugs', label: 'Bug Reports', icon: BugIcon }] : []),
     ...(canViewContacts ? [{ to: '/contacts', label: 'Contact Messages', icon: MailIcon }] : []),
     ...(canViewPlans ? [{ to: '/plans', label: 'Subscription Plans', icon: LayersIcon }] : []),
+    ...(canViewExtensions ? [{ to: '/extensions', label: 'Extension Store', icon: PackageIcon }] : []),
     ...(canViewBroadcasts ? [{ to: '/broadcasts', label: 'In-App Cards & Broadcasts', icon: BroadcastIcon }] : []),
     ...(canViewStaff ? [{ to: '/staff', label: 'Staff Management', icon: ShieldCheckIcon }] : []),
     ...(canViewAuditLogs ? [{ to: '/audit-logs', label: 'Audit Logs', icon: FileTextIcon }] : []),

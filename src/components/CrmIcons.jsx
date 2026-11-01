@@ -19,6 +19,7 @@ import {
   FiTool,
   FiMail,
   FiRadio,
+  FiPackage,
 } from 'react-icons/fi';
 
 export function DashboardIcon({ className = 'size-4' }) {
@@ -95,4 +96,8 @@ export function MailIcon({ className = 'size-4' }) {
 
 export function BroadcastIcon({ className = 'size-4' }) {
   return <FiRadio className={className} />;
+}
+
+export function PackageIcon({ className = 'size-4' }) {
+  return <FiPackage className={className} />;
 }

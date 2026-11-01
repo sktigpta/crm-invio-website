@@ -17,6 +17,7 @@ const CrmCouponsPage = lazy(() => import('./pages/CrmCouponsPage').then(m => ({ 
 const CrmTicketsPage = lazy(() => import('./pages/CrmTicketsPage').then(m => ({ default: m.CrmTicketsPage })));
 const CrmTicketDetailPage = lazy(() => import('./pages/CrmTicketDetailPage').then(m => ({ default: m.CrmTicketDetailPage })));
 const CrmPlansPage = lazy(() => import('./pages/CrmPlansPage').then(m => ({ default: m.CrmPlansPage })));
+const CrmExtensionsPage = lazy(() => import('./pages/CrmExtensionsPage').then(m => ({ default: m.CrmExtensionsPage })));
 const CrmStaffPage = lazy(() => import('./pages/CrmStaffPage').then(m => ({ default: m.CrmStaffPage })));
 const CrmAuditLogsPage = lazy(() => import('./pages/CrmAuditLogsPage').then(m => ({ default: m.CrmAuditLogsPage })));
 const CrmBugsPage = lazy(() => import('./pages/CrmBugsPage').then(m => ({ default: m.CrmBugsPage })));
@@ -130,6 +131,14 @@ export function App() {
             element={
               <CrmProtectedRoute requiredRoles={['admin', 'manager']}>
                 <CrmPlansPage />
+              </CrmProtectedRoute>
+            }
+          />
+          <Route
+            path="/extensions"
+            element={
+              <CrmProtectedRoute requiredRoles={['admin', 'manager']}>
+                <CrmExtensionsPage />
               </CrmProtectedRoute>
             }
           />

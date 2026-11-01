@@ -172,6 +172,8 @@ export function CrmAuthProvider({ children }) {
         staff?.role === 'manager' ||
         staff?.role === 'digital_marketer',
       canViewPlans: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
+      canViewExtensions: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
+      canManageExtensions: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
       canViewAuditLogs: staff?.role === 'admin' || staff?.role === 'super_admin' || staff?.role === 'manager',
       login,
       logout,

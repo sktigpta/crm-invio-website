@@ -516,4 +516,29 @@ export const crmApi = {
       body: JSON.stringify(payload),
     });
   },
+
+  // 14. Extension Management (Admin, Super Admin, Manager)
+  async getExtensions() {
+    return request('/extensions');
+  },
+
+  async createExtension(payload) {
+    return request('/extensions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateExtension(id, payload) {
+    return request(`/extensions/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async toggleExtension(id) {
+    return request(`/extensions/${encodeURIComponent(id)}/toggle`, {
+      method: 'POST',
+    });
+  },
 };

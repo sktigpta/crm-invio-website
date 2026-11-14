@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { crmApi } from '../services/crmApi';
 
@@ -213,8 +213,7 @@ export function CrmLoginPage() {
   }
 
   if (isAuthenticated) {
-    navigate('/dashboard', { replace: true });
-    return null;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (

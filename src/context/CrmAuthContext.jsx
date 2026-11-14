@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { crmApi, getCrmToken, getStoredStaff, clearCrmAuth } from '../services/crmApi';
 
 const CrmAuthContext = createContext(null);
@@ -7,12 +7,18 @@ export function CrmAuthProvider({ children }) {
   const [token, setToken] = useState(() => getCrmToken());
   const [staff, setStaff] = useState(() => getStoredStaff());
   const [loading, setLoading] = useState(true);
+  const skipNextVerifyRef = useRef(false);
 
   // Validate session on boot if token exists
   useEffect(() => {
     let isMounted = true;
     async function verifySession() {
       if (!token) {
+        setLoading(false);
+        return;
+      }
+      if (skipNextVerifyRef.current) {
+        skipNextVerifyRef.current = false;
         setLoading(false);
         return;
       }
@@ -43,6 +49,7 @@ export function CrmAuthProvider({ children }) {
 
   const login = useCallback(async (email, password, remember = true) => {
     const res = await crmApi.login(email, password, remember);
+    skipNextVerifyRef.current = true;
     setToken(res.token);
     setStaff(res.staff);
     return res;

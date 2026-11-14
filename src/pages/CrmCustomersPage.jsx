@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
-import { SearchIcon, FilterIcon, RefreshCwIcon, AlertCircleIcon, PlusIcon } from '../components/CrmIcons';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import { SearchIcon, FilterIcon, RefreshCwIcon, AlertCircleIcon, PlusIcon, XIcon } from '../components/CrmIcons';
 import { TableSkeleton } from '../components/common/Skeleton';
 
 function ExecCustomerLookup() {
@@ -85,6 +86,7 @@ export function CrmCustomersPage() {
   const [plan, setPlan] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const debouncedSearch = useDebouncedValue(search, 500);
 
   // Edit Customer Modal
   const [editingCustomer, setEditingCustomer] = useState(null);
@@ -114,11 +116,16 @@ export function CrmCustomersPage() {
   const [regCountry, setRegCountry] = useState('India');
   const [regLoading, setRegLoading] = useState(false);
 
+  // When search changes, reset to page 1
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
+
   const fetchCustomers = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
-      const res = await crmApi.getCustomers({ page, limit: 12, search, plan });
+      const res = await crmApi.getCustomers({ page, limit: 12, search: debouncedSearch, plan });
       setCustomers(res.customers || []);
       setTotal(res.total || 0);
       setTotalPages(res.totalPages || 1);
@@ -129,7 +136,7 @@ export function CrmCustomersPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, search, plan, toast]);
+  }, [page, debouncedSearch, plan, toast]);
 
   useEffect(() => {
     if (canViewDirectory) fetchCustomers();
@@ -491,9 +498,10 @@ export function CrmCustomersPage() {
               <h3 className="font-bold text-slate-900 text-sm">Register New Customer</h3>
               <button
                 onClick={() => setShowRegisterModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                aria-label="Close"
               >
-                ✕
+                <XIcon className="size-4" />
               </button>
             </div>
             <form onSubmit={handleRegisterCustomer} className="space-y-3 text-xs">
@@ -557,9 +565,10 @@ export function CrmCustomersPage() {
               </div>
               <button
                 onClick={() => setEditingCustomer(null)}
-                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                aria-label="Close"
               >
-                ✕
+                <XIcon className="size-4" />
               </button>
             </div>
 

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
-import { RefreshCwIcon, AlertCircleIcon, PlusIcon } from '../components/CrmIcons';
+import { RefreshCwIcon, AlertCircleIcon, PlusIcon, XIcon } from '../components/CrmIcons';
 import { TableSkeleton } from '../components/common/Skeleton';
 
 export function CrmStaffPage() {
@@ -316,9 +316,10 @@ export function CrmStaffPage() {
               <h3 className="font-bold text-slate-900 text-sm">Add New Staff Member</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                aria-label="Close"
               >
-                ✕
+                <XIcon className="size-4" />
               </button>
             </div>
 
@@ -417,9 +418,10 @@ export function CrmStaffPage() {
               </div>
               <button
                 onClick={() => setEditingStaff(null)}
-                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                aria-label="Close"
               >
-                ✕
+                <XIcon className="size-4" />
               </button>
             </div>
 

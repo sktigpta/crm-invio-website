@@ -2,15 +2,18 @@ import { useState, useEffect, useCallback } from 'react';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
-import { RefreshCwIcon, AlertCircleIcon, PlusIcon } from '../components/CrmIcons';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import { RefreshCwIcon, AlertCircleIcon, PlusIcon, XIcon } from '../components/CrmIcons';
 import { TableSkeleton } from '../components/common/Skeleton';
 
 export function CrmCouponsPage() {
-  const { isManagerOrAdmin } = useCrmAuth();
+  const { isAdmin, isManagerOrAdmin, isDigitalMarketer } = useCrmAuth();
+  const canManageCoupons = isManagerOrAdmin || isDigitalMarketer;
   const { toast } = useCrmToast();
   const [coupons, setCoupons] = useState([]);
   const [status, setStatus] = useState('all');
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebouncedValue(search, 500);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -59,7 +62,7 @@ export function CrmCouponsPage() {
     setLoading(true);
     setError('');
     try {
-      const res = await crmApi.getCoupons({ status, search });
+      const res = await crmApi.getCoupons({ status, search: debouncedSearch });
       setCoupons(res.coupons || []);
     } catch (err) {
       const msg = err.message || 'Failed to fetch coupons.';
@@ -68,7 +71,7 @@ export function CrmCouponsPage() {
     } finally {
       setLoading(false);
     }
-  }, [status, search, toast]);
+  }, [status, debouncedSearch, toast]);
 
   useEffect(() => {
     fetchCoupons();
@@ -224,7 +227,7 @@ export function CrmCouponsPage() {
         </div>
 
         <div className="flex items-center gap-2.5">
-          {isManagerOrAdmin && (
+          {canManageCoupons && (
             <button
               onClick={() => setShowCreateModal(true)}
               className="px-3.5 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition flex items-center gap-1.5"
@@ -333,12 +336,12 @@ export function CrmCouponsPage() {
                 <th className="py-1.5 px-3">Redemptions</th>
                 <th className="py-1.5 px-3">Status</th>
                 <th className="py-1.5 px-3">Expires</th>
-                {isManagerOrAdmin && <th className="py-1.5 px-3 text-right">Action</th>}
+                {canManageCoupons && <th className="py-1.5 px-3 text-right">Action</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <TableSkeleton rows={5} cols={7} />
+                <TableSkeleton rows={5} cols={canManageCoupons ? 7 : 6} />
               ) : coupons.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="py-12 text-center text-slate-400">
@@ -378,7 +381,7 @@ export function CrmCouponsPage() {
                     <td className="py-1.5 px-3 text-slate-500">
                       {c.expiryDate ? new Date(c.expiryDate).toLocaleDateString() : 'Never'}
                     </td>
-                    {isManagerOrAdmin && (
+                    {canManageCoupons && (
                       <td className="py-1.5 px-3 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
@@ -397,12 +400,14 @@ export function CrmCouponsPage() {
                           >
                             {c.status === 'active' ? 'Deactivate' : 'Activate'}
                           </button>
-                          <button
-                            onClick={() => setDeletingCoupon(c)}
-                            className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-sm transition cursor-pointer"
-                          >
-                            Delete
-                          </button>
+                          {isAdmin && (
+                            <button
+                              onClick={() => setDeletingCoupon(c)}
+                              className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-sm transition cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          )}
                         </div>
                       </td>
                     )}
@@ -422,9 +427,10 @@ export function CrmCouponsPage() {
               <h3 className="font-bold text-slate-900 text-sm">Create New Coupon Code</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-lg leading-none"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                aria-label="Close"
               >
-                ✕
+                <XIcon className="size-4" />
               </button>
             </div>
 
@@ -574,9 +580,10 @@ export function CrmCouponsPage() {
               <button
                 type="button"
                 onClick={() => setEditingCoupon(null)}
-                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                aria-label="Close"
               >
-                ✕
+                <XIcon className="size-4" />
               </button>
             </div>
 

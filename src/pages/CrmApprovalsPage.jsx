@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
-import { RefreshCwIcon, AlertCircleIcon } from '../components/CrmIcons';
+import { RefreshCwIcon, AlertCircleIcon, CheckIcon, XIcon, AlertTriangleIcon } from '../components/CrmIcons';
 import { TableSkeleton } from '../components/common/Skeleton';
 
 export function CrmApprovalsPage() {
@@ -197,25 +197,27 @@ export function CrmApprovalsPage() {
       {/* Review Modal */}
       {selectedRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="bg-white  max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
+          <div className="bg-white max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Review Discount Request</h3>
               <button
                 onClick={() => setSelectedRequest(null)}
-                className="text-slate-400 hover:text-slate-600 text-lg leading-none"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                aria-label="Close"
               >
-                ✕
+                <XIcon className="size-4" />
               </button>
             </div>
 
             {/* Anti-self-approval rule warning */}
             {staff?.id === selectedRequest.requestedByStaffId ? (
-              <div className="p-3  bg-red-50 border border-red-200 text-xs text-red-700 font-semibold">
-                ⚠️ Anti-Self-Approval Prohibited: You created this discount request. You cannot approve or reject your own request.
+              <div className="p-3 bg-red-50 border border-red-200 text-xs text-red-700 font-semibold flex items-center gap-2">
+                <AlertTriangleIcon className="size-4 shrink-0 text-red-600" />
+                <span>Anti-Self-Approval Prohibited: You created this discount request. You cannot approve or reject your own request.</span>
               </div>
             ) : null}
 
-            <div className="bg-slate-50 p-3  border border-slate-100 text-xs space-y-1">
+            <div className="bg-slate-50 p-3 border border-slate-100 text-xs space-y-1">
               <div><strong>Customer:</strong> {selectedRequest.customerEmail}</div>
               <div><strong>Discount:</strong> {selectedRequest.discountValue}% ({selectedRequest.applicablePlan} Plan)</div>
               <div><strong>Requested By:</strong> {selectedRequest.requestedByName}</div>
@@ -229,24 +231,26 @@ export function CrmApprovalsPage() {
                   <button
                     type="button"
                     onClick={() => setDecision('approved')}
-                    className={`py-2 px-3  font-bold border transition ${
+                    className={`py-2 px-3 font-bold border transition inline-flex items-center justify-center gap-1.5 ${
                       decision === 'approved'
                         ? 'bg-emerald-600 text-white border-emerald-600'
                         : 'border-slate-200 text-slate-700 hover:bg-slate-50'
                     }`}
                   >
-                    ✓ Approve Discount
+                    <CheckIcon className="size-3.5" />
+                    <span>Approve Discount</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setDecision('rejected')}
-                    className={`py-2 px-3  font-bold border transition ${
+                    className={`py-2 px-3 font-bold border transition inline-flex items-center justify-center gap-1.5 ${
                       decision === 'rejected'
                         ? 'bg-red-600 text-white border-red-600'
                         : 'border-slate-200 text-slate-700 hover:bg-slate-50'
                     }`}
                   >
-                    ✕ Reject Request
+                    <XIcon className="size-3.5" />
+                    <span>Reject Request</span>
                   </button>
                 </div>
               </div>

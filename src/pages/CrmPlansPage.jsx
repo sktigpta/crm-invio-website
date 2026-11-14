@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
-import { CheckCircleIcon, RefreshCwIcon, AlertCircleIcon } from '../components/CrmIcons';
+import { CheckCircleIcon, RefreshCwIcon, AlertCircleIcon, XIcon } from '../components/CrmIcons';
 import { PricingCardSkeleton } from '../components/common/Skeleton';
 
 const FALLBACK_PLANS = [
@@ -48,9 +48,9 @@ const FALLBACK_PLANS = [
   {
     id: 'pro',
     name: 'Pro Enterprise',
-    price: 4999,
-    priceYearly: 4999,
-    priceMonthly: 499,
+    price: 9999,
+    priceYearly: 9999,
+    priceMonthly: 1299,
     interval: '/ year',
     badge: 'Enterprise',
     popular: false,
@@ -85,16 +85,17 @@ function normalizePlans(raw) {
     : raw?.plans || raw?.data || raw?.items || [];
   if (!Array.isArray(list) || !list.length) return null;
   return list.map((r, idx) => {
-    const fb = FALLBACK_PLANS[idx] || FALLBACK_PLANS[0];
+    const keyGuess = String(r.id ?? r.planId ?? r.plan_id ?? r.code ?? '').toLowerCase();
+    const fb = FALLBACK_PLANS.find((p) => p.id === keyGuess) || FALLBACK_PLANS[idx] || FALLBACK_PLANS[0];
     const featuresRaw = r.features ?? r.includedFeatures ?? r.included_features ?? fb.features;
     const features = Array.isArray(featuresRaw)
       ? featuresRaw.map(String)
       : typeof featuresRaw === 'string'
         ? featuresRaw.split('\n').map((s) => s.trim()).filter(Boolean)
         : [...fb.features];
-    const key = String(r.id ?? r.planId ?? r.plan_id ?? r.code ?? fb.id).toLowerCase();
-    const defaultMonthly = key === 'plus' ? 149 : key === 'pro' ? 499 : 0;
-    const defaultYearly = key === 'plus' ? 999 : key === 'pro' ? 4999 : 0;
+    const key = keyGuess || fb.id;
+    const defaultMonthly = key === 'plus' ? 149 : key === 'pro' || key === 'enterprise' ? 1299 : 0;
+    const defaultYearly = key === 'plus' ? 999 : key === 'pro' || key === 'enterprise' ? 9999 : 0;
     const priceYearly = toNumberPrice(r.prices?.yearly ?? r.price_yearly ?? r.yearlyPrice ?? r.price ?? r.amount ?? r.priceInr ?? fb.priceYearly ?? defaultYearly);
     const priceMonthly = toNumberPrice(r.prices?.monthly ?? r.price_monthly ?? r.monthlyPrice ?? r.priceMonthly ?? fb.priceMonthly ?? defaultMonthly);
     return {
@@ -345,7 +346,9 @@ export function CrmPlansPage() {
                 <h3 className="font-bold text-slate-900 text-sm">Edit Plan — {editing.id}</h3>
                 <p className="text-[11px] text-slate-400 mt-0.5">Changes apply to live pricing immediately.</p>
               </div>
-              <button onClick={() => setEditing(null)} className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer">✕</button>
+              <button onClick={() => setEditing(null)} className="text-slate-400 hover:text-slate-600 transition cursor-pointer" aria-label="Close">
+                <XIcon className="size-4" />
+              </button>
             </div>
 
             <form onSubmit={handleSave} className="space-y-3 text-xs">

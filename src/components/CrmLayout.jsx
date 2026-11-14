@@ -17,6 +17,7 @@ import {
   MailIcon,
   BroadcastIcon,
   PackageIcon,
+  XIcon,
 } from './CrmIcons';
 
 const roleMeta = {
@@ -94,10 +95,10 @@ export function CrmLayout() {
           {mobileMenuOpen && (
             <button
               onClick={() => setMobileMenuOpen(false)}
-              className="md:hidden p-1 text-slate-500 hover:text-slate-800"
+              className="md:hidden p-1 text-slate-500 hover:text-slate-800 transition cursor-pointer"
               aria-label="Close menu"
             >
-              ✕
+              <XIcon className="size-4" />
             </button>
           )}
         </div>

@@ -3,7 +3,7 @@ import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
 import { useDebouncedValue, isRateLimitError } from '../hooks/useDebouncedValue';
-import { RefreshCwIcon, AlertCircleIcon, SearchIcon } from '../components/CrmIcons';
+import { RefreshCwIcon, AlertCircleIcon, SearchIcon, XIcon } from '../components/CrmIcons';
 import { TableSkeleton } from '../components/common/Skeleton';
 
 const STATUS_STYLES = {
@@ -156,7 +156,9 @@ export function CrmBugsPage() {
                 <h3 className="font-bold text-slate-900 text-sm">{selected.title}</h3>
                 <p className="text-[11px] font-mono text-slate-400 mt-0.5">{selected.ticketId} · {selected.category} · {selected.os} · v{selected.appVersion}</p>
               </div>
-              <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer">✕</button>
+              <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600 transition cursor-pointer" aria-label="Close">
+                <XIcon className="size-4" />
+              </button>
             </div>
             <div className="text-xs text-slate-700 whitespace-pre-wrap leading-relaxed">{selected.description}</div>
             {selected.steps && (

@@ -20,6 +20,12 @@ import {
   FiMail,
   FiRadio,
   FiPackage,
+  FiTrendingUp,
+  FiZap,
+  FiLock,
+  FiCheck,
+  FiX,
+  FiAlertTriangle,
 } from 'react-icons/fi';
 
 export function DashboardIcon({ className = 'size-4' }) {
@@ -100,4 +106,28 @@ export function BroadcastIcon({ className = 'size-4' }) {
 
 export function PackageIcon({ className = 'size-4' }) {
   return <FiPackage className={className} />;
+}
+
+export function TrendingUpIcon({ className = 'size-4' }) {
+  return <FiTrendingUp className={className} />;
+}
+
+export function ZapIcon({ className = 'size-4' }) {
+  return <FiZap className={className} />;
+}
+
+export function LockIcon({ className = 'size-4' }) {
+  return <FiLock className={className} />;
+}
+
+export function CheckIcon({ className = 'size-4' }) {
+  return <FiCheck className={className} />;
+}
+
+export function XIcon({ className = 'size-4' }) {
+  return <FiX className={className} />;
+}
+
+export function AlertTriangleIcon({ className = 'size-4' }) {
+  return <FiAlertTriangle className={className} />;
 }

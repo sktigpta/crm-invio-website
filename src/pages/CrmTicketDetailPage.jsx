@@ -3,12 +3,12 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
-import { AlertCircleIcon } from '../components/CrmIcons';
+import { AlertCircleIcon, LockIcon } from '../components/CrmIcons';
 
 export function CrmTicketDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isManagerOrAdmin } = useCrmAuth();
+  const { isAdmin, isManagerOrAdmin } = useCrmAuth();
   const { toast } = useCrmToast();
 
   const [ticketData, setTicketData] = useState(null);
@@ -40,6 +40,7 @@ export function CrmTicketDetailPage() {
       setTicketData(res);
       setNewStatus(res.ticket?.status || 'open');
       setResolution(res.ticket?.resolution || '');
+      setAssignId(res.ticket?.assignedStaffId || '');
     } catch (err) {
       setError(err.message || 'Failed to load ticket.');
     } finally {
@@ -226,9 +227,11 @@ export function CrmTicketDetailPage() {
                   {assignLoading ? '...' : 'Assign'}
                 </button>
               </form>
-              <button onClick={() => setShowDeleteConfirm(true)} className="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 font-semibold transition cursor-pointer">
-                Delete
-              </button>
+              {isAdmin && (
+                <button onClick={() => setShowDeleteConfirm(true)} className="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 font-semibold transition cursor-pointer">
+                  Delete
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -261,8 +264,8 @@ export function CrmTicketDetailPage() {
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-slate-900">{comment.authorName}</span>
                   {comment.isInternal ? (
-                    <span className="text-[10px] font-bold px-2 py-0.5  bg-amber-200 text-amber-800 uppercase tracking-wider">
-                      🔒 Internal Note
+                    <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-100 text-amber-800 uppercase tracking-wider inline-flex items-center gap-1 rounded-xs">
+                      <LockIcon className="size-2.5" /> Internal Note
                     </span>
                   ) : (
                     <span className="text-[10px] font-medium text-slate-500">Public Reply</span>
@@ -289,8 +292,8 @@ export function CrmTicketDetailPage() {
                 onChange={(e) => setIsInternal(e.target.checked)}
                 className=" border-slate-300 text-amber-600 focus:ring-amber-500"
               />
-              <label htmlFor="internal-toggle" className="text-amber-800 font-semibold cursor-pointer">
-                🔒 Post as Internal Staff Note
+              <label htmlFor="internal-toggle" className="text-amber-800 font-semibold cursor-pointer inline-flex items-center gap-1">
+                <LockIcon className="size-3" /> Post as Internal Staff Note
               </label>
             </div>
           </div>

@@ -10,6 +10,7 @@ import {
   CheckCircleIcon,
   AlertCircleIcon,
   FilterIcon,
+  XIcon,
 } from '../components/CrmIcons';
 
 const TIER_COLORS = {
@@ -524,9 +525,10 @@ export function CrmExtensionsPage() {
               </div>
               <button
                 onClick={() => setModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 text-sm font-bold p-1 cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition"
+                aria-label="Close"
               >
-                ✕
+                <XIcon className="size-4" />
               </button>
             </div>
 

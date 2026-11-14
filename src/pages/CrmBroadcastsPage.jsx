@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { crmApi } from '../services/crmApi';
 import { useCrmToast } from '../context/CrmToastContext';
 import { useCrmAuth } from '../context/CrmAuthContext';
@@ -74,6 +74,14 @@ export function CrmBroadcastsPage() {
 
   const textareaRef = useRef(null);
   const dropdownRef = useRef(null);
+
+  const sanitizedMiddleHtml = useMemo(() => {
+    return sanitizeHtml(middleCard.htmlContent || '<p>No content provided</p>');
+  }, [middleCard.htmlContent]);
+
+  const sanitizedNoticeHtml = useMemo(() => {
+    return sanitizeHtml(noticeCard.message || 'Notification text goes here...');
+  }, [noticeCard.message]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -688,7 +696,7 @@ export function CrmBroadcastsPage() {
                   <div
                     className="w-full min-h-[220px] max-h-[300px] overflow-y-auto p-4 rounded-lg border border-slate-300 bg-white text-slate-800 text-xs leading-relaxed desktop-html-scroll"
                     dangerouslySetInnerHTML={{
-                      __html: sanitizeHtml(middleCard.htmlContent || '<p>No content provided</p>'),
+                      __html: sanitizedMiddleHtml,
                     }}
                   />
                 )}
@@ -853,7 +861,7 @@ export function CrmBroadcastsPage() {
                   <div
                     className="w-full min-h-[140px] p-3 rounded-lg border border-slate-300 bg-white text-slate-800 text-xs leading-relaxed desktop-html-scroll"
                     dangerouslySetInnerHTML={{
-                      __html: sanitizeHtml(noticeCard.message || '<p>No content entered.</p>'),
+                      __html: sanitizedNoticeHtml,
                     }}
                   />
                 )}
@@ -925,7 +933,7 @@ export function CrmBroadcastsPage() {
                       : 'bg-slate-50 border-slate-150 text-slate-700'
                   }`}
                   dangerouslySetInnerHTML={{
-                    __html: sanitizeHtml(middleCard.htmlContent || '<p>No content provided</p>'),
+                    __html: sanitizedMiddleHtml,
                   }}
                 />
 
@@ -990,7 +998,11 @@ export function CrmBroadcastsPage() {
                     )}
                   </span>
                   {noticeCard.title ? (
-                    <h4 className="text-[13px] font-bold leading-tight truncate text-slate-900 dark:text-white">
+                    <h4
+                      className={`text-[13px] font-bold leading-tight truncate ${
+                        previewTheme === 'dark' ? 'text-white' : 'text-slate-900'
+                      }`}
+                    >
                       {noticeCard.title}
                     </h4>
                   ) : null}
@@ -1010,7 +1022,7 @@ export function CrmBroadcastsPage() {
                   previewTheme === 'dark' ? 'text-slate-300' : 'text-slate-600'
                 }`}
                 dangerouslySetInnerHTML={{
-                  __html: sanitizeHtml(noticeCard.message || 'Notification content...'),
+                  __html: sanitizedNoticeHtml,
                 }}
               />
 

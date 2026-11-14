@@ -6,7 +6,7 @@ import {
   downloadAuditLogsCsv,
   getGoogleSheetUrl,
 } from '../services/googleSheets';
-import { RefreshCwIcon, AlertCircleIcon, SearchIcon } from '../components/CrmIcons';
+import { RefreshCwIcon, AlertCircleIcon, SearchIcon, XIcon } from '../components/CrmIcons';
 import { TableSkeleton } from '../components/common/Skeleton';
 
 function labelize(key) {
@@ -304,10 +304,10 @@ export function CrmAuditLogsPage() {
               </div>
               <button
                 onClick={() => setSelectedLog(null)}
-                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
                 aria-label="Close dialog"
               >
-                ✕
+                <XIcon className="size-4" />
               </button>
             </div>
 

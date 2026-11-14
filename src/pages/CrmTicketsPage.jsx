@@ -1,20 +1,22 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
 import { useDebouncedValue, isRateLimitError } from '../hooks/useDebouncedValue';
-import { RefreshCwIcon, AlertCircleIcon, PlusIcon, SearchIcon } from '../components/CrmIcons';
+import { RefreshCwIcon, AlertCircleIcon, PlusIcon, SearchIcon, XIcon } from '../components/CrmIcons';
 import { TableSkeleton } from '../components/common/Skeleton';
 
 export function CrmTicketsPage() {
-  const { isManagerOrAdmin } = useCrmAuth();
+  const { isAdmin } = useCrmAuth();
   const { toast } = useCrmToast();
+  const [searchParams] = useSearchParams();
+  const urlSearch = searchParams.get('search') || '';
   const [tickets, setTickets] = useState([]);
   const [status, setStatus] = useState('all');
   const [category, setCategory] = useState('all');
   const [priority, setPriority] = useState('all');
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(urlSearch);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -50,6 +52,10 @@ export function CrmTicketsPage() {
       setLoading(false);
     }
   }, [status, category, priority, debouncedSearch, toast]);
+
+  useEffect(() => {
+    setSearch(urlSearch);
+  }, [urlSearch]);
 
   useEffect(() => {
     fetchTickets();
@@ -265,7 +271,7 @@ export function CrmTicketsPage() {
                         >
                           Discussion →
                         </Link>
-                        {isManagerOrAdmin && (
+                        {isAdmin && (
                           <button
                             onClick={() => setDeletingTicket(t)}
                             className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs rounded-sm transition cursor-pointer"
@@ -291,9 +297,10 @@ export function CrmTicketsPage() {
               <h3 className="font-bold text-slate-900 text-sm">Open Support Ticket</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-lg leading-none"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                aria-label="Close"
               >
-                ✕
+                <XIcon className="size-4" />
               </button>
             </div>
 

@@ -3,7 +3,7 @@ import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
 import { useDebouncedValue, isRateLimitError } from '../hooks/useDebouncedValue';
-import { RefreshCwIcon, AlertCircleIcon, SearchIcon } from '../components/CrmIcons';
+import { RefreshCwIcon, AlertCircleIcon, SearchIcon, XIcon } from '../components/CrmIcons';
 import { TableSkeleton } from '../components/common/Skeleton';
 
 const STATUS_STYLES = {
@@ -14,7 +14,8 @@ const STATUS_STYLES = {
 };
 
 export function CrmContactsPage() {
-  const { isManagerOrAdmin } = useCrmAuth();
+  const { isManagerOrAdmin, isSupport } = useCrmAuth();
+  const canUpdateStatus = isManagerOrAdmin || isSupport;
   const { toast } = useCrmToast();
   const [contacts, setContacts] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -101,8 +102,9 @@ export function CrmContactsPage() {
           <option value="replied">Replied</option>
           <option value="archived">Archived</option>
         </select>
-        <button onClick={() => { setBreachedOnly((v) => !v); setPage(1); }} title="Unreplied over 20h" className={`px-3 py-1.5 text-xs font-bold transition cursor-pointer ${breachedOnly ? 'bg-red-600 text-white' : 'bg-red-50 hover:bg-red-100 text-red-700 border border-red-200'}`}>
-          ⚠ Action required
+        <button onClick={() => { setBreachedOnly((v) => !v); setPage(1); }} title="Unreplied over 20h" className={`px-3 py-1.5 text-xs font-bold transition cursor-pointer inline-flex items-center gap-1.5 ${breachedOnly ? 'bg-red-600 text-white' : 'bg-red-50 hover:bg-red-100 text-red-700 border border-red-200'}`}>
+          <AlertCircleIcon className="size-3.5" />
+          <span>Action required</span>
         </button>
       </div>
 
@@ -134,8 +136,9 @@ export function CrmContactsPage() {
                     <td className="py-1.5 px-3 whitespace-nowrap">
                       <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase border ${STATUS_STYLES[c.status] || 'bg-slate-100 text-slate-700 border-slate-200'}`}>{c.status}</span>
                       {c.actionRequired && (
-                        <span className="ml-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase bg-red-600 text-white" title={`Waiting ${c.hoursOpen}h — SLA is 20h`}>
-                          ⚠ Action required · {c.hoursOpen}h
+                        <span className="ml-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase bg-red-600 text-white inline-flex items-center gap-1" title={`Waiting ${c.hoursOpen}h — SLA is 20h`}>
+                          <AlertCircleIcon className="size-3" />
+                          <span>Action required · {c.hoursOpen}h</span>
                         </span>
                       )}
                     </td>
@@ -167,15 +170,19 @@ export function CrmContactsPage() {
                 <h3 className="font-bold text-slate-900 text-sm">{selected.subject}</h3>
                 <p className="text-[11px] text-slate-500 mt-0.5">{selected.name} · <span className="font-mono">{selected.email}</span> · {selected.createdAt ? new Date(selected.createdAt).toLocaleString() : ''}</p>
               </div>
-              <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer">✕</button>
+              <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600 transition cursor-pointer" aria-label="Close">
+                <XIcon className="size-4" />
+              </button>
             </div>
             <p className="text-xs text-slate-700 whitespace-pre-wrap leading-relaxed">{selected.message}</p>
-            <div className="flex items-center gap-2 pt-2 border-t border-slate-100 text-xs">
-              <span className="font-semibold text-slate-700">Status:</span>
-              {['new', 'read', 'replied', 'archived'].map((st) => (
-                <button key={st} disabled={statusLoading} onClick={() => handleStatusChange(selected.id, st)} className={`px-3 py-1.5 font-semibold capitalize transition disabled:opacity-50 cursor-pointer ${selected.status === st ? 'bg-purple-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}`}>{st}</button>
-              ))}
-            </div>
+            {canUpdateStatus && (
+              <div className="flex items-center gap-2 pt-2 border-t border-slate-100 text-xs">
+                <span className="font-semibold text-slate-700">Status:</span>
+                {['new', 'read', 'replied', 'archived'].map((st) => (
+                  <button key={st} disabled={statusLoading} onClick={() => handleStatusChange(selected.id, st)} className={`px-3 py-1.5 font-semibold capitalize transition disabled:opacity-50 cursor-pointer ${selected.status === st ? 'bg-purple-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}`}>{st}</button>
+                ))}
+              </div>
+            )}
             <a href={`mailto:${selected.email}?subject=${encodeURIComponent(`Re: ${selected.subject}`)}`} className="block text-center px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition">Reply via Email →</a>
           </div>
         </div>

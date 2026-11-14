@@ -11,6 +11,9 @@ import {
   FileTextIcon,
   AlertCircleIcon,
   CheckCircleIcon,
+  TrendingUpIcon,
+  CheckIcon,
+  XIcon,
 } from '../components/CrmIcons';
 
 export function CrmCustomerDetailPage() {
@@ -333,7 +336,13 @@ export function CrmCustomerDetailPage() {
               <span className={`text-[11px] font-medium px-2 py-0.5  ${
                 profile.emailVerified ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'
               }`}>
-                {profile.emailVerified ? '✓ Verified' : 'Unverified'}
+                {profile.emailVerified ? (
+                  <span className="inline-flex items-center gap-1">
+                    <CheckIcon className="size-3 text-emerald-600" /> Verified
+                  </span>
+                ) : (
+                  'Unverified'
+                )}
               </span>
             </div>
             <div className="flex items-center gap-4 text-xs text-slate-500 mt-1 font-mono">
@@ -351,15 +360,18 @@ export function CrmCustomerDetailPage() {
               onClick={openUpgradeModal}
               className="px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold text-xs shadow-xs transition cursor-pointer flex items-center gap-1.5"
             >
-              <span>⚡</span> Upgrade Plan
+              <TrendingUpIcon className="size-3.5" />
+              <span>Upgrade Plan</span>
             </button>
           )}
-          <button
-            onClick={() => setShowDiscountModal(true)}
-            className="px-3.5 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition cursor-pointer"
-          >
-            + Grant Discount
-          </button>
+          {(isManagerOrAdmin || isSales || isSupport) && (
+            <button
+              onClick={() => setShowDiscountModal(true)}
+              className="px-3.5 py-2  bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-xs transition cursor-pointer"
+            >
+              + Grant Discount
+            </button>
+          )}
           {isManagerOrAdmin && (
             <button
               onClick={openEditModal}
@@ -482,7 +494,9 @@ export function CrmCustomerDetailPage() {
                     {assignLoading ? 'Saving...' : 'Update Assignment'}
                   </button>
                   {assignSuccess && (
-                    <span className="text-emerald-600 font-semibold text-xs">✓ Assignment saved!</span>
+                    <span className="text-emerald-600 font-semibold text-xs inline-flex items-center gap-1">
+                      <CheckIcon className="size-3" /> Assignment saved!
+                    </span>
                   )}
                 </div>
               </form>
@@ -525,7 +539,8 @@ export function CrmCustomerDetailPage() {
                 onClick={openUpgradeModal}
                 className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs transition cursor-pointer self-start md:self-center flex items-center gap-1.5"
               >
-                <span>⚡</span> Upgrade / Adjust Plan
+                <TrendingUpIcon className="size-3.5" />
+                <span>Upgrade / Adjust Plan</span>
               </button>
             )}
           </div>
@@ -614,11 +629,13 @@ export function CrmCustomerDetailPage() {
                   ) : (
                     payments.map((p) => (
                       <tr key={p.id} className="hover:bg-slate-50">
-                        <td className="py-1.5 px-3 font-mono font-medium">{p.order_id || p.id}</td>
+                        <td className="py-1.5 px-3 font-mono font-medium">{p.orderId || p.order_id || p.id}</td>
                         <td className="py-1.5 px-3 capitalize font-semibold text-purple-700">{p.plan}</td>
                         <td className="py-1.5 px-3 capitalize text-slate-600">{p.validity}</td>
                         <td className="py-1.5 px-3 font-bold text-slate-900">₹{p.amount}</td>
-                        <td className="py-1.5 px-3 text-slate-500">{new Date(p.created_at).toLocaleDateString()}</td>
+                        <td className="py-1.5 px-3 text-slate-500">
+                          {(p.createdAt || p.created_at) ? new Date(p.createdAt || p.created_at).toLocaleDateString() : '—'}
+                        </td>
                       </tr>
                     ))
                   )}
@@ -803,7 +820,9 @@ export function CrmCustomerDetailPage() {
           <div className="bg-white max-w-md w-full p-4 shadow-xl border border-slate-200 space-y-2.5 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Raise Service Request</h3>
-              <button onClick={() => setShowTicketModal(false)} className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer">✕</button>
+              <button onClick={() => setShowTicketModal(false)} className="text-slate-400 hover:text-slate-600 transition cursor-pointer" aria-label="Close">
+                <XIcon className="size-4" />
+              </button>
             </div>
             <form onSubmit={handleRaiseTicket} className="space-y-3 text-xs">
               <div>
@@ -852,9 +871,10 @@ export function CrmCustomerDetailPage() {
               <h3 className="font-bold text-slate-900 text-sm">Assign Discount to Customer</h3>
               <button
                 onClick={() => setShowDiscountModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-lg leading-none"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                aria-label="Close"
               >
-                ✕
+                <XIcon className="size-4" />
               </button>
             </div>
 
@@ -879,8 +899,8 @@ export function CrmCustomerDetailPage() {
                   className="w-full p-2.5  border border-slate-200 text-sm font-semibold"
                 />
                 {isSales && Number(discountValue) <= 10 && (
-                  <p className="text-[11px] text-emerald-600 mt-1 font-medium">
-                    ✓ Within Sales Policy (≤10%): Activates instantly.
+                  <p className="text-[11px] text-emerald-600 mt-1 font-medium inline-flex items-center gap-1">
+                    <CheckIcon className="size-3" /> Within Sales Policy (≤10%): Activates instantly.
                   </p>
                 )}
                 {isSales && Number(discountValue) > 10 && Number(discountValue) <= 30 && (
@@ -956,9 +976,10 @@ export function CrmCustomerDetailPage() {
               </div>
               <button
                 onClick={() => setShowEditModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                aria-label="Close"
               >
-                ✕
+                <XIcon className="size-4" />
               </button>
             </div>
 
@@ -1105,9 +1126,10 @@ export function CrmCustomerDetailPage() {
               </div>
               <button
                 onClick={() => setShowUpgradeModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                aria-label="Close"
               >
-                ✕
+                <XIcon className="size-4" />
               </button>
             </div>
 

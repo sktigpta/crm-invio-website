@@ -192,7 +192,7 @@ function sanitizeWithDOM(rawHtml) {
         }
       }
 
-      if (tag === 'a' && el.getAttribute('target') === '_blank') {
+      if (tag === 'a' && (el.getAttribute('target') || '').toLowerCase() === '_blank') {
         el.setAttribute('rel', 'noopener noreferrer');
       }
     }

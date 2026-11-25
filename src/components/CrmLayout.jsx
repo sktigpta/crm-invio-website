@@ -37,7 +37,7 @@ export function CrmLayout() {
 
   const navItems = [
     { to: '/dashboard', label: 'Dashboard', icon: DashboardIcon },
-    { to: '/customers', label: canViewDirectory ? 'Customers' : 'Customer Lookup', icon: UsersIcon },
+    ...(canViewDirectory ? [{ to: '/customers', label: 'Customers', icon: UsersIcon }] : []),
     ...(canViewDiscounts ? [{ to: '/discounts', label: 'Discounts', icon: PercentIcon }] : []),
     ...(canViewApprovals ? [{ to: '/approvals', label: 'Discount Approvals', icon: CheckCircleIcon }] : []),
     ...(canViewCoupons ? [{ to: '/coupons', label: 'Coupons', icon: TagIcon }] : []),
@@ -54,15 +54,15 @@ export function CrmLayout() {
   const currentRole = roleMeta[staff?.role] || { label: staff?.role || 'Staff', bg: 'bg-slate-100 text-slate-700 border-slate-200' };
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-slate-50 flex flex-col md:flex-row font-sans text-slate-800">
+    <div className="h-dvh w-full overflow-hidden bg-slate-50 flex flex-col md:flex-row font-sans text-slate-800">
       {/* Mobile Top Header */}
       <div className="md:hidden h-12 flex-shrink-0 flex items-center justify-between px-3 bg-white border-b border-slate-200 z-30">
-        <Link to="/dashboard" className="flex items-center gap-2">
+        <Link to="/dashboard" className="flex items-center gap-2 shrink-0">
           <img src="/appLogo.png" alt="Invio" className="size-5 object-contain" />
           <span className="font-bold text-xs tracking-tight text-slate-900">Invio CRM</span>
         </Link>
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] font-semibold text-slate-700">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-[11px] font-semibold text-slate-700 truncate max-w-[150px]">
             ({currentRole.label}) {staff?.fullName || 'Staff'}
           </span>
           <button
@@ -155,7 +155,7 @@ export function CrmLayout() {
         <header className="h-12 flex-shrink-0 bg-white border-b border-slate-200 px-4 flex items-center justify-between z-10">
           <div className="flex items-center gap-2">
             <h1 className="text-xs font-bold text-slate-900 capitalize tracking-tight">
-              {location.pathname === '/' ? 'Dashboard' : location.pathname.slice(1).replace('-', ' ')}
+              {location.pathname === '/' ? 'Dashboard' : location.pathname.slice(1).split('/')[0].replace(/-/g, ' ')}
             </h1>
           </div>
 

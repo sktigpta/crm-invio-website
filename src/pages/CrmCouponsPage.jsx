@@ -256,7 +256,7 @@ export function CrmCouponsPage() {
 
       {/* Live Coupon Testing Sandbox */}
       <div className="bg-white p-5  border border-slate-200 shadow-xs space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
             Authoritative Server-Side Validation Sandbox
           </h3>
@@ -312,7 +312,7 @@ export function CrmCouponsPage() {
               ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
               : 'bg-red-50 text-red-800 border-red-200'
           }`}>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <span>{validationResult.message}</span>
               {validationResult.valid && (
                 <span className="font-bold">

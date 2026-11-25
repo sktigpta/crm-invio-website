@@ -30,7 +30,7 @@ import {
 
 export function CrmBroadcastsPage() {
   const { toast } = useCrmToast();
-  const { isManagerOrAdmin, canViewBroadcasts } = useCrmAuth();
+  const { canViewBroadcasts } = useCrmAuth();
 
   const [activeTab, setActiveTab] = useState('middle'); // 'middle' | 'notification'
   const [dropdownOpen, setDropdownOpen] = useState(false);

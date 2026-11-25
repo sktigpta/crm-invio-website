@@ -52,7 +52,7 @@ const STATUS_COLORS = {
 };
 
 export function CrmExtensionsPage() {
-  const { isManagerOrAdmin, isSuperAdmin } = useCrmAuth();
+  const { isManagerOrAdmin } = useCrmAuth();
   const { addToast } = useCrmToast();
 
   const [extensions, setExtensions] = useState([]);

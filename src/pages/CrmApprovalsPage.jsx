@@ -85,7 +85,7 @@ export function CrmApprovalsPage() {
       )}
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 bg-white p-2.5  border border-slate-200 shadow-xs">
+      <div className="flex flex-wrap items-center gap-2 bg-white p-2.5 border border-slate-200 shadow-xs">
         {['pending', 'approved', 'rejected', 'all'].map((st) => (
           <button
             key={st}

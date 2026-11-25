@@ -3,29 +3,16 @@ const STAFF_KEY = 'invio_crm_staff_user';
 
 export function getCrmToken() {
   try {
-    return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || null;
+    return sessionStorage.getItem(TOKEN_KEY) || null;
   } catch {
     return null;
   }
 }
 
-function isUsingLocalStorage() {
+export function setCrmToken(token) {
   try {
-    return Boolean(localStorage.getItem(TOKEN_KEY));
-  } catch {
-    return false;
-  }
-}
-
-export function setCrmToken(token, remember = false) {
-  try {
-    if (remember) {
-      sessionStorage.removeItem(TOKEN_KEY);
-      localStorage.setItem(TOKEN_KEY, token);
-    } else {
-      localStorage.removeItem(TOKEN_KEY);
-      sessionStorage.setItem(TOKEN_KEY, token);
-    }
+    localStorage.removeItem(TOKEN_KEY);
+    sessionStorage.setItem(TOKEN_KEY, token);
   } catch (e) {
     console.warn('Storage quota or error setting token:', e);
   }
@@ -44,23 +31,17 @@ export function clearCrmAuth() {
 
 export function getStoredStaff() {
   try {
-    const raw = sessionStorage.getItem(STAFF_KEY) || localStorage.getItem(STAFF_KEY);
+    const raw = sessionStorage.getItem(STAFF_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
 }
 
-export function setStoredStaff(staff, remember = false) {
+export function setStoredStaff(staff) {
   try {
-    const json = JSON.stringify(staff);
-    if (remember) {
-      sessionStorage.removeItem(STAFF_KEY);
-      localStorage.setItem(STAFF_KEY, json);
-    } else {
-      localStorage.removeItem(STAFF_KEY);
-      sessionStorage.setItem(STAFF_KEY, json);
-    }
+    localStorage.removeItem(STAFF_KEY);
+    sessionStorage.setItem(STAFF_KEY, JSON.stringify(staff));
   } catch (e) {
     console.warn('Error setting staff:', e);
   }
@@ -145,14 +126,14 @@ async function request(endpoint, options = {}) {
 
 export const crmApi = {
   // Auth
-  async login(email, password, remember = false) {
+  async login(email, password) {
     const res = await request('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
     if (res.token && res.staff) {
-      setCrmToken(res.token, remember);
-      setStoredStaff(res.staff, remember);
+      setCrmToken(res.token);
+      setStoredStaff(res.staff);
     }
     return res;
   },

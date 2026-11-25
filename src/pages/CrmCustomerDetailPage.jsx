@@ -4,13 +4,7 @@ import { crmApi } from '../services/crmApi';
 import { useCrmAuth } from '../context/CrmAuthContext';
 import { useCrmToast } from '../context/CrmToastContext';
 import {
-  UsersIcon,
-  PercentIcon,
-  TicketIcon,
-  TagIcon,
-  FileTextIcon,
   AlertCircleIcon,
-  CheckCircleIcon,
   TrendingUpIcon,
   CheckIcon,
   XIcon,
@@ -97,7 +91,6 @@ export function CrmCustomerDetailPage() {
 
   // Discount Modal State
   const [showDiscountModal, setShowDiscountModal] = useState(false);
-  const [discountType, setDiscountType] = useState('percentage');
   const [discountValue, setDiscountValue] = useState(10);
   const [discountReason, setDiscountReason] = useState('');
   const [discountPlan, setDiscountPlan] = useState('all');
@@ -259,7 +252,7 @@ export function CrmCustomerDetailPage() {
     try {
       const res = await crmApi.createDiscount({
         customerId: id,
-        discountType,
+        discountType: 'percentage',
         discountValue: Number(discountValue),
         reason: discountReason,
         applicablePlan: discountPlan,

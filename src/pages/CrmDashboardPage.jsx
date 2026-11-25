@@ -155,12 +155,19 @@ export function CrmDashboardPage() {
         <div className="bg-white p-3 border border-slate-200">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs font-bold text-slate-900">Customers by Subscription Plan</h3>
-            <Link to="/customers" className="text-[11px] text-purple-600 hover:text-purple-700 font-semibold">
-              View Directory →
-            </Link>
+            {canViewDirectory && (
+              <Link to="/customers" className="text-[11px] text-purple-600 hover:text-purple-700 font-semibold">
+                View Directory →
+              </Link>
+            )}
           </div>
           <div className="space-y-1.5">
-            {metrics?.subscriptions?.length ? (
+            {loading ? (
+              <div className="space-y-2 py-1">
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+              </div>
+            ) : metrics?.subscriptions?.length ? (
               metrics.subscriptions.map((sub, idx) => (
                 <div key={idx} className="flex items-center justify-between p-2 bg-slate-50 border border-slate-100">
                   <div className="flex items-center gap-2">
@@ -191,7 +198,12 @@ export function CrmDashboardPage() {
             )}
           </div>
           <div className="space-y-1.5">
-            {metrics?.tickets?.length ? (
+            {loading ? (
+              <div className="space-y-2 py-1">
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+              </div>
+            ) : metrics?.tickets?.length ? (
               metrics.tickets.map((t, idx) => (
                 <div key={idx} className="flex items-center justify-between p-2 bg-slate-50 border border-slate-100">
                   <span className="capitalize font-semibold text-xs text-slate-800">
@@ -217,7 +229,12 @@ export function CrmDashboardPage() {
             )}
           </div>
           <div className="space-y-1.5">
-            {metrics?.coupons?.length ? (
+            {loading ? (
+              <div className="space-y-2 py-1">
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+              </div>
+            ) : metrics?.coupons?.length ? (
               metrics.coupons.map((c, idx) => (
                 <div key={idx} className="flex items-center justify-between p-2 bg-slate-50 border border-slate-100">
                   <span className="capitalize font-semibold text-xs text-slate-800">
@@ -246,7 +263,12 @@ export function CrmDashboardPage() {
             )}
           </div>
           <div className="space-y-1.5">
-            {metrics?.recentActivity?.length ? (
+            {loading ? (
+              <div className="space-y-2 py-1">
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+              </div>
+            ) : metrics?.recentActivity?.length ? (
               metrics.recentActivity.map((log) => (
                 <div key={log.id} className="flex items-center justify-between p-2 bg-slate-50 border border-slate-100 text-xs">
                   <div className="flex items-center gap-2 truncate">

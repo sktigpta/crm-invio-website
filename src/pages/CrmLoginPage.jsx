@@ -32,7 +32,6 @@ export function CrmLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(
     location.search.includes('idle=1')
@@ -62,7 +61,7 @@ export function CrmLoginPage() {
     setError('');
 
     try {
-      const res = await login(cleanEmail, password, remember);
+      const res = await login(cleanEmail, password);
       if (res?.staff?.mustChangePassword) {
         navigate('/login?change=1', { replace: true });
       } else {
@@ -314,18 +313,6 @@ export function CrmLoginPage() {
                   )}
                 </button>
               </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs pt-0.5">
-              <label className="flex items-center gap-2 cursor-pointer text-slate-600 select-none">
-                <input
-                  type="checkbox"
-                  checked={remember}
-                  onChange={(e) => setRemember(e.target.checked)}
-                  className="rounded-xs border-slate-300 text-purple-600 focus:ring-purple-500"
-                />
-                <span className="text-[11px]">Keep me signed in</span>
-              </label>
             </div>
 
             <button

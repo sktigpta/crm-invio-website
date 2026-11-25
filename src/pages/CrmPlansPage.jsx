@@ -132,7 +132,6 @@ export function CrmPlansPage() {
   const [fName, setFName] = useState('');
   const [fPriceYearly, setFPriceYearly] = useState(0);
   const [fPriceMonthly, setFPriceMonthly] = useState(0);
-  const [fInterval, setFInterval] = useState('/ year');
   const [fBadge, setFBadge] = useState('');
   const [fDescription, setFDescription] = useState('');
   const [fFeatures, setFFeatures] = useState('');
@@ -177,7 +176,6 @@ export function CrmPlansPage() {
     setFName(plan.name || '');
     setFPriceYearly(toNumberPrice(plan.priceYearly ?? plan.price));
     setFPriceMonthly(toNumberPrice(plan.priceMonthly ?? (plan.id === 'plus' ? 149 : plan.id === 'pro' ? 499 : 0)));
-    setFInterval(plan.interval || '/ year');
     setFBadge(plan.badge || '');
     setFDescription(plan.description || '');
     setFFeatures((plan.features || []).join('\n'));
@@ -204,8 +202,6 @@ export function CrmPlansPage() {
         price_monthly: priceMonthly,
         monthlyPrice: priceMonthly,
         priceMonthly: priceMonthly,
-        interval: fInterval,
-        validity: fInterval,
         badge: fBadge,
         description: fDescription,
         features,
@@ -390,16 +386,6 @@ export function CrmPlansPage() {
                   />
                   <span className="text-[10px] text-slate-400">Billed monthly</span>
                 </div>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Interval Display</label>
-                <select value={fInterval} onChange={(e) => setFInterval(e.target.value)} className="w-full p-2.5 border border-slate-200 bg-white focus:outline-none focus:border-purple-600">
-                  <option value="/ year">/ year</option>
-                  <option value="/ month">/ month</option>
-                  <option value="Lifetime">Lifetime</option>
-                  <option value="/ quarter">/ quarter</option>
-                </select>
               </div>
 
               <div>

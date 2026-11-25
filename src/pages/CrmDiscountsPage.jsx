@@ -152,10 +152,10 @@ export function CrmDiscountsPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <TableSkeleton rows={5} cols={8} />
+                <TableSkeleton rows={5} cols={isManagerOrAdmin ? 8 : 7} />
               ) : discounts.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="py-12 text-center text-slate-400">
+                  <td colSpan={isManagerOrAdmin ? 8 : 7} className="py-12 text-center text-slate-400">
                     No customer discounts found for status: {status}.
                   </td>
                 </tr>

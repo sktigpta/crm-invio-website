@@ -47,8 +47,8 @@ export function CrmAuthProvider({ children }) {
     };
   }, [token]);
 
-  const login = useCallback(async (email, password, remember = true) => {
-    const res = await crmApi.login(email, password, remember);
+  const login = useCallback(async (email, password) => {
+    const res = await crmApi.login(email, password);
     skipNextVerifyRef.current = true;
     setToken(res.token);
     setStaff(res.staff);
@@ -60,9 +60,7 @@ export function CrmAuthProvider({ children }) {
     if (res.staff) {
       setStaff(res.staff);
       try {
-        const remember = Boolean(localStorage.getItem('invio_crm_staff_token'));
-        if (remember) localStorage.setItem('invio_crm_staff_user', JSON.stringify(res.staff));
-        else sessionStorage.setItem('invio_crm_staff_user', JSON.stringify(res.staff));
+        sessionStorage.setItem('invio_crm_staff_user', JSON.stringify(res.staff));
       } catch { /* storage best-effort */ }
     }
     return res.staff;

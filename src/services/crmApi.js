@@ -143,16 +143,15 @@ export const crmApi = {
   },
 
   async changePassword(currentPassword, newPassword) {
-    const remember = isUsingLocalStorage();
     const res = await request('/auth/change-password', {
       method: 'POST',
       body: JSON.stringify({ currentPassword, newPassword }),
     });
     if (res.token) {
-      setCrmToken(res.token, remember);
+      setCrmToken(res.token);
     }
     if (res.staff) {
-      setStoredStaff(res.staff, remember);
+      setStoredStaff(res.staff);
     }
     return res;
   },

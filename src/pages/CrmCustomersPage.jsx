@@ -169,7 +169,7 @@ export function CrmCustomersPage() {
   async function handleUpdateCustomer(e) {
     e.preventDefault();
     if (!editingCustomer) return;
-    if (editPlan !== editingCustomer.currentPlan && !editUpgradeReason.trim()) {
+    if (editPlan !== (editingCustomer.currentPlan || 'free') && !editUpgradeReason.trim()) {
       toast.error('A documented reason is required when changing the subscription plan.');
       return;
     }
@@ -283,7 +283,7 @@ export function CrmCustomersPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
     toast.success('Customer CSV exported.');
   }
 

@@ -205,10 +205,10 @@ export function CrmStaffPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <TableSkeleton rows={5} cols={6} />
+                <TableSkeleton rows={5} cols={isManagerOrAdmin ? 6 : 5} />
               ) : staffList.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="py-12 text-center text-slate-400">
+                  <td colSpan={isManagerOrAdmin ? 6 : 5} className="py-12 text-center text-slate-400">
                     No staff records found.
                   </td>
                 </tr>

@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { useCrmAuth } from '../context/CrmAuthContext';
 
 export function CrmProtectedRoute({ children, requiredRoles }) {
@@ -40,12 +40,12 @@ export function CrmProtectedRoute({ children, requiredRoles }) {
         <p className="text-sm text-slate-600 mb-6">
           Your current role (<strong className="capitalize">{staff?.role?.replace('_', ' ')}</strong>) does not have permission to view this administrative resource.
         </p>
-        <a
-          href="/dashboard"
+        <Link
+          to="/dashboard"
           className="inline-flex px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white  text-sm font-semibold transition"
         >
           Return to Dashboard
-        </a>
+        </Link>
       </div>
     );
   }

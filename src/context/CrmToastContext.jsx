@@ -67,6 +67,7 @@ export function useCrmToast() {
         info: (m) => console.log('[toast info]', m),
       },
       notify: (t, m) => console.log('[toast]', t, m),
+      addToast: (m, t) => console.log('[toast]', t, m),
     };
   }
   return ctx;

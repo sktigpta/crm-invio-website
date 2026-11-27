@@ -344,7 +344,7 @@ export function CrmCouponsPage() {
                 <TableSkeleton rows={5} cols={canManageCoupons ? 7 : 6} />
               ) : coupons.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="py-12 text-center text-slate-400">
+                  <td colSpan={canManageCoupons ? 7 : 6} className="py-12 text-center text-slate-400">
                     No coupon codes registered.
                   </td>
                 </tr>

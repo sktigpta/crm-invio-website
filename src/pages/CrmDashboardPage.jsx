@@ -13,7 +13,7 @@ import {
 import { Skeleton } from '../components/common/Skeleton';
 
 export function CrmDashboardPage() {
-  const { canViewApprovals, canViewTickets, canViewCoupons, canViewAuditLogs } = useCrmAuth();
+  const { canViewDirectory, canViewApprovals, canViewTickets, canViewCoupons, canViewAuditLogs } = useCrmAuth();
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
